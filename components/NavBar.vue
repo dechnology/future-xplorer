@@ -34,6 +34,8 @@
 </template>
 
 <script setup lang="ts">
+interface Props {}
+const props = defineProps<Props>();
 const heading = '未來情境探索輔助工具';
 </script>
 
