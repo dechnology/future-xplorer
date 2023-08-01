@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 const route = useRoute();
-const topic = await useFetch(`/api/topics/${route.params.id}`);
+const topic = await useFetch(`/api/topics/${route.params.workshopId}`);
 
 const title = '議題列表';
 const description =
