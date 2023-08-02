@@ -1,18 +1,20 @@
 <template>
-  <div class="flex items-start gap-8 px-14 pt-36">
-    <div class="basis-1/3 border border-solid border-red-500">
-      <h2 class="text-3xl">{{ title }}</h2>
-      <p>{{ description }}</p>
-      <!-- NEW ISSUE FORM -->
-    </div>
-    <div class="basis-2/3 border border-solid border-red-500">
-      <div>
-        <Icon size="1.25rem" name="mdi:arrow-left" />
-        <span>返回</span>
+  <NuxtLayout>
+    <div class="flex items-start gap-8 px-14 pt-36">
+      <div class="basis-1/3 border border-solid border-red-500">
+        <h2 class="text-3xl">{{ title }}</h2>
+        <p>{{ description }}</p>
+        <!-- NEW ISSUE FORM -->
       </div>
-      <!-- ISSUES -->
+      <div class="basis-2/3 border border-solid border-red-500">
+        <div>
+          <Icon size="1.25rem" name="mdi:arrow-left" />
+          <span>返回</span>
+        </div>
+        <!-- ISSUES -->
+      </div>
     </div>
-  </div>
+  </NuxtLayout>
 </template>
 
 <script setup lang="ts">

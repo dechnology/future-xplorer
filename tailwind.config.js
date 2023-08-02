@@ -3,6 +3,9 @@ module.exports = {
   content: [],
   theme: {
     extend: {
+      fontFamily: {
+        'sans': ['Noto Sans TC', ...defaultTheme.fontFamily.sans],
+      },
       colors: {
         primary: {
           100: '#e2efda',
