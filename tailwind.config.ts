@@ -1,10 +1,14 @@
 /** @type {import('tailwindcss').Config} */
+
+const defaultTheme = require('tailwindcss/defaultTheme');
+
 module.exports = {
   content: [],
   theme: {
     extend: {
       fontFamily: {
-        'sans': ['Noto Sans TC', ...defaultTheme.fontFamily.sans],
+        sans: ['Noto Sans TC', ...defaultTheme.fontFamily.sans],
+        serif: ['Noto Serif TC', ...defaultTheme.fontFamily.serif],
       },
       colors: {
         primary: {
