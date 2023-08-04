@@ -5,7 +5,7 @@
       <p class="mb-7 text-base">
         第一步需先決定整體研究的核心主題為何，後續的所有情境都會需在這個主題架構下。
       </p>
-      <IssueDetailedCard />
+      <IssueDetailCard />
     </template>
     <div class="flex flex-col gap-6">
       <div class="flex items-center gap-6">
@@ -16,24 +16,38 @@
         <IssueCard v-for="issue in issues" :issue="issue" />
       </div>
     </div>
-    <!-- ISSUES -->
   </NuxtLayout>
 </template>
 
 <script setup lang="ts">
 import { Issue } from '@/types/issue';
 
-const issues = Array.from({ length: 10 }, (_, idx) => {
-  return idx === 0
-    ? null
-    : ({
-        id: idx,
-        title: '智慧健康生活探詢',
-        description:
-          'Nostrud veniam commodo reprehenderit minim duis labore irure sit do dolore eu proident enim. Nostrud veniam commodo reprehenderit minim duis labore irure sit do dolore eu proident enim. Nostrud veniam commodo reprehenderit minim duis labore irure sit do dolore eu proident enim.Nostrud veniam commodo reprehenderit minim duis labore irure sit do dolore eu proident enim.Nostrud veniam commodo reprehenderit minim duis labore irure sit do dolore eu proident enim.Nostrud veniam commodo reprehenderit minim duis labore irure sit do dolore eu proident enim.Nostrud veniam commodo reprehenderit minim duis labore irure sit do dolore eu proident enim.Nostrud veniam commodo reprehenderit minim duis labore irure sit do dolore eu proident enim.',
-        creator: 'HEHE',
-        createdAt: new Date(2000, 10, 7),
-        updatedAt: new Date(),
-      } as Issue);
-}) as (Issue | null)[];
+const route = useRoute();
+
+const convertDateStr = (dateStr?: string) =>
+  dateStr ? new Date(dateStr) : undefined;
+
+const { data } = await useFetch(`/api/workshops/${route.params.workshopId}`);
+const issues = ref<(Issue | null)[] | undefined>(
+  data.value?.map((issue) => ({
+    ...issue,
+    createdAt: convertDateStr(issue.createdAt),
+    updatedAt: convertDateStr(issue.updatedAt),
+  }))
+);
+issues.value?.unshift(null);
+
+// const issues = Array.from({ length: 10 }, (_, idx) => {
+//   return idx === 0
+//     ? null
+//     : ({
+//         id: idx,
+//         title: '智慧健康生活探詢',
+//         description:
+//           'Nostrud veniam commodo reprehenderit minim duis labore irure sit do dolore eu proident enim. Nostrud veniam commodo reprehenderit minim duis labore irure sit do dolore eu proident enim. Nostrud veniam commodo reprehenderit minim duis labore irure sit do dolore eu proident enim.Nostrud veniam commodo reprehenderit minim duis labore irure sit do dolore eu proident enim.Nostrud veniam commodo reprehenderit minim duis labore irure sit do dolore eu proident enim.Nostrud veniam commodo reprehenderit minim duis labore irure sit do dolore eu proident enim.Nostrud veniam commodo reprehenderit minim duis labore irure sit do dolore eu proident enim.Nostrud veniam commodo reprehenderit minim duis labore irure sit do dolore eu proident enim.',
+//         creator: 'HEHE',
+//         createdAt: new Date(2000, 10, 7),
+//         updatedAt: new Date(),
+//       } as Issue);
+// }) as (Issue | null)[];
 </script>

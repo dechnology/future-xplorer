@@ -10,6 +10,7 @@
     "lint": "eslint ."
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.0.2",
     "@nuxt/devtools": "latest",
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
     "@nuxtjs/tailwindcss": "^6.8.0",
@@ -28,6 +29,7 @@
   },
   "dependencies": {
     "@pinia/nuxt": "^0.4.11",
-    "pinia": "^2.1.6"
+    "pinia": "^2.1.6",
+    "tailwind-merge": "^1.14.0"
   }
 }

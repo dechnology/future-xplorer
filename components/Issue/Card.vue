@@ -29,16 +29,26 @@
 </template>
 
 <script setup lang="ts">
-import { Issue } from 'types/issue';
+import { Issue, IssueStates } from '@/types/issue';
 import { format } from 'date-fns';
+import { storeToRefs } from 'pinia';
 
 interface Props {
   issue: Issue | null;
 }
 const props = defineProps<Props>();
-const activeIssueStore = useActiveIssueStore();
-const isActive = computed(() => activeIssueStore.issue?.id === props.issue?.id);
+const issueStore = useIssueStore();
+const { activeIssue, state } = storeToRefs(issueStore);
+
+const isActive = computed(() => activeIssue.value?.id === props.issue?.id);
+
 const handleClick = (e: Event) => {
-  activeIssueStore.issue = props.issue;
+  if (props.issue === null) {
+    activeIssue.value = null;
+    state.value = IssueStates.New;
+    return;
+  }
+  activeIssue.value = props.issue;
+  state.value = IssueStates.Detail;
 };
 </script>
