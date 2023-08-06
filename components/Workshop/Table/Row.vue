@@ -45,13 +45,9 @@
 
 <script setup lang="ts">
 import { Workshop } from '@/types/workshop';
-import { format } from 'date-fns';
 
 interface Props {
   workshop: Workshop | null;
 }
 const props = defineProps<Props>();
-
-const formatDate = (dateObject?: Date, formatStr: string = 'yyyy-MM-dd') =>
-  dateObject ? format(dateObject, formatStr) : '';
 </script>

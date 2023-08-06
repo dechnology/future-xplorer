@@ -1,54 +1,123 @@
 <template>
-  <div
-    v-if="issue"
-    @click="handleClick"
-    class="flex h-80 basis-1/5 cursor-pointer flex-col justify-between gap-4 rounded-2xl border border-solid border-gray-500 p-8"
-    :class="[isActive ? 'bg-primary-300' : 'bg-white']"
+  <form
+    @submit="handleSubmit"
+    class="relative flex flex-col gap-10 rounded-md bg-white p-8 shadow-2xl"
   >
-    <h3 class="text-2xl font-bold">{{ issue.title }}</h3>
-    <p class="flex-grow overflow-hidden">
-      {{ issue.description }}
-    </p>
-    <div class="mt-auto flex flex-col items-end text-[10px] text-gray-300">
-      <div>建立者：{{ issue.creator }}</div>
-      <div v-if="issue.createdAt">
-        新增時間：{{ format(issue.createdAt, 'yyyy-MM-dd') }}
+    <div class="flex items-end gap-4">
+      <h3 class="text-2xl font-medium text-blue-950">{{ state.formTitle }}</h3>
+      <span class="text-sm text-gray-500"
+        >建立者：{{ currentIssue.creator }}</span
+      >
+    </div>
+    <div class="flex flex-col gap-7 rounded-lg">
+      <div class="flex flex-col gap-4">
+        <label
+          for="title"
+          class="bg-white px-1 text-lg font-semibold text-gray-700"
+        >
+          議題名稱
+        </label>
+        <input
+          type="text"
+          id="title"
+          placeholder="議題名稱"
+          v-model="currentIssue.title"
+          class="h-16"
+          :disabled="state.name == IssueStates.Detail.name"
+          :class="commonInputClasses"
+        />
       </div>
-      <div v-if="issue.updatedAt">
-        更新時間：{{ format(issue.updatedAt, 'yyyy-MM-dd') }}
+      <div class="flex flex-col gap-4">
+        <label
+          for="desc"
+          class="bg-white px-1 text-lg font-semibold text-gray-700"
+        >
+          議題描述
+        </label>
+        <textarea
+          id="desc"
+          placeholder="議題描述"
+          v-model="currentIssue.description"
+          class="h-80 resize-none text-start"
+          :disabled="state.name == IssueStates.Detail.name"
+          :class="commonInputClasses"
+        ></textarea>
       </div>
     </div>
-  </div>
-  <div
-    v-else
-    @click="handleClick"
-    class="flex h-80 basis-1/5 cursor-pointer items-center justify-center rounded-2xl border border-solid border-gray-500"
-  >
-    <Icon class="text-gray-300" name="mdi:plus" size="10rem" />
-  </div>
+    <div
+      v-if="currentIssue.createdAt || currentIssue.updatedAt"
+      class="flex items-center justify-center gap-2"
+    >
+      <div v-if="currentIssue.createdAt">
+        建立時間：{{ format(currentIssue.createdAt, 'yyyy-MM-dd') }}
+      </div>
+      <div v-if="currentIssue.updatedAt">
+        建立時間：{{ format(currentIssue.updatedAt, 'yyyy-MM-dd') }}
+      </div>
+    </div>
+    <IssueActionsNew v-if="state.name === IssueStates.New.name" />
+    <IssueActionsDetail v-if="state.name === IssueStates.Detail.name" />
+    <IssueActionsEditing v-if="state.name === IssueStates.Editing.name" />
+    <Icon
+      v-if="state.name === IssueStates.Detail.name"
+      @click="() => modalStore.show()"
+      class="absolute right-6 top-6 cursor-pointer text-blue-950"
+      name="material-symbols:pan-zoom-rounded"
+      size="3rem"
+    />
+  </form>
+  <!-- <Modal /> -->
 </template>
 
 <script setup lang="ts">
-import { Issue, IssueStates } from '@/types/issue';
 import { format } from 'date-fns';
 import { storeToRefs } from 'pinia';
+import { twMerge, ClassNameValue } from 'tailwind-merge';
+import { IssueStates } from '@/types/issue';
 
-interface Props {
-  issue: Issue | null;
-}
-const props = defineProps<Props>();
+const route = useRoute();
+const router = useRouter();
+
+const modalStore = useModalStore();
 const issueStore = useIssueStore();
-const { activeIssue, state } = storeToRefs(issueStore);
+const { currentIssue, state, activeIssue, modalShown } =
+  storeToRefs(issueStore);
 
-const isActive = computed(() => activeIssue.value?.id === props.issue?.id);
-
-const handleClick = (e: Event) => {
-  if (props.issue === null) {
-    activeIssue.value = null;
-    state.value = IssueStates.New;
-    return;
+const defaultInputClasses: ClassNameValue = [
+  'w-full',
+  'rounded',
+  'px-3',
+  'py-4',
+  'border',
+  'border-solid',
+  'border-gray-200',
+];
+const commonInputClasses = computed(() => {
+  if (state.value.name === IssueStates.Detail.name) {
+    return twMerge(defaultInputClasses, 'bg-slate-50');
   }
-  activeIssue.value = props.issue;
-  state.value = IssueStates.Detail;
+  return twMerge(defaultInputClasses, ['border-gray-500', 'bg-white']);
+});
+
+const handleSubmit = (e: Event) => {
+  e.preventDefault();
+  switch (state.value.name) {
+    // TODO
+    case 'new':
+      console.log('submiting new...');
+      break;
+    case 'detail':
+      console.log('submiting detail...');
+
+      router.push(`${route.fullPath}/issue/${activeIssue.value?.id}/people`);
+      break;
+    // TODO
+    case 'editing':
+      console.log('submiting editing...');
+      state.value = IssueStates.Detail;
+      break;
+    default:
+      throw Error('Unknown state');
+  }
 };
 </script>

@@ -14,23 +14,3 @@ export interface Workshop {
   messages: string[];
   services: string[];
 }
-
-// export interface WorkshopState {
-//   name: string;
-//   formTitle: string;
-// }
-
-// export const WorkshopStates = {
-//   New: {
-//     name: 'new',
-//     formTitle: '新增議題',
-//   } as WorkshopState,
-//   Detail: {
-//     name: 'detail',
-//     formTitle: '議題資訊',
-//   } as WorkshopState,
-//   Editing: {
-//     name: 'editing',
-//     formTitle: '編輯議題',
-//   } as WorkshopState,
-// } as const;

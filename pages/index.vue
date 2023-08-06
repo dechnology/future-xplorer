@@ -35,11 +35,9 @@
 
 <script setup lang="ts">
 import { Workshop } from '@/types/workshop';
+import { convertDateStr } from '@/utils/date';
 
 const tableHeaders = ['名稱', '工作坊時間', '建立者', '建立日期', '更新日期'];
-
-const convertDateStr = (dateStr?: string) =>
-  dateStr ? new Date(dateStr) : undefined;
 
 const { data } = await useFetch('/api/workshops');
 const workshops = ref<(Workshop | null)[] | undefined>(
