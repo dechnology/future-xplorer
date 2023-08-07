@@ -1,12 +1,6 @@
 import { Workshop } from './../types/workshop';
 import { Issue, IssueState, IssueStates } from '@/types/issue';
 
-const EmptyIssue = {
-  title: '',
-  creator: '',
-  description: '',
-} as Issue;
-
 export const useIssueStore = definePiniaStore('issue', () => {
   // fetched
   const workshop = ref<Workshop | null>(null);
@@ -23,7 +17,6 @@ export const useIssueStore = definePiniaStore('issue', () => {
 
   const loading = ref(true);
   const state = ref<IssueState>(IssueStates.New);
-  const modalShown = ref(false);
 
   async function initStore(workshopId: number) {
     // const { data } = await useFetch(`/api/workshops/${workshopId}`);
@@ -101,7 +94,6 @@ export const useIssueStore = definePiniaStore('issue', () => {
 
     loading,
     state,
-    modalShown,
 
     initStore,
     resetCurrentIssue,

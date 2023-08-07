@@ -30,6 +30,7 @@
   "dependencies": {
     "@pinia/nuxt": "^0.4.11",
     "pinia": "^2.1.6",
-    "tailwind-merge": "^1.14.0"
+    "tailwind-merge": "^1.14.0",
+    "vue-tailwind-datepicker": "^1.4.5"
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="relative flex items-center justify-between">
     <CardButton
-      @click="handleRemoveIssueClick"
+      @click="handleRemoveWorkshopClick"
       class="h-12 w-28 rounded-lg bg-red-400 text-white hover:bg-red-500"
       :icon="{ name: 'mdi:delete', size: '3rem' }"
       body="刪除"
@@ -13,7 +13,7 @@
       type="submit"
     />
     <CardButton
-      @click="handleEditIssueClick"
+      @click="handleEditWorkshopClick"
       class="h-12 w-28 rounded-lg bg-gray-400 text-white hover:bg-gray-500"
       :icon="{ name: 'mdi:application-edit', size: '3rem' }"
       body="編輯"
@@ -23,19 +23,19 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { IssueStates } from '@/types/issue';
+import { WorkshopStates } from '@/types/workshop';
 
-const issueStore = useIssueStore();
-const { currentIssue, state, activeIssue } = storeToRefs(issueStore);
+const workshopStore = useWorkshopStore();
+const { currentWorkshop, state, activeWorkshop } = storeToRefs(workshopStore);
 
-const handleRemoveIssueClick = (e: Event) => {
-  console.log(currentIssue.value);
+const handleRemoveWorkshopClick = (e: Event) => {
+  console.log(currentWorkshop.value);
   // TODO
 };
 
-const handleEditIssueClick = (e: Event) => {
-  console.log(currentIssue.value);
-  state.value = IssueStates.Editing;
+const handleEditWorkshopClick = (e: Event) => {
+  console.log(currentWorkshop.value);
+  state.value = WorkshopStates.Editing;
 };
 </script>
 

@@ -66,7 +66,6 @@
       size="3rem"
     />
   </form>
-  <!-- <Modal /> -->
 </template>
 
 <script setup lang="ts">
@@ -80,8 +79,7 @@ const router = useRouter();
 
 const modalStore = useModalStore();
 const issueStore = useIssueStore();
-const { currentIssue, state, activeIssue, modalShown } =
-  storeToRefs(issueStore);
+const { currentIssue, state, activeIssue } = storeToRefs(issueStore);
 
 const defaultInputClasses: ClassNameValue = [
   'w-full',

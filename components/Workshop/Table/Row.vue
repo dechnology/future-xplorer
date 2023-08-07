@@ -1,19 +1,5 @@
 <template>
-  <tr v-if="workshop === null">
-    <td class="py-4" colspan="5">
-      <div class="flex items-center justify-center">
-        <Icon name="mdi:plus-circle-outline" size="3rem" />
-      </div>
-    </td>
-  </tr>
-  <tr
-    v-else
-    @click="
-      () => {
-        $router.push(`/workshop/${workshop?.id}`);
-      }
-    "
-  >
+  <tr>
     <td class="py-6">
       <div class="flex items-center justify-center">
         {{ workshop.name }}
@@ -47,7 +33,7 @@
 import { Workshop } from '@/types/workshop';
 
 interface Props {
-  workshop: Workshop | null;
+  workshop: Workshop;
 }
 const props = defineProps<Props>();
 </script>
