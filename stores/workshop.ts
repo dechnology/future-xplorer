@@ -5,6 +5,7 @@ import {
   WorkshopState,
   WorkshopStates,
 } from '@/types/workshop';
+import { Issue, IssueState, IssueStates } from '@/types/issue';
 
 const EmptyWorkshop = {
   name: '',
@@ -35,7 +36,7 @@ const EmptyWorkshop = {
   ] as WorkshopElement[],
 } as Workshop;
 
-export const useWorkshopStore = definePiniaStore('workshop', () => {
+export const useWorkshopsStore = definePiniaStore('workshops', () => {
   // fetched
   const workshops = ref<Workshop[] | null>(null);
   const cachedWorkshop = ref<Workshop | null>(null);
@@ -46,23 +47,9 @@ export const useWorkshopStore = definePiniaStore('workshop', () => {
 
   const loading = ref(true);
   const state = ref<WorkshopState>(WorkshopStates.New);
-  const modalShown = ref(false);
 
   async function initStore() {
-    const { data } = await useFetch('/api/workshops');
-
-    // Fetching error
-    if (data.value === null) {
-      return;
-    }
-
-    workshops.value = data.value.map((rawWorkshop) => ({
-      ...rawWorkshop,
-      createdAt: convertDateStr(rawWorkshop.createdAt),
-      updatedAt: convertDateStr(rawWorkshop.updatedAt),
-      startAt: convertDateStr(rawWorkshop.startAt),
-      endAt: convertDateStr(rawWorkshop.endAt),
-    }));
+    workshops.value = await fetchAllWorkshops();
 
     resetCurrentWorkshop();
 
@@ -94,10 +81,12 @@ export const useWorkshopStore = definePiniaStore('workshop', () => {
   function cacheWorkshop() {}
 
   watch(state, (newState, oldState) => {
-    // We will use cached form inputs if possible when in New state
-    setCurrentWorkshop(newState.name === WorkshopStates.New.name);
     if (oldState.name === WorkshopStates.New.name) {
       cacheWorkshop();
+    }
+
+    if (newState.name === WorkshopStates.New.name) {
+      setCurrentWorkshop(true);
     }
   });
 
@@ -110,11 +99,92 @@ export const useWorkshopStore = definePiniaStore('workshop', () => {
 
     loading,
     state,
-    modalShown,
 
     initStore,
     resetCurrentWorkshop,
     setCurrentWorkshop,
     cacheWorkshop,
+  };
+});
+
+export const useWorkshopStore = definePiniaStore('workshop', () => {
+  // fetched
+  const workshop = ref<Workshop | null>(null);
+  const issues = ref<Issue[] | null>(null);
+  const cachedIssue = ref<Issue | null>(null);
+
+  // current session usage
+  const activeIssue = ref<Issue | null>(null);
+  const currentIssue = ref<Issue>({
+    title: '',
+    creator: '',
+    description: '',
+  });
+
+  const loading = ref(true);
+  const state = ref<IssueState>(IssueStates.New);
+
+  async function initStore(workshopId: number) {
+    if (workshopId === workshop.value?.id) {
+      console.log('workshop already fetched');
+      return;
+    }
+
+    console.log('fetching workshop...');
+    const data = await fetchWorkshopById(workshopId);
+
+    workshop.value = data.workshop;
+    issues.value = data.issues;
+  }
+
+  function resetCurrentIssue() {
+    currentIssue.value = {
+      title: '',
+      creator: '',
+      description: '',
+    };
+  }
+
+  function setCurrentIssue(cached: boolean = true) {
+    if (cached) {
+      if (cachedIssue.value === null) {
+        resetCurrentIssue();
+      } else {
+        currentIssue.value = { ...cachedIssue.value };
+      }
+      return;
+    }
+
+    if (!activeIssue.value) {
+      throw Error('no issue seleted');
+    }
+    currentIssue.value = { ...activeIssue.value };
+  }
+
+  function cacheIssue() {}
+
+  watch(state, (newState, oldState) => {
+    // We will use cached form inputs if possible when in New state
+    setCurrentIssue(newState.name === IssueStates.New.name);
+    if (oldState.name === IssueStates.New.name) {
+      cacheIssue();
+    }
+  });
+
+  return {
+    workshop,
+    issues,
+    cachedIssue,
+
+    activeIssue,
+    currentIssue,
+
+    loading,
+    state,
+
+    initStore,
+    resetCurrentIssue,
+    setCurrentIssue,
+    cacheIssue,
   };
 });

@@ -98,8 +98,8 @@ interface DateValue {
 
 const router = useRouter();
 
-const workshopStore = useWorkshopStore();
-const { activeWorkshop, currentWorkshop, state } = storeToRefs(workshopStore);
+const workshopsStore = useWorkshopsStore();
+const { activeWorkshop, currentWorkshop, state } = storeToRefs(workshopsStore);
 
 const poemsElements = [];
 

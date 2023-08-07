@@ -39,6 +39,7 @@
           @click="
             () => {
               activeWorkshop = workshop;
+              currentWorkshop = workshop;
               state = WorkshopStates.Detail;
             }
           "
@@ -59,8 +60,9 @@
 import { storeToRefs } from 'pinia';
 import { WorkshopStates } from '@/types/workshop';
 
-const workshopStore = useWorkshopStore();
-const { workshops, activeWorkshop, state } = storeToRefs(workshopStore);
+const workshopsStore = useWorkshopsStore();
+const { workshops, activeWorkshop, currentWorkshop, state } =
+  storeToRefs(workshopsStore);
 
 const tableHeaders = ['名稱', '工作坊時間', '建立者', '建立日期', '更新日期'];
 </script>

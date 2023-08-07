@@ -1,3 +1,0 @@
-<template>
-  <WorkshopTable />
-</template>

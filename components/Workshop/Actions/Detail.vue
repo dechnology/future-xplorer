@@ -25,8 +25,8 @@
 import { storeToRefs } from 'pinia';
 import { WorkshopStates } from '@/types/workshop';
 
-const workshopStore = useWorkshopStore();
-const { currentWorkshop, state, activeWorkshop } = storeToRefs(workshopStore);
+const workshopsStore = useWorkshopsStore();
+const { currentWorkshop, state, activeWorkshop } = storeToRefs(workshopsStore);
 
 const handleRemoveWorkshopClick = (e: Event) => {
   console.log(currentWorkshop.value);

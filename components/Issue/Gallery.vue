@@ -19,6 +19,7 @@
       @click="
         () => {
           activeIssue = issue;
+          cachedIssue = issue;
           modalStore.setContent(issue);
           state = IssueStates.Detail;
         }
@@ -45,6 +46,6 @@ import { storeToRefs } from 'pinia';
 import { IssueStates } from '@/types/issue';
 
 const modalStore = useModalStore();
-const issueStore = useIssueStore();
-const { issues, activeIssue, state } = storeToRefs(issueStore);
+const workshopStore = useWorkshopStore();
+const { issues, activeIssue, cachedIssue, state } = storeToRefs(workshopStore);
 </script>

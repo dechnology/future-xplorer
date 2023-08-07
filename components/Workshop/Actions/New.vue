@@ -16,5 +16,5 @@
 </template>
 
 <script setup lang="ts">
-const store = useWorkshopStore();
+const store = useWorkshopsStore();
 </script>

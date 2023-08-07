@@ -25,8 +25,8 @@
 import { storeToRefs } from 'pinia';
 import { IssueStates } from '@/types/issue';
 
-const issueStore = useIssueStore();
-const { currentIssue, state, activeIssue } = storeToRefs(issueStore);
+const store = useWorkshopStore();
+const { currentIssue, state, activeIssue } = storeToRefs(store);
 
 const handleRemoveIssueClick = (e: Event) => {
   console.log(currentIssue.value);

@@ -2,9 +2,9 @@
   <Suspense>
     <NuxtLayout>
       <template #detail-pane>
-        <IssuePaneDetail />
+        <IssuePanel />
       </template>
-      <IssuePaneGallery />
+      <IssueGallery />
     </NuxtLayout>
     <template #fallback> Loading </template>
   </Suspense>
@@ -12,6 +12,6 @@
 
 <script setup lang="ts">
 const route = useRoute();
-const issueStore = useIssueStore();
-await issueStore.initStore(parseInt(route.params.workshopId as string));
+const store = useWorkshopStore();
+await store.initStore(parseInt(route.params.workshopId as string));
 </script>

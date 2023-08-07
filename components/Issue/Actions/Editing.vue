@@ -19,8 +19,8 @@
 import { storeToRefs } from 'pinia';
 import { IssueStates } from '@/types/issue';
 
-const issueStore = useIssueStore();
-const { state } = storeToRefs(issueStore);
+const store = useWorkshopStore();
+const { state } = storeToRefs(store);
 </script>
 
 <style scoped></style>

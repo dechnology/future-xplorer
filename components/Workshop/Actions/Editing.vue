@@ -19,8 +19,8 @@
 import { storeToRefs } from 'pinia';
 import { WorkshopStates } from '@/types/workshop';
 
-const workshopStore = useWorkshopStore();
-const { state } = storeToRefs(workshopStore);
+const workshopsStore = useWorkshopsStore();
+const { state } = storeToRefs(workshopsStore);
 </script>
 
 <style scoped></style>
