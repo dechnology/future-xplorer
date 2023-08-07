@@ -65,4 +65,4 @@ jobs:
             docker rmi ${{ env.IMAGE_NAME }}:main || true
 
             docker pull ${{ env.IMAGE_NAME }}:main
-            docker run -d --name fx-ci ${{ env.IMAGE_NAME }}:main
+            docker run -p 3000:3000 -d --name fx-ci ${{ env.IMAGE_NAME }}:main
