@@ -1,34 +1,50 @@
 import { zh_TW, fakerZH_TW } from '@faker-js/faker';
+import { Base } from '@/types/base';
+import { User } from '@/types/user';
 import { Issue } from '@/types/issue';
 import { Workshop } from '@/types/workshop';
 
-export const getIssues = (n: number) =>
+const getBase = () => {
+  const updatedAt = fakerZH_TW.date.recent();
+  const createdAt = fakerZH_TW.date.recent({ refDate: updatedAt });
+  return {
+    id: fakerZH_TW.database.mongodbObjectId(),
+    createdAt: createdAt,
+    updatedAt: updatedAt,
+    creatorId: fakerZH_TW.database.mongodbObjectId(),
+  } as Base;
+};
+
+export const getUsers = (n: number) =>
   Array.from({ length: n }, () => {
-    const fakeDate = fakerZH_TW.date.recent();
     return {
-      title: fakerZH_TW.lorem.word(),
-      description: fakerZH_TW.lorem.paragraph(),
-      creator: fakerZH_TW.person.fullName(),
-      id: fakerZH_TW.number.int(),
-      createdAt: fakerZH_TW.date.recent({ refDate: fakeDate }),
-      updatedAt: fakeDate,
-    } as Issue;
+      ...getBase(),
+      name: fakerZH_TW.person.fullName(),
+      uid: fakerZH_TW.database.mongodbObjectId(),
+    } as User;
   });
 
 export const getWorkshops = (n: number) =>
   Array.from({ length: n }, () => {
-    const updatedAt = fakerZH_TW.date.recent();
-    const createdAt = fakerZH_TW.date.recent({ refDate: updatedAt });
-    const startAt = fakerZH_TW.date.soon({ refDate: updatedAt });
+    const base = getBase();
+    const startAt = fakerZH_TW.date.soon({ refDate: base.updatedAt });
     const endAt = fakerZH_TW.date.future({ refDate: startAt });
     return {
+      ...base,
       name: fakerZH_TW.lorem.word(),
       description: fakerZH_TW.lorem.paragraph(),
-      creator: fakerZH_TW.person.fullName(),
-      id: fakerZH_TW.number.int(),
-      createdAt: createdAt,
-      updatedAt: updatedAt,
       startAt: startAt,
       endAt: endAt,
     } as Workshop;
   });
+
+export const getIssues = (n: number) =>
+  Array.from(
+    { length: n },
+    () =>
+      ({
+        ...getBase(),
+        title: fakerZH_TW.lorem.word(),
+        description: fakerZH_TW.lorem.paragraph(),
+      }) as Issue
+  );

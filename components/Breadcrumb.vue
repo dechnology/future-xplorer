@@ -46,7 +46,7 @@ if (workshopParam) {
     const issueId = parseInt(issueParam);
     const issuePath = `${workshopPath}/issue/${issueId}/people`;
 
-    issue.value = await fetchIssueById(workshopId, issueId);
+    issue.value = (await fetchIssueById(workshopId, issueId)).issue;
     crumbs.value.push({ name: issue.value.title, path: issuePath });
   }
 }

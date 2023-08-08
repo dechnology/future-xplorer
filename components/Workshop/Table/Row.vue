@@ -13,7 +13,7 @@
     </td>
     <td class="py-6">
       <div class="flex items-center justify-center">
-        {{ workshop.creator }}
+        {{ workshop.creatorId }}
       </div>
     </td>
     <td class="py-6">

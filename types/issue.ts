@@ -1,10 +1,19 @@
-export interface Issue {
+import { Base } from '@/types/base';
+import { User } from '@/types/user';
+import { Workshop } from '@/types/workshop';
+import { Charactor } from '@/types/charactor';
+import { Case } from '@/types/case';
+
+export interface Issue extends Base {
   title: string;
   description: string;
-  creator: string;
-  id?: number;
-  createdAt?: Date;
-  updatedAt?: Date;
+
+  workshopId: string;
+  workshop?: Workshop;
+
+  users?: User[];
+  charaters?: Charactor[];
+  cases?: Case[];
 }
 
 export interface IssueState {

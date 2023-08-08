@@ -33,7 +33,7 @@
       :title="issue.title"
       :description="issue.description"
       :footnotes="[
-        `建立者：${issue.creator}`,
+        `建立者：${issue.creatorId}`,
         `新增日期：${formatDate(issue.createdAt)}`,
         `更新日期：${formatDate(issue.updatedAt)}`,
       ]"

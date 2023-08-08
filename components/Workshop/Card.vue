@@ -6,7 +6,7 @@
     <div class="flex items-end gap-4">
       <h3 class="text-2xl font-medium text-blue-950">{{ state.formTitle }}</h3>
       <span class="text-sm text-gray-500"
-        >建立者：{{ currentWorkshop.creator }}</span
+        >建立者：{{ currentWorkshop.creatorId }}</span
       >
     </div>
     <div class="flex flex-col gap-7 rounded-lg">

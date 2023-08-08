@@ -6,7 +6,7 @@
     <div class="flex items-end gap-4">
       <h3 class="text-2xl font-medium text-blue-950">{{ state.formTitle }}</h3>
       <span class="text-sm text-gray-500"
-        >建立者：{{ currentIssue.creator }}</span
+        >建立者：{{ currentIssue.creatorId }}</span
       >
     </div>
     <div class="flex flex-col gap-7 rounded-lg">
@@ -107,7 +107,9 @@ const handleSubmit = (e: Event) => {
     case 'detail':
       console.log('submiting detail...');
 
-      router.push(`${route.fullPath}/issue/${activeIssue.value?.id}/people`);
+      router.push(
+        `${route.fullPath}/issue/${activeIssue.value?.id}/characters`
+      );
       break;
     // TODO
     case 'editing':

@@ -1,26 +1,25 @@
-export interface WorkshopElementItem {
+import { Base } from '@/types/base';
+import { User } from '@/types/user';
+import { Issue } from '@/types/issue';
+
+export interface WorkshopElement extends Base {
   name: string;
-  color: string;
+  category: 'object' | 'environment' | 'message' | 'service';
+  workshipId: string;
 }
 
-export interface WorkshopElement {
+export interface Workshop extends Base {
   name: string;
   description: string;
-  items: WorkshopElementItem[];
-}
-
-export interface Workshop {
-  name: string;
-  description: string;
-  creator: string;
-  id?: number;
-  createdAt?: Date;
-  updatedAt?: Date;
-
   startAt?: Date;
   endAt?: Date;
 
-  elements: WorkshopElement[];
+  object?: WorkshopElement[];
+  environment?: WorkshopElement[];
+  message?: WorkshopElement[];
+  service?: WorkshopElement[];
+  issues?: Issue[];
+  users?: User[];
 }
 
 export interface WorkshopState {

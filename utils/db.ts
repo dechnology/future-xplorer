@@ -1,43 +1,21 @@
+import { Serialize } from 'nitropack';
 import { Issue } from '@/types/issue';
-import { Workshop, WorkshopElement } from '@/types/workshop';
+import { Workshop } from '@/types/workshop';
 
-interface RawWorkshop {
-  name: string;
-  description: string;
-  creator: string;
-  id?: number;
-  createdAt?: string;
-  updatedAt?: string;
-
-  startAt?: string;
-  endAt?: string;
-
-  elements: WorkshopElement[];
-}
-
-interface RawIssue {
-  title: string;
-  description: string;
-  creator: string;
-  id?: number;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-const convertRawWorkshop = (raw: RawWorkshop) =>
+const convertSerializedWorkshop = (serialized: Serialize<Workshop>) =>
   ({
-    ...raw,
-    createdAt: convertDateStr(raw.createdAt),
-    updatedAt: convertDateStr(raw.updatedAt),
-    startAt: convertDateStr(raw.startAt),
-    endAt: convertDateStr(raw.endAt),
+    ...serialized,
+    createdAt: convertDateStr(serialized.createdAt),
+    updatedAt: convertDateStr(serialized.updatedAt),
+    startAt: convertDateStr(serialized.startAt),
+    endAt: convertDateStr(serialized.endAt),
   }) as Workshop;
 
-const convertRawIssue = (raw: RawIssue) =>
+const convertSerializedIssue = (serialized: Serialize<Issue>) =>
   ({
-    ...raw,
-    createdAt: convertDateStr(raw.createdAt),
-    updatedAt: convertDateStr(raw.updatedAt),
+    ...serialized,
+    createdAt: convertDateStr(serialized.createdAt),
+    updatedAt: convertDateStr(serialized.updatedAt),
   }) as Issue;
 
 export const fetchIssueById = async (workshopId: number, issueId: number) => {
@@ -53,11 +31,11 @@ export const fetchIssueById = async (workshopId: number, issueId: number) => {
     });
   }
 
-  const { issue: rawIssue, workshop: rawWorkshop } = data.value;
+  const { issue: serializedIssue, workshop: serializedWorkshop } = data.value;
 
   return {
-    workshop: convertRawWorkshop(rawWorkshop),
-    issue: convertRawIssue(rawIssue),
+    workshop: convertSerializedWorkshop(serializedWorkshop),
+    issue: convertSerializedIssue(serializedIssue),
   };
 };
 
@@ -72,11 +50,13 @@ export const fetchWorkshopById = async (id: number) => {
     });
   }
 
-  const { issues: rawIssues, workshop: rawWorkshop } = data.value;
+  const { issues: serializedIssues, workshop: serializedWorkshop } = data.value;
 
   return {
-    workshop: convertRawWorkshop(rawWorkshop),
-    issues: rawIssues.map((rawIssue) => convertRawIssue(rawIssue)),
+    workshop: convertSerializedWorkshop(serializedWorkshop),
+    issues: serializedIssues.map((serializedIssue) =>
+      convertSerializedIssue(serializedIssue)
+    ),
   };
 };
 
@@ -91,5 +71,7 @@ export const fetchAllWorkshops = async () => {
     });
   }
 
-  return data.value.map((rawWorkshop) => convertRawWorkshop(rawWorkshop));
+  return data.value.map((serializedWorkshop) =>
+    convertSerializedWorkshop(serializedWorkshop)
+  );
 };

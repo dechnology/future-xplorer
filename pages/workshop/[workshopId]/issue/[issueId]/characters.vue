@@ -2,9 +2,9 @@
   <Suspense>
     <NuxtLayout>
       <template #detail-pane>
-        <PeoplePanel />
+        <CharacterPanel />
       </template>
-      <PeopleGallery />
+      <CharacterGallery />
     </NuxtLayout>
     <template #fallback> Loading </template>
   </Suspense>

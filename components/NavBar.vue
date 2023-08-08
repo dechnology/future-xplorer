@@ -37,7 +37,7 @@ const route = useRoute();
 const heading = '未來情境探索輔助工具';
 
 const issueNavItems = [
-  { title: '人物清單', name: 'people' },
+  { title: '人物清單', name: 'characters' },
   { title: '案例整理', name: 'cases' },
   { title: '關鍵字萃取', name: 'keywords' },
   { title: '關鍵字分享', name: 'sharing' },

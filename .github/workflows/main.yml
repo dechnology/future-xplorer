@@ -60,8 +60,8 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: 22
           script: |
-            docker stop $(docker ps -a -q --filter ancestor=${{ env.IMAGE_NAME }}) || true
-            docker rm $(docker ps -a -q --filter ancestor=${{ env.IMAGE_NAME }}) || true
+            docker stop fx-ci || true
+            docker rm fx-ci || true
             docker rmi ${{ env.IMAGE_NAME }}:main || true
 
             docker pull ${{ env.IMAGE_NAME }}:main
