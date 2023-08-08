@@ -9,6 +9,11 @@ const convertSerializedWorkshop = (serialized: Serialize<Workshop>) =>
     updatedAt: convertDateStr(serialized.updatedAt),
     startAt: convertDateStr(serialized.startAt),
     endAt: convertDateStr(serialized.endAt),
+    elements: serialized.elements.map((el) => ({
+      ...el,
+      createdAt: convertDateStr(el.createdAt),
+      updatedAt: convertDateStr(el.updatedAt),
+    })),
   }) as Workshop;
 
 const convertSerializedIssue = (serialized: Serialize<Issue>) =>
@@ -39,7 +44,7 @@ export const fetchIssueById = async (workshopId: number, issueId: number) => {
   };
 };
 
-export const fetchWorkshopById = async (id: number) => {
+export const fetchWorkshopById = async (id: string) => {
   const { data } = await useFetch(`/api/workshops/${id}`);
 
   // Fetching error

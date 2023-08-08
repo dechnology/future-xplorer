@@ -2,22 +2,26 @@ import { Base } from '@/types/base';
 import { User } from '@/types/user';
 import { Issue } from '@/types/issue';
 
-export interface WorkshopElement extends Base {
+export interface NewWorkshopElement {
   name: string;
   category: 'object' | 'environment' | 'message' | 'service';
-  workshipId: string;
 }
 
-export interface Workshop extends Base {
+export interface WorkshopElement extends NewWorkshopElement, Base {
+  workshopId: string;
+}
+
+export interface NewWorkshop {
   name: string;
   description: string;
-  startAt?: Date;
-  endAt?: Date;
+  startAt: Date;
+  endAt: Date;
 
-  object?: WorkshopElement[];
-  environment?: WorkshopElement[];
-  message?: WorkshopElement[];
-  service?: WorkshopElement[];
+  elements: NewWorkshopElement[];
+}
+
+export interface Workshop extends Omit<NewWorkshop, 'elements'>, Base {
+  elements: WorkshopElement[];
   issues?: Issue[];
   users?: User[];
 }

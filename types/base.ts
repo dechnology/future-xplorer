@@ -4,6 +4,6 @@ export interface Base {
   id: string;
   createdAt: Date;
   updatedAt: Date;
-  creatorId?: string;
+  creatorId: string;
   creator?: User;
 }

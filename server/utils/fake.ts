@@ -2,7 +2,7 @@ import { zh_TW, fakerZH_TW } from '@faker-js/faker';
 import { Base } from '@/types/base';
 import { User } from '@/types/user';
 import { Issue } from '@/types/issue';
-import { Workshop } from '@/types/workshop';
+import { Workshop, WorkshopElement } from '@/types/workshop';
 
 const getBase = () => {
   const updatedAt = fakerZH_TW.date.recent();
@@ -24,6 +24,22 @@ export const getUsers = (n: number) =>
     } as User;
   });
 
+export const getWorkshopElements = (n: number) =>
+  Array.from({ length: n }, () => {
+    const base = getBase();
+    return {
+      ...base,
+      name: fakerZH_TW.lorem.word(),
+      category: fakerZH_TW.helpers.arrayElement([
+        'object',
+        'environment',
+        'message',
+        'service',
+      ]),
+      workshopId: '',
+    } as WorkshopElement;
+  });
+
 export const getWorkshops = (n: number) =>
   Array.from({ length: n }, () => {
     const base = getBase();
@@ -35,6 +51,7 @@ export const getWorkshops = (n: number) =>
       description: fakerZH_TW.lorem.paragraph(),
       startAt: startAt,
       endAt: endAt,
+      elements: getWorkshopElements(10),
     } as Workshop;
   });
 

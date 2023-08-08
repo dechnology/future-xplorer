@@ -1,49 +1,29 @@
 import {
-  WorkshopElementItem,
-  WorkshopElement,
+  NewWorkshop,
   Workshop,
   WorkshopState,
   WorkshopStates,
 } from '@/types/workshop';
 import { Issue, IssueState, IssueStates } from '@/types/issue';
 
-const EmptyWorkshop = {
+const newWorkshop = {
   name: '',
   description: '',
-  creator: '',
 
-  elements: [
-    {
-      name: 'objects',
-      description: '物件 or 技術',
-      items: [{ name: '技術', color: '#000' }] as WorkshopElementItem[],
-    },
-    {
-      name: 'environments',
-      description: '環境 or 場景',
-      items: [{ name: '場景體驗', color: '#000' }] as WorkshopElementItem[],
-    },
-    {
-      name: 'messages',
-      description: '訊息 or 目標',
-      items: [{ name: '洞見與價值', color: '#000' }] as WorkshopElementItem[],
-    },
-    {
-      name: 'services',
-      description: '服務、行動 or 經驗',
-      items: [{ name: '使用者體驗', color: '#000' }] as WorkshopElementItem[],
-    },
-  ] as WorkshopElement[],
-} as Workshop;
+  elements: new Set([
+    { name: '技術', category: 'object' },
+    { name: '場景體驗', category: 'environment' },
+    { name: '洞見與價值', category: 'message' },
+    { name: '使用者體驗', category: 'service' },
+  ]),
+} as NewWorkshop;
 
 export const useWorkshopsStore = definePiniaStore('workshops', () => {
-  // fetched
   const workshops = ref<Workshop[] | null>(null);
-  const cachedWorkshop = ref<Workshop | null>(null);
-
-  // current session usage
   const activeWorkshop = ref<Workshop | null>(null);
-  const currentWorkshop = ref<Workshop>(EmptyWorkshop);
+
+  const cachedWorkshop = ref<Workshop | NewWorkshop | null>(null);
+  const currentWorkshop = ref<Workshop | NewWorkshop>(newWorkshop);
 
   const loading = ref(true);
   const state = ref<WorkshopState>(WorkshopStates.New);
