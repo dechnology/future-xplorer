@@ -9,5 +9,5 @@
 
 <script setup lang="ts">
 const store = useWorkshopsStore();
-await store.initStore();
+await store.init();
 </script>

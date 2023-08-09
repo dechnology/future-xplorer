@@ -1,15 +1,23 @@
-import { Charactor } from '@/types/charactor';
+import { Character } from 'types/character';
 import { Workshop } from '@/types/workshop';
-import { Issue, IssueState, IssueStates } from '@/types/issue';
+import { Issue } from '@/types/issue';
 
 export const useIssueStore = definePiniaStore('issue', () => {
-  // fetched
   const workshop = ref<Workshop | null>(null);
   const issue = ref<Issue | null>(null);
 
-  const characters = ref<Charactor[] | null>(null);
+  const charaters = computed(() =>
+    issue.value !== null ? (issue.value.charaters as Character[]) : null
+  );
 
-  async function initStore(workshopId: number, issueId: number) {}
+  async function initStore(workshopId: string, issueId: string) {
+    const data = await fetchIssueById(workshopId, issueId, {
+      withWorkshop: true,
+    });
 
-  return { workshop, issue, initStore };
+    workshop.value = data.workshop as Workshop;
+    issue.value = data.issue;
+  }
+
+  return { workshop, issue, charaters, initStore };
 });

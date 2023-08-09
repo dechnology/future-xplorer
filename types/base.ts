@@ -1,9 +1,10 @@
 import { User } from '@/types/user';
 
 export interface Base {
-  id: string;
-  createdAt: Date;
+  readonly id: string;
+  readonly creatorId: string;
+  readonly createdAt: Date;
+
   updatedAt: Date;
-  creatorId: string;
   creator?: User;
 }

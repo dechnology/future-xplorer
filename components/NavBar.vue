@@ -41,7 +41,7 @@ const issueNavItems = [
   { title: '案例整理', name: 'cases' },
   { title: '關鍵字萃取', name: 'keywords' },
   { title: '關鍵字分享', name: 'sharing' },
-  { title: '模板設計', name: 'models' },
+  { title: '模板設計', name: 'templates' },
   { title: '故事產製', name: 'stories' },
   { title: '圖片產製', name: 'images' },
 ];
@@ -55,12 +55,16 @@ const isIssueTabRoute = computed(() => {
 });
 
 const currentTab = computed(() => {
+  console.log(isIssueTabRoute.value);
+
   if (!isIssueTabRoute.value) {
     return;
   }
   const match = route.fullPath.match(
     /^\/workshop\/(\d+)\/issue\/(\d+)\/([^\/]+)(\/.*)?$/
   );
+
+  console.log(match);
 
   if (match) {
     return match[3];

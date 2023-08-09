@@ -15,12 +15,7 @@
       </thead>
       <tbody>
         <tr
-          @click="
-            () => {
-              activeWorkshop = null;
-              state = WorkshopStates.New;
-            }
-          "
+          @click="() => (state = CardStates.New)"
           class="cursor-pointer border-b border-solid border-gray-300 transition-all ease-in-out"
           :class="[
             activeWorkshop === null
@@ -36,11 +31,12 @@
         </tr>
         <WorkshopTableRow
           v-for="workshop in workshops"
+          @dblclick="() => $router.push(`/workshop/${workshop?.id}`)"
           @click="
             () => {
-              activeWorkshop = workshop;
-              currentWorkshop = workshop;
-              state = WorkshopStates.Detail;
+              cardStore.setActiveWorkshop(workshop);
+              cardStore.setCurrentWorkshop(workshop);
+              state = CardStates.Detail;
             }
           "
           :workshop="workshop"
@@ -58,11 +54,11 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { WorkshopStates } from '@/types/workshop';
+import { CardStates } from '@/types/cardState';
 
-const workshopsStore = useWorkshopsStore();
-const { workshops, activeWorkshop, currentWorkshop, state } =
-  storeToRefs(workshopsStore);
-
+const store = useWorkshopsStore();
+const cardStore = useWorkshopCardStore();
+const { workshops } = storeToRefs(store);
+const { activeWorkshop, state } = storeToRefs(cardStore);
 const tableHeaders = ['名稱', '工作坊時間', '建立者', '建立日期', '更新日期'];
 </script>

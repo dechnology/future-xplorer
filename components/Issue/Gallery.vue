@@ -3,33 +3,32 @@
     <Card
       @click="
         () => {
-          activeIssue = null;
           modalStore.setContent({});
-          state = IssueStates.New;
+          state = CardStates.New;
         }
       "
-      class="cursor-pointer rounded-2xl border border-solid border-gray-400 px-8 py-7 transition-all hover:shadow-2xl"
-      :class="[
-        activeIssue === null ? 'bg-gray-200' : 'bg-white hover:bg-gray-100',
-      ]"
+      :is-activated="activeIssue === null"
       :icon="{ name: 'mdi:plus', size: '10rem' }"
     />
     <Card
       v-for="issue in issues"
+      @dblclick="
+        () =>
+          $router.push(
+            `${$route.fullPath.replace(/\/+$/, '')}/issue/${
+              issue?.id
+            }/characters`
+          )
+      "
       @click="
         () => {
-          activeIssue = issue;
-          cachedIssue = issue;
           modalStore.setContent(issue);
-          state = IssueStates.Detail;
+          cardStore.setActiveIssue(issue);
+          cardStore.setCurrentIssue(issue);
+          state = CardStates.Detail;
         }
       "
-      class="cursor-pointer rounded-2xl border border-solid border-gray-400 px-8 py-7 transition-all hover:shadow-2xl"
-      :class="[
-        activeIssue?.id === issue.id
-          ? 'bg-gray-200'
-          : 'bg-white hover:bg-gray-100',
-      ]"
+      :is-activated="activeIssue?.id === issue.id"
       :title="issue.title"
       :description="issue.description"
       :footnotes="[
@@ -43,9 +42,11 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { IssueStates } from '@/types/issue';
+import { CardStates } from '@/types/cardState';
 
+const store = useIssuesStore();
+const cardStore = useIssueCardStore();
 const modalStore = useModalStore();
-const workshopStore = useWorkshopStore();
-const { issues, activeIssue, cachedIssue, state } = storeToRefs(workshopStore);
+const { issues } = storeToRefs(store);
+const { activeIssue, state } = storeToRefs(cardStore);
 </script>

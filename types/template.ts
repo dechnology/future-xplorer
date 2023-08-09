@@ -1,5 +1,5 @@
 import { Base } from '@/types/base';
-import { Charactor } from '@/types/charactor';
+import { Charactor } from 'types/character';
 
 export interface Template extends Base {
   title: string;

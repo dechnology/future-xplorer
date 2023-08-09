@@ -12,6 +12,6 @@
 
 <script setup lang="ts">
 const route = useRoute();
-const store = useWorkshopStore();
-await store.initStore(parseInt(route.params.workshopId as string));
+const store = useIssuesStore();
+await store.init(route.params.workshopId as string);
 </script>

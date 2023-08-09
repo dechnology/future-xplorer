@@ -1,7 +1,7 @@
 <template>
   <div class="relative flex items-center justify-between">
     <CardButton
-      @click="handleRemoveIssueClick"
+      @click="handleRemoveClick"
       class="h-12 w-28 rounded-lg bg-red-400 text-white hover:bg-red-500"
       :icon="{ name: 'mdi:delete', size: '3rem' }"
       body="刪除"
@@ -13,7 +13,7 @@
       type="submit"
     />
     <CardButton
-      @click="handleEditIssueClick"
+      @click="handleEditClick"
       class="h-12 w-28 rounded-lg bg-gray-400 text-white hover:bg-gray-500"
       :icon="{ name: 'mdi:application-edit', size: '3rem' }"
       body="編輯"
@@ -25,16 +25,16 @@
 import { storeToRefs } from 'pinia';
 import { CardStates } from '@/types/cardState';
 
-const store = useIssueCardStore();
-const { currentIssue, state } = storeToRefs(store);
+const store = useCharacterCardStore();
+const { currentCharacter, state } = storeToRefs(store);
 
-const handleRemoveIssueClick = (e: Event) => {
-  console.log(currentIssue.value);
+const handleRemoveClick = (e: Event) => {
+  console.log(currentCharacter.value);
   // TODO
 };
 
-const handleEditIssueClick = (e: Event) => {
-  console.log(currentIssue.value);
+const handleEditClick = (e: Event) => {
+  console.log(currentCharacter.value);
   state.value = CardStates.Editing;
 };
 </script>

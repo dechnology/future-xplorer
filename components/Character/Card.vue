@@ -5,61 +5,93 @@
   >
     <div class="flex items-end gap-4">
       <h3 class="text-2xl font-medium text-blue-950">{{ state.formTitle }}</h3>
-      <span class="text-sm text-gray-500"
-        >建立者：{{ currentIssue.creator }}</span
-      >
+      <div class="text-sm text-gray-500">
+        <span>建立者：</span>
+        <span v-if="state.name === CardStates.New.name"> You </span>
+        <span
+          v-else-if="'creator' in currentCharacter && currentCharacter.creator"
+        >
+          {{ currentCharacter.creator.name }}
+        </span>
+        <span v-else>Unknown</span>
+      </div>
     </div>
-    <div class="flex flex-col gap-7 rounded-lg">
-      <div class="flex flex-col gap-4">
-        <label
-          for="title"
-          class="bg-white px-1 text-lg font-semibold text-gray-700"
-        >
-          議題名稱
-        </label>
-        <input
-          type="text"
-          id="title"
-          placeholder="議題名稱"
-          v-model="currentIssue.title"
-          class="h-16"
-          :disabled="state.name == IssueStates.Detail.name"
-          :class="commonInputClasses"
-        />
-      </div>
-      <div class="flex flex-col gap-4">
-        <label
-          for="desc"
-          class="bg-white px-1 text-lg font-semibold text-gray-700"
-        >
-          議題描述
-        </label>
-        <textarea
-          id="desc"
-          placeholder="議題描述"
-          v-model="currentIssue.description"
-          class="h-80 resize-none text-start"
-          :disabled="state.name == IssueStates.Detail.name"
-          :class="commonInputClasses"
-        ></textarea>
-      </div>
+    <div class="grid grid-cols-2 gap-x-5 gap-y-7 rounded-lg">
+      <InputText
+        title="角色"
+        placeholder="角色名稱"
+        :disabled="disabled"
+        v-model="currentCharacter.role"
+      />
+      <InputText
+        title="姓名"
+        placeholder="姓名"
+        :disabled="disabled"
+        v-model="currentCharacter.name"
+      />
+      <InputText
+        title="年齡"
+        placeholder="年齡"
+        :disabled="disabled"
+        v-model="currentCharacter.age"
+      />
+      <InputText
+        title="特徵"
+        placeholder="特徵"
+        :disabled="disabled"
+        v-model="currentCharacter.trait"
+      />
+      <InputText
+        title="性別"
+        placeholder="性別"
+        :disabled="disabled"
+        v-model="currentCharacter.gender"
+      />
+      <InputText
+        title="其他"
+        placeholder="其他"
+        :disabled="disabled"
+        v-model="currentCharacter.other"
+      />
     </div>
     <div
-      v-if="currentIssue.createdAt || currentIssue.updatedAt"
+      v-if="currentCharacter.imageUrl"
+      class="flex min-h-[296px] overflow-hidden rounded-lg"
+    >
+      <img
+        class="w-full object-contain"
+        :src="currentCharacter.imageUrl"
+        alt=""
+      />
+    </div>
+    <Card
+      v-else
+      class="min-h-[296px] bg-slate-400"
+      :icon="{ name: 'material-symbols:add-photo-alternate', size: '5rem' }"
+    />
+    <CardButton
+      v-if="state.name !== CardStates.Detail.name"
+      @click="() => {}"
+      class="h-12 rounded-lg bg-blue-400 text-white hover:bg-blue-500"
+      :icon="{ name: 'mdi:play', size: '3rem' }"
+      body="AI生成圖片"
+    />
+    <div
+      v-if="'createdAt' in currentCharacter && 'updatedAt' in currentCharacter"
       class="flex items-center justify-center gap-2"
     >
-      <div v-if="currentIssue.createdAt">
-        建立時間：{{ format(currentIssue.createdAt, 'yyyy-MM-dd') }}
+      <div v-if="currentCharacter.createdAt">
+        建立時間：{{ format(currentCharacter.createdAt, 'yyyy-MM-dd') }}
       </div>
-      <div v-if="currentIssue.updatedAt">
-        建立時間：{{ format(currentIssue.updatedAt, 'yyyy-MM-dd') }}
+      <div v-if="currentCharacter.updatedAt">
+        建立時間：{{ format(currentCharacter.updatedAt, 'yyyy-MM-dd') }}
       </div>
     </div>
-    <IssueActionsNew v-if="state.name === IssueStates.New.name" />
-    <IssueActionsDetail v-if="state.name === IssueStates.Detail.name" />
-    <IssueActionsEditing v-if="state.name === IssueStates.Editing.name" />
+    <CharacterActionsNew v-if="state.name === CardStates.New.name" />
+    <CharacterActionsDetail v-if="state.name === CardStates.Detail.name" />
+    <CharacterActionsEditing v-if="state.name === CardStates.Editing.name" />
     <Icon
-      v-if="state.name === IssueStates.Detail.name"
+      v-if="state.name === CardStates.Detail.name"
       @click="() => modalStore.show()"
       class="absolute right-6 top-6 cursor-pointer text-blue-950"
       name="material-symbols:pan-zoom-rounded"
@@ -71,31 +103,13 @@
 <script setup lang="ts">
 import { format } from 'date-fns';
 import { storeToRefs } from 'pinia';
-import { twMerge, ClassNameValue } from 'tailwind-merge';
-import { IssueStates } from '@/types/issue';
+import { CardStates } from '@/types/cardState';
 
-const route = useRoute();
-const router = useRouter();
-
+const store = useCharacterCardStore();
 const modalStore = useModalStore();
-const workshopStore = useWorkshopStore();
-const { currentIssue, state, activeIssue } = storeToRefs(workshopStore);
+const { currentCharacter, state, activeCharacter } = storeToRefs(store);
 
-const defaultInputClasses: ClassNameValue = [
-  'w-full',
-  'rounded',
-  'px-3',
-  'py-4',
-  'border',
-  'border-solid',
-  'border-gray-200',
-];
-const commonInputClasses = computed(() => {
-  if (state.value.name === IssueStates.Detail.name) {
-    return twMerge(defaultInputClasses, 'bg-slate-50');
-  }
-  return twMerge(defaultInputClasses, ['border-gray-500', 'bg-white']);
-});
+const disabled = computed(() => state.value.name === CardStates.Detail.name);
 
 const handleSubmit = (e: Event) => {
   e.preventDefault();
@@ -106,13 +120,11 @@ const handleSubmit = (e: Event) => {
       break;
     case 'detail':
       console.log('submiting detail...');
-
-      router.push(`${route.fullPath}/issue/${activeIssue.value?.id}/people`);
       break;
     // TODO
     case 'editing':
       console.log('submiting editing...');
-      state.value = IssueStates.Detail;
+      state.value = CardStates.Detail;
       break;
     default:
       throw Error('Unknown state');

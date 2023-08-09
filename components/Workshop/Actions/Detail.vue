@@ -23,10 +23,10 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { WorkshopStates } from '@/types/workshop';
+import { CardStates } from '@/types/cardState';
 
-const workshopsStore = useWorkshopsStore();
-const { currentWorkshop, state, activeWorkshop } = storeToRefs(workshopsStore);
+const store = useWorkshopCardStore();
+const { currentWorkshop, state } = storeToRefs(store);
 
 const handleRemoveWorkshopClick = (e: Event) => {
   console.log(currentWorkshop.value);
@@ -35,7 +35,7 @@ const handleRemoveWorkshopClick = (e: Event) => {
 
 const handleEditWorkshopClick = (e: Event) => {
   console.log(currentWorkshop.value);
-  state.value = WorkshopStates.Editing;
+  state.value = CardStates.Editing;
 };
 </script>
 

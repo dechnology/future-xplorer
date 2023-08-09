@@ -31,9 +31,8 @@
 
 <script setup lang="ts">
 import { Workshop } from '@/types/workshop';
-
 interface Props {
   workshop: Workshop;
 }
-const props = defineProps<Props>();
+defineProps<Props>();
 </script>

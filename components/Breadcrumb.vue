@@ -32,20 +32,16 @@ const crumbs = ref<Crumb[]>([]);
 const workshop = ref<Workshop>();
 const issue = ref<Issue>();
 
-const workshopParam = route.params.workshopId as string;
-const issueParam = route.params.issueId as string;
+const workshopId = route.params.workshopId as string;
+const issueId = route.params.issueId as string;
 
-if (workshopParam) {
-  const workshopId = parseInt(workshopParam);
+if (workshopId) {
   const workshopPath = `/workshop/${workshopId}`;
-
   workshop.value = (await fetchWorkshopById(workshopId)).workshop;
   crumbs.value.push({ name: workshop.value.name, path: workshopPath });
 
-  if (issueParam) {
-    const issueId = parseInt(issueParam);
-    const issuePath = `${workshopPath}/issue/${issueId}/people`;
-
+  if (issueId) {
+    const issuePath = `${workshopPath}/issue/${issueId}/characters`;
     issue.value = (await fetchIssueById(workshopId, issueId)).issue;
     crumbs.value.push({ name: issue.value.title, path: issuePath });
   }

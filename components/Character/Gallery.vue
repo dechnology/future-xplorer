@@ -3,49 +3,40 @@
     <Card
       @click="
         () => {
-          activeIssue = null;
-          modalStore.setContent({});
-          state = IssueStates.New;
+          state = CardStates.New;
         }
       "
-      class="cursor-pointer rounded-2xl border border-solid border-gray-400 px-8 py-7 transition-all hover:shadow-2xl"
-      :class="[
-        activeIssue === null ? 'bg-gray-200' : 'bg-white hover:bg-gray-100',
-      ]"
+      :isActivated="activeCharacter === null"
       :icon="{ name: 'mdi:plus', size: '10rem' }"
     />
     <Card
-      v-for="issue in issues"
+      v-for="charater in charaters"
       @click="
         () => {
-          activeIssue = issue;
-          cachedIssue = issue;
-          modalStore.setContent(issue);
-          state = IssueStates.Detail;
+          cardStore.setActiveCharacter(charater);
+          cardStore.setCurrentCharacter(charater);
+          state = CardStates.Detail;
         }
       "
-      class="cursor-pointer rounded-2xl border border-solid border-gray-400 px-8 py-7 transition-all hover:shadow-2xl"
-      :class="[
-        activeIssue?.id === issue.id
-          ? 'bg-gray-200'
-          : 'bg-white hover:bg-gray-100',
+      :isActivated="charater.id === activeCharacter?.id"
+      :imageUrl="charater.imageUrl"
+      :lines="[
+        `角色：${charater.role}`,
+        `姓名：${charater.name}`,
+        `性別：${charater.gender}`,
+        `年齡：${charater.age}`,
+        `特徵：${charater.trait}`,
       ]"
-      :title="issue.title"
-      :description="issue.description"
-      :footnotes="[
-        `建立者：${issue.creatorId}`,
-        `新增日期：${formatDate(issue.createdAt)}`,
-        `更新日期：${formatDate(issue.updatedAt)}`,
-      ]"
+      :footnotes="[`建立者：${charater.creatorId}`]"
     />
   </div>
 </template>
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { IssueStates } from '@/types/issue';
-
-const modalStore = useModalStore();
-const workshopStore = useWorkshopStore();
-const { issues, activeIssue, cachedIssue, state } = storeToRefs(workshopStore);
+import { CardStates } from '@/types/cardState';
+const issueStore = useIssueStore();
+const cardStore = useCharacterCardStore();
+const { charaters } = storeToRefs(issueStore);
+const { activeCharacter, state } = storeToRefs(cardStore);
 </script>
