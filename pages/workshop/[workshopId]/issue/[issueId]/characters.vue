@@ -16,7 +16,7 @@ import { storeToRefs } from 'pinia';
 const route = useRoute();
 
 const issueStore = useIssueStore();
-await issueStore.initStore(
+await issueStore.init(
   route.params.workshopId as string,
   route.params.issueId as string
 );

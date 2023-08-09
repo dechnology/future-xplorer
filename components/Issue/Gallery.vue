@@ -12,6 +12,7 @@
     />
     <Card
       v-for="issue in issues"
+      :key="issue.id"
       @dblclick="
         () =>
           $router.push(

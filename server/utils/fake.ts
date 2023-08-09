@@ -1,56 +1,56 @@
-import { zh_TW, fakerZH_TW } from '@faker-js/faker';
-import { Base } from '@/types/base';
+import { zh_TW, fakerZH_TW, fa } from '@faker-js/faker';
 import { User } from '@/types/user';
-import { Issue } from '@/types/issue';
-import { Workshop, WorkshopElement } from '@/types/workshop';
+import { Base } from '@/types/base';
+import { BaseIssue, Issue } from '@/types/issue';
+import { BaseWorkshop, Workshop, WorkshopElement } from '@/types/workshop';
 import { Character } from '@/types/character';
+import { Case } from '@/types/case';
+import { Keyword } from '@/types/keyword';
 
-const getBase = (
-  opts: { withCreatorId: boolean } = { withCreatorId: true }
-) => {
+export const getUser = (): User => {
   const updatedAt = fakerZH_TW.date.recent();
   const createdAt = fakerZH_TW.date.recent({ refDate: updatedAt });
   return {
     id: fakerZH_TW.database.mongodbObjectId(),
     createdAt: createdAt,
     updatedAt: updatedAt,
-    creatorId: opts.withCreatorId
-      ? fakerZH_TW.database.mongodbObjectId()
-      : undefined,
-  } as Base;
-};
-
-export const getUser = () =>
-  ({
-    ...(getBase({ withCreatorId: false }) as {
-      id: string;
-      createdAt: Date;
-      updatedAt: Date;
-    }),
     name: fakerZH_TW.person.fullName(),
     uid: fakerZH_TW.database.mongodbObjectId(),
-  }) as User;
+    isAdmin: false,
+    issueIds: [fakerZH_TW.database.mongodbObjectId()],
+  };
+};
 
-export const getUsers = (n: number) =>
+export const getUsers = (n: number): User[] =>
   Array.from({ length: n }, () => getUser());
 
-export const getWorkshopElement = () =>
-  ({
-    ...getBase(),
-    name: fakerZH_TW.lorem.word(),
-    category: fakerZH_TW.helpers.arrayElement([
-      'object',
-      'environment',
-      'message',
-      'service',
-    ]),
-    workshopId: '',
-  }) as WorkshopElement;
+const getBase = (): Base => {
+  const updatedAt = fakerZH_TW.date.recent();
+  const createdAt = fakerZH_TW.date.recent({ refDate: updatedAt });
+  return {
+    id: fakerZH_TW.database.mongodbObjectId(),
+    createdAt: createdAt,
+    updatedAt: updatedAt,
+    creatorId: fakerZH_TW.database.mongodbObjectId(),
+    creator: getUser(),
+  };
+};
 
-export const getWorkshopElements = (n: number) =>
+export const getWorkshopElement = (): WorkshopElement => ({
+  ...getBase(),
+  name: fakerZH_TW.lorem.word(),
+  category: fakerZH_TW.helpers.arrayElement([
+    'object',
+    'environment',
+    'message',
+    'service',
+  ]),
+});
+
+export const getWorkshopElements = (n: number): WorkshopElement[] =>
   Array.from({ length: n }, () => getWorkshopElement());
 
-export const getWorkshop = () => {
+export const getBaseWorkshop = (): BaseWorkshop => {
   const base = getBase();
   const startAt = fakerZH_TW.date.soon({ refDate: base.updatedAt });
   const endAt = fakerZH_TW.date.future({ refDate: startAt });
@@ -61,37 +61,92 @@ export const getWorkshop = () => {
     startAt: startAt,
     endAt: endAt,
     elements: getWorkshopElements(10),
-  } as Workshop;
+  };
 };
 
-export const getWorkshops = (n: number) =>
+export const getBaseWorkshops = (n: number): BaseWorkshop[] =>
+  Array.from({ length: n }, () => getBaseWorkshop());
+
+export const getWorkshop = (): Workshop => {
+  const base = getBase();
+  const startAt = fakerZH_TW.date.soon({ refDate: base.updatedAt });
+  const endAt = fakerZH_TW.date.future({ refDate: startAt });
+  return {
+    ...base,
+    name: fakerZH_TW.lorem.word(),
+    description: fakerZH_TW.lorem.paragraph(),
+    startAt: startAt,
+    endAt: endAt,
+    elements: getWorkshopElements(10),
+    issues: getIssues(10),
+    users: getUsers(10),
+  };
+};
+
+export const getWorkshops = (n: number): Workshop[] =>
   Array.from({ length: n }, () => getWorkshop());
 
-export const getCharacter = () =>
-  ({
-    ...getBase(),
-    role: fakerZH_TW.person.zodiacSign(),
-    name: fakerZH_TW.person.fullName(),
-    age: fakerZH_TW.number.int(),
-    gender: fakerZH_TW.helpers.arrayElement(['male', 'female', 'nonbinary']),
-    trait: fakerZH_TW.person.jobTitle(),
-    other: fakerZH_TW.person.bio(),
+export const getCharacter = (): Character => ({
+  ...getBase(),
+  role: fakerZH_TW.person.zodiacSign(),
+  name: fakerZH_TW.person.fullName(),
+  age: fakerZH_TW.number.int(),
+  gender: fakerZH_TW.helpers.arrayElement(['male', 'female', 'nonbinary']),
+  trait: fakerZH_TW.person.jobTitle(),
+  other: fakerZH_TW.person.bio(),
 
-    imageUrl: fakerZH_TW.image.avatar(),
+  imageUrl: fakerZH_TW.image.avatar(),
 
-    issueId: fakerZH_TW.database.mongodbObjectId(),
-  }) as Character;
+  issueId: fakerZH_TW.database.mongodbObjectId(),
+});
 
-export const getCharacters = (n: number) =>
+export const getCharacters = (n: number): Character[] =>
   Array.from({ length: n }, () => getCharacter());
 
-export const getIssue = () =>
-  ({
-    ...getBase(),
-    title: fakerZH_TW.lorem.word(),
-    description: fakerZH_TW.lorem.paragraph(),
-    charaters: getCharacters(20),
-  }) as Issue;
+export const getKeyword = (): Keyword => ({
+  ...getBase(),
+  body: fakerZH_TW.lorem.word(),
+  isAutoGenerated: false,
+  issueId: fakerZH_TW.database.mongodbObjectId(),
+  caseId: fakerZH_TW.database.mongodbObjectId(),
+});
 
-export const getIssues = (n: number) =>
+export const getKeywords = (n: number): Keyword[] =>
+  Array.from({ length: n }, () => getKeyword());
+
+export const getCase = (): Case => ({
+  ...getBase(),
+  title: fakerZH_TW.hacker.noun(),
+  background: fakerZH_TW.lorem.paragraph(),
+  method: fakerZH_TW.lorem.paragraph(),
+  goal: fakerZH_TW.lorem.paragraph(),
+  challenge: fakerZH_TW.lorem.paragraph(),
+  result: fakerZH_TW.lorem.paragraph(),
+  reference: fakerZH_TW.internet.url(),
+  imageUrl: fakerZH_TW.image.url(),
+  other: fakerZH_TW.lorem.paragraph(),
+});
+
+export const getCases = (n: number): Case[] =>
+  Array.from({ length: n }, () => getCase());
+
+export const getBaseIssue = (): BaseIssue => ({
+  ...getBase(),
+  workshopId: fakerZH_TW.database.mongodbObjectId(),
+  title: fakerZH_TW.lorem.word(),
+  description: fakerZH_TW.lorem.paragraph(),
+});
+
+export const getBaseIssues = (n: number): BaseIssue[] =>
+  Array.from({ length: n }, () => getBaseIssue());
+
+export const getIssue = (): Issue => ({
+  ...getBaseIssue(),
+  users: getUsers(20),
+  charaters: getCharacters(20),
+  cases: getCases(20),
+  keywords: getKeywords(20),
+});
+
+export const getIssues = (n: number): Issue[] =>
   Array.from({ length: n }, () => getIssue());

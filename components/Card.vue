@@ -16,14 +16,14 @@
       </p>
       <!-- Lines -->
       <div v-if="lines" class="flex flex-col text-sm">
-        <div v-for="line in lines">{{ line }}</div>
+        <div v-for="line in lines" class="truncate">{{ line }}</div>
       </div>
       <!-- Footnotes -->
       <div
         v-if="footnotes"
         class="mt-auto flex flex-col items-end justify-self-end text-[10px] text-gray-300"
       >
-        <div v-for="note in footnotes">{{ note }}</div>
+        <div v-for="note in footnotes" class="truncate">{{ note }}</div>
       </div>
     </div>
   </div>

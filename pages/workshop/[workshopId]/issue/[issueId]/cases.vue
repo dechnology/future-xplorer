@@ -1,7 +1,25 @@
 <template>
-  <div></div>
+  <Suspense>
+    <NuxtLayout>
+      <template #detail-pane>
+        <CasePanel />
+      </template>
+      <CaseGallery />
+    </NuxtLayout>
+    <template #fallback> Loading </template>
+  </Suspense>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { storeToRefs } from 'pinia';
 
-<style scoped></style>
+const route = useRoute();
+
+const issueStore = useIssueStore();
+await issueStore.init(
+  route.params.workshopId as string,
+  route.params.issueId as string
+);
+
+const {} = storeToRefs(issueStore);
+</script>

@@ -1,6 +1,6 @@
 import { Base } from '@/types/base';
 import { User } from '@/types/user';
-import { Issue } from '@/types/issue';
+import { BaseIssue } from '@/types/issue';
 
 export interface WorkshopElement {
   name: string;
@@ -16,7 +16,9 @@ export interface NewWorkshop {
   elements: WorkshopElement[];
 }
 
-export interface Workshop extends NewWorkshop, Base {
-  issues?: Issue[];
-  users?: User[];
+export type BaseWorkshop = Base & NewWorkshop;
+
+export interface Workshop extends BaseWorkshop {
+  users: User[];
+  issues: BaseIssue[];
 }

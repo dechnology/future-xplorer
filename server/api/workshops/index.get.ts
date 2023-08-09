@@ -1,3 +1,3 @@
 import { getWorkshops } from '@/server/utils/fake';
 
-export default defineEventHandler((event) => getWorkshops(10));
+export default defineEventHandler((event) => getBaseWorkshops(10));

@@ -17,6 +17,7 @@
         v-model="currentIssue.title"
       />
       <InputTextarea
+        class="h-80"
         title="議題描述"
         placeholder="議題描述"
         :disabled="state.name === CardStates.Detail.name"

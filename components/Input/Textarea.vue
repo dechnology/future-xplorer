@@ -1,16 +1,12 @@
 <template>
   <div class="flex flex-col gap-2">
-    <label
-      v-if="title"
-      class="bg-white px-1 text-lg font-semibold text-gray-700"
-    >
+    <label v-if="title" :class="resultTitleClasses">
       {{ title }}
     </label>
     <textarea
-      class="h-80 resize-none text-start"
       :placeholder="placeholder"
       :disabled="disabled"
-      :class="classes"
+      :class="resultInputClasses"
       :value="modelValue"
       @input="
         $emit('update:modelValue', ($event.target as HTMLInputElement).value)
@@ -27,6 +23,9 @@ interface Props {
   placeholder: string;
   disabled: boolean;
   modelValue: string;
+
+  titleClasses?: string;
+  inputClasses?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), { disabled: false });
@@ -35,8 +34,19 @@ const emit = defineEmits<{
   (e: 'update:modelValue'): void;
 }>();
 
-const defaultClasses: ClassNameValue = [
+const defaultTitleClasses: ClassNameValue = [
+  'bg-white',
+  'px-1',
+  'text-lg',
+  'font-semibold',
+  'text-gray-700',
+];
+
+const defaultInputClasses: ClassNameValue = [
+  'resize-none',
+  'text-start',
   'w-full',
+  'h-full',
   'rounded',
   'px-3',
   'py-4',
@@ -45,11 +55,20 @@ const defaultClasses: ClassNameValue = [
   'border-gray-200',
 ];
 
-const classes = computed(() => {
+const resultInputClasses = computed(() => {
+  const result = twMerge(defaultInputClasses, props.inputClasses);
   if (props.disabled) {
-    return twMerge(defaultClasses, 'bg-slate-50');
+    return twMerge(result, 'bg-slate-50');
   }
-  return twMerge(defaultClasses, ['border-gray-500', 'bg-white']);
+  return twMerge(result, ['border-gray-500', 'bg-white']);
+});
+
+const resultTitleClasses = computed(() => {
+  const result = twMerge(defaultTitleClasses, props.titleClasses);
+  if (props.disabled) {
+    return twMerge(result, 'bg-slate-50');
+  }
+  return twMerge(result, ['border-gray-500', 'bg-white']);
 });
 </script>
 

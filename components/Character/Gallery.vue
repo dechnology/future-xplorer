@@ -11,6 +11,7 @@
     />
     <Card
       v-for="charater in charaters"
+      :key="charater.id"
       @click="
         () => {
           cardStore.setActiveCharacter(charater);

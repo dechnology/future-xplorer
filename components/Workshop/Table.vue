@@ -31,6 +31,7 @@
         </tr>
         <WorkshopTableRow
           v-for="workshop in workshops"
+          :key="workshop.id"
           @dblclick="() => $router.push(`/workshop/${workshop?.id}`)"
           @click="
             () => {
