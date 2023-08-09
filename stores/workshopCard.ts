@@ -1,4 +1,4 @@
-import { NewWorkshop, Workshop } from '@/types/workshop';
+import { BaseWorkshop, NewWorkshop, Workshop } from '@/types/workshop';
 import { CardState, CardStates } from '@/types/cardState';
 
 const newWorkshop = {
@@ -14,15 +14,17 @@ const newWorkshop = {
 } as NewWorkshop;
 
 export const useWorkshopCardStore = definePiniaStore('workshop card', () => {
-  const activeWorkshop = ref<Workshop | null>(null);
-  const currentWorkshop = ref<Workshop | NewWorkshop>(newWorkshop);
+  const activeWorkshop = ref<Workshop | BaseWorkshop | null>(null);
+  const currentWorkshop = ref<Workshop | BaseWorkshop | NewWorkshop>(
+    newWorkshop
+  );
   const state = ref<CardState>(CardStates.New);
 
   function clearCurrentWorkshop() {
     currentWorkshop.value = { ...newWorkshop, creatorId: "HEHE's id" };
   }
 
-  function setCurrentWorkshop(w: Workshop) {
+  function setCurrentWorkshop(w: Workshop | BaseWorkshop) {
     currentWorkshop.value = { ...w };
   }
 
@@ -30,7 +32,7 @@ export const useWorkshopCardStore = definePiniaStore('workshop card', () => {
     activeWorkshop.value = null;
   }
 
-  function setActiveWorkshop(w: Workshop) {
+  function setActiveWorkshop(w: Workshop | BaseWorkshop) {
     activeWorkshop.value = { ...w };
   }
 

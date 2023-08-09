@@ -30,9 +30,9 @@
 </template>
 
 <script setup lang="ts">
-import { Workshop } from '@/types/workshop';
+import { BaseWorkshop, Workshop } from '@/types/workshop';
 interface Props {
-  workshop: Workshop;
+  workshop: Workshop | BaseWorkshop;
 }
 defineProps<Props>();
 </script>

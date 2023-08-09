@@ -1,3 +1,7 @@
-import { getWorkshops } from '@/server/utils/fake';
+import { BaseWorkshop } from '@/types/workshop';
 
-export default defineEventHandler((event) => getBaseWorkshops(10));
+export default defineEventHandler(
+  (event): { baseWorkshops: BaseWorkshop[] } => ({
+    baseWorkshops: getBaseWorkshops(10),
+  })
+);

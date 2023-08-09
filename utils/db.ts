@@ -1,48 +1,11 @@
-import { Serialize } from 'nitropack';
 import { Issue } from '@/types/issue';
-import { Workshop } from '@/types/workshop';
-import { Character } from 'types/character';
-
-const convertSerializedWorkshop = (serialized: Serialize<Workshop>) =>
-  ({
-    ...serialized,
-    createdAt: convertDateStr(serialized.createdAt),
-    updatedAt: convertDateStr(serialized.updatedAt),
-    startAt: convertDateStr(serialized.startAt),
-    endAt: convertDateStr(serialized.endAt),
-  }) as Workshop;
-
-const convertSerializedBase = <
-  T extends {
-    createdAt: string;
-    updatedAt: string;
-  },
->(
-  serialized: Serialize<T>
-) =>
-  ({
-    ...serialized,
-    createdAt: convertDateStr(serialized.createdAt),
-    updatedAt: convertDateStr(serialized.updatedAt),
-  }) as T;
-
-const convertSerializedIssue = (serialized: Serialize<Issue>) =>
-  ({
-    ...serialized,
-    createdAt: convertDateStr(serialized.createdAt),
-    updatedAt: convertDateStr(serialized.updatedAt),
-    charaters: serialized.charaters
-      ? serialized.charaters.map((charater) =>
-          convertSerializedBase(charater as Serialize<Character>)
-        )
-      : undefined,
-  }) as Issue;
+import { BaseWorkshop, Workshop } from '@/types/workshop';
 
 export const fetchIssueById = async (
   workshopId: string,
   issueId: string,
   opts: { withWorkshop: boolean } = { withWorkshop: false }
-) => {
+): Promise<{ workshop?: BaseWorkshop; issue: Issue }> => {
   const { data } = await useFetch(
     `/api/workshops/${workshopId}/issues/${issueId}`
   );
@@ -55,20 +18,15 @@ export const fetchIssueById = async (
     });
   }
 
-  const { workshop: serializedWorkshop, issue: serializedIssue } = data.value;
+  const { workshop: w, issue: i } = data.value;
 
   return {
-    workshop: opts.withWorkshop
-      ? convertSerializedWorkshop(serializedWorkshop)
-      : undefined,
-    issue: convertSerializedIssue(serializedIssue),
+    workshop: opts.withWorkshop ? deserializeBaseWorkshop(w) : undefined,
+    issue: deserializeIssue(i),
   };
 };
 
-export const fetchWorkshopById = async (
-  id: string,
-  opts: { withIssues: boolean } = { withIssues: false }
-) => {
+export const fetchWorkshopById = async (id: string): Promise<Workshop> => {
   const { data } = await useFetch(`/api/workshops/${id}`);
 
   // Fetching error
@@ -79,21 +37,12 @@ export const fetchWorkshopById = async (
     });
   }
 
-  const { issues: serializedIssues, workshop: serializedWorkshop } = data.value;
+  const { workshop: serializedWorkshop } = data.value;
 
-  return {
-    workshop: convertSerializedWorkshop(serializedWorkshop),
-    issues: opts.withIssues
-      ? serializedIssues.map((serializedIssue) =>
-          convertSerializedIssue(serializedIssue)
-        )
-      : undefined,
-  };
+  return deserializeWorkshop(serializedWorkshop);
 };
 
-export const fetchAllWorkshops = async (
-  opts: { withIssues: boolean } = { withIssues: false }
-) => {
+export const fetchAllWorkshops = async (): Promise<BaseWorkshop[]> => {
   const { data } = await useFetch('/api/workshops');
 
   // Fetching error
@@ -104,7 +53,7 @@ export const fetchAllWorkshops = async (
     });
   }
 
-  return data.value.map((serializedWorkshop) =>
-    convertSerializedWorkshop(serializedWorkshop)
-  );
+  const { baseWorkshops: serializedBaseWorkshops } = data.value;
+
+  return serializedBaseWorkshops.map((w) => deserializeBaseWorkshop(w));
 };
