@@ -1,5 +1,7 @@
 <template>
-  <div class="overflow-hidden rounded-t-xl border border-solid border-gray-300">
+  <div
+    class="h-full overflow-y-auto rounded-t-xl border border-solid border-gray-300"
+  >
     <table class="w-full table-auto border-collapse">
       <thead class="bg-slate-100 text-xl">
         <tr>

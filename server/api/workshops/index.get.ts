@@ -2,6 +2,6 @@ import { BaseWorkshop } from '@/types/workshop';
 
 export default defineEventHandler(
   (event): { baseWorkshops: BaseWorkshop[] } => ({
-    baseWorkshops: getBaseWorkshops(10),
+    baseWorkshops: getBaseWorkshops(30),
   })
 );

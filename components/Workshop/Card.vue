@@ -74,7 +74,6 @@
 import { storeToRefs } from 'pinia';
 import { WorkshopElement } from '@/types/workshop';
 import { CardStates } from '@/types/cardState';
-import { ClassNameValue, twMerge } from 'tailwind-merge';
 
 interface DateValue {
   start: Date;

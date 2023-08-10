@@ -1,11 +1,12 @@
 <template>
-  <div class="grid grid-cols-4 gap-4">
+  <div class="grid grid-cols-4 gap-4 rounded-2xl">
     <Card
       @click="
         () => {
           state = CardStates.New;
         }
       "
+      classes="h-[300px]"
       :isActivated="activeCharacter === null"
       :icon="{ name: 'mdi:plus', size: '10rem' }"
     />
@@ -19,6 +20,7 @@
           state = CardStates.Detail;
         }
       "
+      classes="h-[300px]"
       :isActivated="charater.id === activeCharacter?.id"
       :imageUrl="charater.imageUrl"
       :lines="[

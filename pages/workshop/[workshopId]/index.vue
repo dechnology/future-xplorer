@@ -4,7 +4,7 @@
       <template #detail-pane>
         <IssuePanel />
       </template>
-      <IssueGallery />
+      <IssueGalleryPanel />
     </NuxtLayout>
     <template #fallback> Loading </template>
   </Suspense>

@@ -7,6 +7,7 @@
           state = CardStates.New;
         }
       "
+      classes="h-[300px]"
       :is-activated="activeIssue === null"
       :icon="{ name: 'mdi:plus', size: '10rem' }"
     />
@@ -29,6 +30,7 @@
           state = CardStates.Detail;
         }
       "
+      classes="h-[300px]"
       :is-activated="activeIssue?.id === issue.id"
       :title="issue.title"
       :description="issue.description"

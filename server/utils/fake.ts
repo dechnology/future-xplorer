@@ -2,7 +2,12 @@ import { zh_TW, fakerZH_TW, fa } from '@faker-js/faker';
 import { User } from '@/types/user';
 import { Base } from '@/types/base';
 import { BaseIssue, Issue } from '@/types/issue';
-import { BaseWorkshop, Workshop, WorkshopElement } from '@/types/workshop';
+import {
+  BaseWorkshop,
+  ElementCategories,
+  Workshop,
+  WorkshopElement,
+} from '@/types/workshop';
 import { Character } from '@/types/character';
 import { Case } from '@/types/case';
 import { Keyword } from '@/types/keyword';
@@ -48,7 +53,9 @@ export const getWorkshopElement = (): WorkshopElement => ({
 });
 
 export const getWorkshopElements = (n: number): WorkshopElement[] =>
-  Array.from({ length: n }, () => getWorkshopElement());
+  Array.from({ length: n }, () => getWorkshopElement()).sort(
+    (a, b) => ElementCategories[a.category] - ElementCategories[b.category]
+  );
 
 export const getBaseWorkshop = (): BaseWorkshop => {
   const base = getBase();

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-10 gap-5">
+  <div class="flex h-14 gap-5">
     <div class="relative grow">
       <div
         class="absolute inset-y-0 left-3 flex h-full items-center justify-center"
@@ -8,7 +8,7 @@
       </div>
       <input
         type="text"
-        class="block h-full w-full rounded border border-solid border-gray-900 bg-inherit pl-14"
+        class="block h-full w-full rounded border border-solid border-gray-900 bg-inherit pl-14 text-lg"
         :placeholder="placeholder"
         :value="modelValue"
         @input="
@@ -16,7 +16,7 @@
         "
       />
     </div>
-    <button class="rounded bg-blue-600 px-4 py-1 text-xs text-white">
+    <button class="rounded bg-blue-600 px-6 py-1 text-white">
       {{ buttonText }}
     </button>
   </div>
