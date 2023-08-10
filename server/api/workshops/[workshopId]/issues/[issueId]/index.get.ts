@@ -1,9 +1,9 @@
 import { Issue } from '@/types/issue';
-import { Workshop } from '@/types/workshop';
+import { BaseWorkshop } from '@/types/workshop';
 
 export default defineEventHandler(
-  (event): { workshop: Workshop; issue: Issue } => ({
-    workshop: getWorkshop(),
+  (event): { workshop: BaseWorkshop; issue: Issue } => ({
+    workshop: getBaseWorkshop(),
     issue: getIssue(),
   })
 );

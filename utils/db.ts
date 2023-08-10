@@ -26,7 +26,9 @@ export const fetchIssueById = async (
   };
 };
 
-export const fetchWorkshopById = async (id: string): Promise<Workshop> => {
+export const fetchWorkshopById = async (
+  id: string
+): Promise<{ workshop: Workshop }> => {
   const { data } = await useFetch(`/api/workshops/${id}`);
 
   // Fetching error
@@ -39,7 +41,7 @@ export const fetchWorkshopById = async (id: string): Promise<Workshop> => {
 
   const { workshop: serializedWorkshop } = data.value;
 
-  return deserializeWorkshop(serializedWorkshop);
+  return { workshop: deserializeWorkshop(serializedWorkshop) };
 };
 
 export const fetchAllWorkshops = async (): Promise<BaseWorkshop[]> => {

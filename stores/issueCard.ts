@@ -1,4 +1,4 @@
-import { Issue, NewIssue } from '@/types/issue';
+import { BaseIssue, Issue, NewIssue } from '@/types/issue';
 import { CardState, CardStates } from '@/types/cardState';
 
 const newIssue = {
@@ -7,8 +7,8 @@ const newIssue = {
 } as NewIssue;
 
 export const useIssueCardStore = definePiniaStore('issue card', () => {
-  const activeIssue = ref<Issue | null>(null);
-  const currentIssue = ref<Issue | NewIssue>(newIssue);
+  const activeIssue = ref<Issue | BaseIssue | null>(null);
+  const currentIssue = ref<Issue | BaseIssue | NewIssue>(newIssue);
   const state = ref<CardState>(CardStates.New);
 
   function clearCurrentIssue() {
@@ -19,15 +19,15 @@ export const useIssueCardStore = definePiniaStore('issue card', () => {
     activeIssue.value = null;
   }
 
-  function setCurrentIssue(w: Issue) {
+  function setCurrentIssue(w: Issue | BaseIssue) {
     currentIssue.value = { ...w };
   }
 
-  function setActiveIssue(w: Issue) {
+  function setActiveIssue(w: Issue | BaseIssue) {
     activeIssue.value = { ...w };
   }
 
-  watch(state, (newState, oldState) => {
+  watch(state, (newState) => {
     if (newState.name === CardStates.New.name) {
       clearActiveIssue();
       clearCurrentIssue();

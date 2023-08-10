@@ -1,21 +1,31 @@
 <template>
-  <ol class="flex items-center gap-1">
-    <NuxtLink
-      to="/"
-      class="transition-all hover:text-gray-600 active:text-gray-400"
-    >
-      <Icon name="mdi:home" size="1.25rem" />
-    </NuxtLink>
-    <li v-for="crumb in crumbs" class="flex items-center gap-1">
-      <Icon name="mdi:circle-small" size="24px" />
+  <div class="flex justify-between">
+    <ol class="flex items-center gap-1">
       <NuxtLink
-        :to="crumb.path"
+        to="/"
         class="transition-all hover:text-gray-600 active:text-gray-400"
       >
-        {{ crumb.name }}
+        <Icon name="mdi:home" size="1.25rem" />
       </NuxtLink>
-    </li>
-  </ol>
+      <li v-for="crumb in crumbs" class="flex items-center gap-1">
+        <Icon name="mdi:circle-small" size="24px" />
+        <NuxtLink
+          :to="crumb.path"
+          class="transition-all hover:text-gray-600 active:text-gray-400"
+        >
+          {{ crumb.name }}
+        </NuxtLink>
+      </li>
+    </ol>
+    <NuxtLink
+      v-if="backLink"
+      :to="backLink"
+      class="flex items-center gap-4 transition-all hover:text-gray-600 active:text-gray-400"
+    >
+      <Icon name="mdi:arrow-left-thin" size="1.25rem" />
+      <span>返回</span>
+    </NuxtLink>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -29,6 +39,7 @@ interface Crumb {
 
 const route = useRoute();
 const crumbs = ref<Crumb[]>([]);
+const backLink = ref<string>();
 const workshop = ref<Workshop>();
 const issue = ref<Issue>();
 
@@ -39,11 +50,13 @@ if (workshopId) {
   const workshopPath = `/workshop/${workshopId}`;
   workshop.value = (await fetchWorkshopById(workshopId)).workshop;
   crumbs.value.push({ name: workshop.value.name, path: workshopPath });
+  backLink.value = '/';
 
   if (issueId) {
     const issuePath = `${workshopPath}/issue/${issueId}/characters`;
     issue.value = (await fetchIssueById(workshopId, issueId)).issue;
     crumbs.value.push({ name: issue.value.title, path: issuePath });
+    backLink.value = workshopPath;
   }
 }
 </script>

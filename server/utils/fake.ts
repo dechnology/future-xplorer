@@ -60,7 +60,7 @@ export const getBaseWorkshop = (): BaseWorkshop => {
     description: fakerZH_TW.lorem.paragraph(),
     startAt: startAt,
     endAt: endAt,
-    elements: getWorkshopElements(10),
+    elements: getWorkshopElements(4),
   };
 };
 
@@ -77,7 +77,7 @@ export const getWorkshop = (): Workshop => {
     description: fakerZH_TW.lorem.paragraph(),
     startAt: startAt,
     endAt: endAt,
-    elements: getWorkshopElements(10),
+    elements: getWorkshopElements(4),
     issues: getIssues(10),
     users: getUsers(10),
   };
