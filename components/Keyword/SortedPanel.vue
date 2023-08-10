@@ -1,7 +1,7 @@
 <template>
-  <div class="flex flex-col gap-6">
+  <div class="flex h-full flex-col gap-6">
     <KeywordTab v-model="tab" />
-    <KeywordGallery :category-filter="tab" />
+    <KeywordGallery class="grow" :category-filter="tab" />
   </div>
 </template>
 

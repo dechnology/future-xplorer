@@ -5,7 +5,7 @@
   </p>
   <div class="flex flex-col gap-2">
     <InputSearchBar v-model="searchQuery" placeholder="輸入關鍵字" />
-    <KeywordGallery />
+    <KeywordGallery :n_cols="2" draggable />
   </div>
 </template>
 
