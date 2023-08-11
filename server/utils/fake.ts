@@ -67,7 +67,7 @@ export const getBaseWorkshop = (): BaseWorkshop => {
     description: fakerZH_TW.lorem.paragraph(),
     startAt: startAt,
     endAt: endAt,
-    elements: getWorkshopElements(4),
+    elements: getWorkshopElements(10),
   };
 };
 
@@ -84,7 +84,7 @@ export const getWorkshop = (): Workshop => {
     description: fakerZH_TW.lorem.paragraph(),
     startAt: startAt,
     endAt: endAt,
-    elements: getWorkshopElements(4),
+    elements: getWorkshopElements(10),
     issues: getIssues(10),
     users: getUsers(10),
   };
@@ -98,7 +98,7 @@ export const getCharacter = (): Character => ({
   role: fakerZH_TW.person.zodiacSign(),
   name: fakerZH_TW.person.fullName(),
   age: fakerZH_TW.number.int(),
-  gender: fakerZH_TW.helpers.arrayElement(['male', 'female', 'nonbinary']),
+  gender: fakerZH_TW.helpers.arrayElement(['male', 'female']),
   trait: fakerZH_TW.person.jobTitle(),
   other: fakerZH_TW.person.bio(),
 

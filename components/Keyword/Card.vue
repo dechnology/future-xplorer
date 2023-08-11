@@ -1,143 +1,77 @@
 <template>
-  <form
-    @submit="handleSubmit"
-    class="relative flex flex-col gap-10 rounded-md bg-white p-8 shadow-2xl"
+  <div
+    @mousedown="handleMouseDown"
+    @dragstart="() => (dragged = keyword)"
+    :draggable="allowDrag && draggable"
+    :class="draggable && 'cursor-move'"
+    class="flex h-40 flex-col gap-2 rounded-lg bg-white px-4 py-5"
   >
-    <div class="flex items-end gap-4">
-      <h3 class="text-2xl font-medium text-blue-950">{{ state.formTitle }}</h3>
-      <div class="text-sm text-gray-500">
-        <span>建立者：</span>
-        <span v-if="state.name === CardStates.New.name"> You </span>
-        <span v-else-if="'creator' in currentCase && currentCase.creator">
-          {{ currentCase.creator.name }}
-        </span>
-        <span v-else>Unknown</span>
-      </div>
+    <div class="w-fit rounded-2xl bg-slate-400 px-3 py-1 text-sm text-white">
+      {{ keyword.category || '未分類' }}
     </div>
-    <InputText
-      title="標題"
-      placeholder="案例標題"
-      :disabled="disabled"
-      v-model="currentCase.other"
+    <input
+      @dblclick="handleDblclick"
+      @keypress.enter="(e) => handleEnterPress(e, keyword)"
+      ref="inputRef"
+      :readonly="!editing"
+      :value="keyword.body"
+      :class="!editing && 'focus:outline-none'"
+      class="w-full p-2 text-2xl font-bold text-primary-500"
     />
-    <InputTextarea
-      inputClasses="h-28"
-      title="背景介紹"
-      placeholder="案例背景"
-      :disabled="disabled"
-      v-model="currentCase.other"
-    />
-    <InputTextarea
-      inputClasses="h-28"
-      title="作法"
-      placeholder="案例作法"
-      :disabled="disabled"
-      v-model="currentCase.other"
-    />
-    <InputTextarea
-      inputClasses="h-28"
-      title="目標"
-      placeholder="案例目標"
-      :disabled="disabled"
-      v-model="currentCase.other"
-    />
-    <InputTextarea
-      inputClasses="h-28"
-      title="問題與挑戰"
-      placeholder="案例的問題與挑戰"
-      :disabled="disabled"
-      v-model="currentCase.other"
-    />
-    <InputTextarea
-      inputClasses="h-28"
-      title="成果"
-      placeholder="成果"
-      :disabled="disabled"
-      v-model="currentCase.other"
-    />
-    <InputTextarea
-      inputClasses="h-28"
-      title="其他"
-      placeholder="其他"
-      :disabled="disabled"
-      v-model="currentCase.other"
-    />
-    <InputText
-      title="參考資料"
-      placeholder="參考資料"
-      :disabled="disabled"
-      v-model="currentCase.other"
-    />
-    <div
-      v-if="currentCase.imageUrl"
-      class="flex min-h-[296px] overflow-hidden rounded-lg"
-    >
-      <img class="w-full object-contain" :src="currentCase.imageUrl" alt="" />
-    </div>
-    <Card
-      v-else
-      class="min-h-[296px] bg-slate-400"
-      :icon="{ name: 'material-symbols:add-photo-alternate', size: '5rem' }"
-    />
-    <CardButton
-      v-if="state.name !== CardStates.Detail.name"
-      @click="() => {}"
-      class="h-12 rounded-lg bg-blue-400 text-white hover:bg-blue-500"
-      :icon="{ name: 'mdi:play', size: '3rem' }"
-      body="AI生成圖片"
-    />
-    <div
-      v-if="'createdAt' in currentCase && 'updatedAt' in currentCase"
-      class="flex items-center justify-center gap-2"
-    >
-      <div v-if="currentCase.createdAt">
-        建立時間：{{ format(currentCase.createdAt, 'yyyy-MM-dd') }}
-      </div>
-      <div v-if="currentCase.updatedAt">
-        建立時間：{{ format(currentCase.updatedAt, 'yyyy-MM-dd') }}
-      </div>
-    </div>
-    <CaseActionsNew v-if="state.name === CardStates.New.name" />
-    <CaseActionsDetail v-if="state.name === CardStates.Detail.name" />
-    <CaseActionsEditing v-if="state.name === CardStates.Editing.name" />
-    <Icon
-      v-if="state.name === CardStates.Detail.name"
-      @click="() => modalStore.show()"
-      class="absolute right-6 top-6 cursor-pointer text-blue-950"
-      name="material-symbols:pan-zoom-rounded"
-      size="3rem"
-    />
-  </form>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { format } from 'date-fns';
 import { storeToRefs } from 'pinia';
-import { CardStates } from '@/types/cardState';
+import { Keyword } from '@/types/keyword';
 
-const store = useCaseCardStore();
-const modalStore = useModalStore();
-const { currentCase, state, activeCase } = storeToRefs(store);
+interface Props {
+  keyword: Keyword;
+  draggable: boolean;
+}
 
-const disabled = computed(() => state.value.name === CardStates.Detail.name);
+const props = withDefaults(defineProps<Props>(), {
+  draggable: false,
+});
 
-const handleSubmit = (e: Event) => {
-  e.preventDefault();
-  switch (state.value.name) {
-    // TODO
-    case 'new':
-      console.log('submiting new...');
-      break;
-    case 'detail':
-      console.log('submiting detail...');
-      break;
-    // TODO
-    case 'editing':
-      console.log('submiting editing...');
-      state.value = CardStates.Detail;
-      break;
-    default:
-      throw Error('Unknown state');
+const emit = defineEmits<{
+  (e: 'update:keyword', k: Keyword): void;
+}>();
+
+const inputRef = ref<HTMLInputElement | null>(null);
+const editing = ref(false);
+
+const issueStore = useIssueStore();
+const dragStore = useDragStore();
+const allowDrag = ref(true);
+const { dragged } = storeToRefs(dragStore);
+
+const handleMouseDown = (e: MouseEvent) => {
+  if (inputRef.value && inputRef.value === e.target) {
+    allowDrag.value = false;
+  } else {
+    allowDrag.value = true;
   }
+};
+
+const handleOutsideClick = (e: MouseEvent) => {
+  if (inputRef.value && !inputRef.value.contains(e.target as Node)) {
+    editing.value = false;
+    window.removeEventListener('click', handleOutsideClick);
+  }
+};
+
+const handleDblclick = (e: MouseEvent) => {
+  editing.value = true;
+  window.addEventListener('click', handleOutsideClick);
+};
+
+const handleEnterPress = (e: KeyboardEvent, k: Keyword) => {
+  if (!inputRef.value) {
+    return;
+  }
+
+  editing.value = false;
+  issueStore.updateKeywordById(k.id, { ...k, body: inputRef.value.value });
 };
 </script>

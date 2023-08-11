@@ -1,9 +1,10 @@
 <template>
-  <div class="flex h-full flex-col gap-6">
+  <div class="flex h-full flex-col gap-2">
     <KeywordTab v-model="tab" />
     <KeywordGallery
-      class="h-full grow overflow-y-auto"
+      class="grow overflow-y-auto"
       :category-filter="tab"
+      draggable
     />
   </div>
 </template>

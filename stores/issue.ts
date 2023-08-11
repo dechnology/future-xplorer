@@ -11,9 +11,18 @@ export const useIssueStore = definePiniaStore('issue', () => {
   const elements = computed(
     () => workshop.value?.elements as WorkshopElement[]
   );
-  const charaters = computed(() => issue.value?.charaters as Character[]);
+  const characters = computed(() => issue.value?.charaters as Character[]);
   const cases = computed(() => issue.value?.cases as Case[]);
   const keywords = computed(() => issue.value?.keywords as Keyword[]);
+
+  function updateKeywordById(id: string, k: Keyword) {
+    if (!(issue.value && issue.value.keywords)) {
+      return;
+    }
+
+    const idx = issue.value?.keywords.findIndex((k) => k.id === id);
+    issue.value.keywords[idx] = { ...k };
+  }
 
   async function init(workshopId: string, issueId: string) {
     const data = await fetchIssueById(workshopId, issueId, {
@@ -24,5 +33,14 @@ export const useIssueStore = definePiniaStore('issue', () => {
     issue.value = data.issue;
   }
 
-  return { workshop, elements, issue, charaters, cases, keywords, init };
+  return {
+    workshop,
+    elements,
+    issue,
+    characters,
+    cases,
+    keywords,
+    init,
+    updateKeywordById,
+  };
 });

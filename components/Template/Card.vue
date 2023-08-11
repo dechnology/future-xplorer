@@ -82,15 +82,29 @@
 <script setup lang="ts">
 import { format } from 'date-fns';
 import { storeToRefs } from 'pinia';
-import { twMerge, ClassNameValue } from 'tailwind-merge';
 import { CardStates } from '@/types/cardState';
 
 const route = useRoute();
 const router = useRouter();
 
 const store = useIssueCardStore();
+const issueStore = useIssueStore();
 const modalStore = useModalStore();
-const { currentIssue, state, activeIssue } = storeToRefs(store);
+const { state, currentIssue, activeIssue } = storeToRefs(store);
+const { characters, keywords } = storeToRefs(issueStore);
+
+const options = computed(() => {
+  const results = {
+    person: characters.value.map((c) => c.name),
+    object: [],
+    environment: [],
+    message: [],
+    service: [],
+  };
+  // keywords.value.forEach((k) => {
+  //   k.category && results[k.category]
+  // })
+});
 
 const handleSubmit = (e: Event) => {
   e.preventDefault();

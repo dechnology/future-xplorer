@@ -1,17 +1,22 @@
 <template>
-  <div
-    class="flex h-16 items-center rounded-lg border border-solid border-gray-300 bg-slate-100"
-  >
+  <div class="flex h-24 shrink-0 items-start justify-between rounded-lg">
+    <div class="flex h-full flex-1 overflow-x-scroll">
+      <div
+        v-for="el in elements"
+        @click="$emit('update:modelValue', el.name)"
+        :key="el.name"
+        class="h-full cursor-pointer whitespace-nowrap rounded-lg border border-solid border-gray-300 px-6 py-3 text-xl font-medium"
+        :class="modelValue === el.name && 'bg-blue-400 text-white'"
+      >
+        <span> {{ el.name }}</span>
+        <span> / </span>
+        <span>{{ el.category.charAt(0).toUpperCase() }}</span>
+      </div>
+    </div>
     <div
-      v-for="el in elements"
-      @click="$emit('update:modelValue', el.name)"
-      :key="el.name"
-      class="h-full cursor-pointer rounded-lg border border-solid border-gray-300 px-6 py-3 text-xl font-medium"
-      :class="modelValue === el.name && 'bg-blue-400 text-white'"
+      class="flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-lg border border-solid border-gray-300"
     >
-      <span>{{ el.name }}</span>
-      <span> / </span>
-      <span class="capitalize">{{ el.category.charAt(0) }}</span>
+      <Icon name="mdi:plus" size="2rem" />
     </div>
   </div>
 </template>

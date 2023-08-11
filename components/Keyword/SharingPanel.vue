@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-6 overflow-hidden">
+  <div class="flex flex-col gap-2 overflow-hidden">
     <KeywordTab v-model="tab" />
     <div class="flex gap-14 overflow-hidden">
       <KeywordGallery class="flex-1 overflow-y-auto" />

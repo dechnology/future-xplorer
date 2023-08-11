@@ -5,19 +5,12 @@
     class="grid content-start gap-2"
     :class="`grid-cols-${n_cols}`"
   >
-    <div
+    <KeywordCard
       v-for="k in filteredKeywords"
-      @dragstart="() => (dragged = k)"
+      :keyword="k"
       :key="k.id"
       :draggable="draggable"
-      :class="draggable && 'cursor-move'"
-      class="flex h-40 flex-col gap-2 rounded-lg bg-white px-4 py-5"
-    >
-      <div class="w-fit rounded-2xl bg-slate-400 px-3 py-1 text-sm text-white">
-        {{ k.category || '未分類' }}
-      </div>
-      <h4 class="text-2xl font-bold text-primary-500">{{ k.body }}</h4>
-    </div>
+    />
   </div>
 </template>
 
