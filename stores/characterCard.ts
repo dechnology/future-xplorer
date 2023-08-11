@@ -1,12 +1,14 @@
 import { Character, NewCharacter } from '@/types/character';
 import { CardState, CardStates } from '@/types/cardState';
 
-const newCharacter = {
+const newCharacter: NewCharacter = {
   role: '',
   name: '',
+  age: '',
   trait: '',
+  gender: 'female',
   other: '',
-} as NewCharacter;
+};
 
 export const useCharacterCardStore = definePiniaStore('character card', () => {
   // current session usage

@@ -21,6 +21,7 @@
         title="角色"
         placeholder="角色名稱"
         :disabled="disabled"
+        :select-options="characterOptions.role"
         v-model="currentCharacter.role"
       />
       <InputText
@@ -33,27 +34,31 @@
         title="年齡"
         placeholder="年齡"
         :disabled="disabled"
+        :select-options="characterOptions.age"
         v-model="currentCharacter.age"
-      />
-      <InputText
-        title="特徵"
-        placeholder="特徵"
-        :disabled="disabled"
-        v-model="currentCharacter.trait"
       />
       <InputText
         title="性別"
         placeholder="性別"
         :disabled="disabled"
+        :select-options="characterOptions.gender"
         v-model="currentCharacter.gender"
-      />
-      <InputText
-        title="其他"
-        placeholder="其他"
-        :disabled="disabled"
-        v-model="currentCharacter.other"
+        select-only
       />
     </div>
+    <InputTextarea
+      title="特徵"
+      placeholder="特徵"
+      :disabled="disabled"
+      :select-options="characterOptions.trait"
+      v-model="currentCharacter.trait"
+    />
+    <InputTextarea
+      title="其他"
+      placeholder="其他"
+      :disabled="disabled"
+      v-model="currentCharacter.other"
+    />
     <div
       v-if="currentCharacter.imageUrl"
       class="flex min-h-[296px] overflow-hidden rounded-lg"
@@ -105,9 +110,22 @@ import { format } from 'date-fns';
 import { storeToRefs } from 'pinia';
 import { CardStates } from '@/types/cardState';
 
+const characterOptions = {
+  role: ['教師', '學生', '媽媽', '爸爸'],
+  gender: ['男', '女'],
+  age: ['青少年', 'Z世代 (Gen Z)', '嬰兒'],
+  trait: [
+    '行為數位化',
+    '資訊素養高',
+    '環境意識高',
+    '習慣科技運用',
+    '需關注心理健康',
+  ],
+};
+
 const store = useCharacterCardStore();
 const modalStore = useModalStore();
-const { currentCharacter, state, activeCharacter } = storeToRefs(store);
+const { currentCharacter, state } = storeToRefs(store);
 
 const disabled = computed(() => state.value.name === CardStates.Detail.name);
 

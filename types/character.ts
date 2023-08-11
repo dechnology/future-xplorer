@@ -3,12 +3,12 @@ import { Base } from '@/types/base';
 export interface NewCharacter {
   role: string;
   name: string;
-  age: number;
-  gender: 'male' | 'female' | 'nonbinary';
+  age: string | number;
+  gender: 'male' | 'female';
   trait: string;
   other: string;
 
-  imageUrl: string;
+  imageUrl?: string;
 }
 
 export interface Character extends Base, NewCharacter {

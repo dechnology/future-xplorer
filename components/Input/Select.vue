@@ -6,25 +6,20 @@
     >
       {{ title }}
     </label>
-    <div class="relative">
-      <input
-        type="text"
-        class="h-16"
-        :placeholder="placeholder"
-        :disabled="disabled"
-        :class="classes"
-        :value="modelValue"
-        :readonly="selectOnly"
-        @input="
-          !selectOnly &&
-            $emit(
-              'update:modelValue',
-              ($event.target as HTMLInputElement).value
-            )
-        "
-      />
-      <div
-        v-if="selectOptions"
+    <select
+      class="h-16"
+      :placeholder="placeholder"
+      :disabled="disabled"
+      :class="classes"
+      :value="modelValue"
+      @input="
+        $emit('update:modelValue', ($event.target as HTMLInputElement).value)
+      "
+    >
+      <option v-for="opt in options" :value="opt">{{ opt }}</option>
+    </select>
+    <!-- <div
+        v-if="options"
         class="absolute inset-y-0 right-2 flex items-center justify-center"
       >
         <div
@@ -40,7 +35,7 @@
         </div>
       </div>
       <Dropdown
-        v-if="selectOptions"
+        v-if="options"
         class="origin-top-right transition-all duration-300"
         :class="dropdownShown ? 'scale-100' : 'scale-0'"
         @item-click="
@@ -49,11 +44,9 @@
             $emit('update:modelValue', item);
           }
         "
-        @close-menu="() => (dropdownShown = false)"
-        :items="selectOptions"
-        :shown="dropdownShown"
+        :items="options"
       />
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -65,14 +58,10 @@ interface Props {
   placeholder: string;
   disabled: boolean;
   modelValue: string | number;
-  selectOptions?: string[];
-  selectOnly: boolean;
+  options?: string[];
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  disabled: false,
-  selectOnly: false,
-});
+const props = withDefaults(defineProps<Props>(), { disabled: false });
 
 const emit = defineEmits<{
   (e: 'update:modelValue'): void;
@@ -83,8 +72,7 @@ const dropdownShown = ref(false);
 const defaultClasses: ClassNameValue = [
   'w-full',
   'rounded',
-  'pl-4',
-  'pr-4',
+  'px-3',
   'py-4',
   'border',
   'border-solid',
@@ -92,16 +80,10 @@ const defaultClasses: ClassNameValue = [
 ];
 
 const classes = computed(() => {
-  let resultClasses = twMerge(defaultClasses);
   if (props.disabled) {
-    return twMerge(resultClasses, 'bg-slate-50');
+    return twMerge(defaultClasses, 'bg-slate-50');
   }
-
-  if (props.selectOptions) {
-    resultClasses = twMerge(resultClasses, 'pr-12');
-  }
-
-  return twMerge(resultClasses, ['border-gray-500', 'bg-white']);
+  return twMerge(defaultClasses, ['border-gray-500', 'bg-white']);
 });
 </script>
 

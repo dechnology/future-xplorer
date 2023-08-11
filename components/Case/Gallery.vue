@@ -1,6 +1,7 @@
 <template>
   <div class="grid grid-cols-4 gap-4">
     <Card
+      classes="h-80"
       @click="
         () => {
           state = CardStates.New;
@@ -10,6 +11,7 @@
       :icon="{ name: 'mdi:plus', size: '10rem' }"
     />
     <Card
+      classes="h-80"
       v-for="_case in cases"
       :key="_case.id"
       @click="

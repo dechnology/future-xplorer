@@ -4,7 +4,7 @@
   </div>
   <div v-else :class="cardClasses">
     <!-- Image -->
-    <div v-if="imageUrl" class="h-48 w-full">
+    <div v-if="imageUrl" class="h-44 w-full">
       <img class="h-full w-full object-cover" :src="imageUrl" alt="" />
     </div>
     <div class="flex h-full flex-col px-5 py-6">

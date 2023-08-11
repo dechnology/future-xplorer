@@ -11,8 +11,6 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
-
 definePageMeta({
   layout: 'reversed',
 });
