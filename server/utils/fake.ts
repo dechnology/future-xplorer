@@ -11,6 +11,7 @@ import {
 import { Character } from '@/types/character';
 import { Case } from '@/types/case';
 import { Keyword } from '@/types/keyword';
+import { Schema } from 'mongoose';
 
 export const getUser = (): User => {
   const updatedAt = fakerZH_TW.date.recent();
@@ -22,7 +23,7 @@ export const getUser = (): User => {
     name: fakerZH_TW.person.fullName(),
     uid: fakerZH_TW.database.mongodbObjectId(),
     isAdmin: false,
-    issueIds: [fakerZH_TW.database.mongodbObjectId()],
+    issues: [new Schema.ObjectId(fakerZH_TW.database.mongodbObjectId())],
   };
 };
 

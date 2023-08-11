@@ -6,5 +6,5 @@ export interface Base {
   readonly createdAt: Date;
 
   updatedAt: Date;
-  creator?: User;
+  creator: User | string;
 }

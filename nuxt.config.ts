@@ -20,6 +20,9 @@ export default defineNuxtConfig({
       ],
     },
   },
+  runtimeConfig: {
+    mongoConnectionStr: process.env.MONGO_CONNECTION_STR,
+  },
   imports: { dirs: ['stores'] },
   devtools: { enabled: true },
   modules: ['@nuxtjs/tailwindcss', 'nuxt-icon', '@pinia/nuxt'],

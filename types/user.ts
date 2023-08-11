@@ -1,8 +1,12 @@
 import { Base } from '@/types/base';
+import { BaseIssue } from '@/types/issue';
+import { Schema } from 'mongoose';
 
-export interface User extends Omit<Base, 'creatorId' | 'creator'> {
-  uid: string; // uid is used for login and should be stored safely
+export interface NewUser {
+  uid: string;
   name: string;
   isAdmin: boolean;
-  issueIds: string[];
+  issues: (Schema.Types.ObjectId | BaseIssue)[];
 }
+
+export type User = Omit<Base, 'creatorId' | 'creator'> & NewUser;

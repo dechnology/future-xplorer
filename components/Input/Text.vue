@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-2">
     <label
       v-if="title"
-      class="bg-white px-1 text-lg font-semibold text-gray-700"
+      class="bg-transparent px-1 text-lg font-semibold text-gray-700"
     >
       {{ title }}
     </label>
@@ -70,6 +70,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  placeholder: '',
   disabled: false,
   selectOnly: false,
 });
