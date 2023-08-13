@@ -4,5 +4,9 @@
   },
   "editor.quickSuggestions": {
     "strings": true
-  }
+},
+"[python]": {
+    "editor.defaultFormatter": "ms-python.autopep8"
+},
+"python.formatting.provider": "none"
 }

@@ -1,10 +1,10 @@
 import mongoose, { Schema } from 'mongoose';
-import { User } from '@/types/user';
+import { Roles, User } from '@/types/user';
 
 const schema = new Schema<User>(
   {
     uid: { type: String, unique: true, required: true },
-    isAdmin: { type: Boolean, required: true },
+    role: { type: String, enum: Object.keys(Roles), required: true },
     name: { type: String, required: true },
     issues: [{ type: Schema.Types.ObjectId, ref: 'Issue' }],
   },

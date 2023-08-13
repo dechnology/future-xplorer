@@ -1,13 +1,14 @@
 <template>
   <NuxtLayout>
     <template #detail-pane>
-      <WorkshopPanel />
+      index
+      <!-- <WorkshopPanel /> -->
     </template>
-    <WorkshopTable />
+    <!-- <WorkshopTable /> -->
   </NuxtLayout>
 </template>
 
 <script setup lang="ts">
-const store = useWorkshopsStore();
-await store.init();
+// const store = useWorkshopsStore();
+// await store.init();
 </script>

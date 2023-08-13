@@ -27,11 +27,14 @@ definePageMeta({
   layout: false,
 });
 
+const router = useRouter();
+const authStore = useAuthStore();
+
 const uid = ref('');
 const username = ref('');
 
 const handleStart = async (e: Event) => {
-  const { data } = await useFetch('/api/auth', {
+  const { data, error } = await useFetch('/api/login', {
     method: 'post',
     body: {
       uid: uid.value,
@@ -39,6 +42,18 @@ const handleStart = async (e: Event) => {
     },
   });
 
-  console.log(data.value?.message);
+  if (error.value) {
+    console.error(error.value);
+    return;
+  }
+
+  if (!data.value) {
+    console.error('data is null');
+    return;
+  }
+
+  authStore.setAccessToken(data.value.accessToken);
+
+  router.push('/');
 };
 </script>

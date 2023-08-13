@@ -11,7 +11,12 @@
     </NuxtLink>
     <div class="flex items-center gap-2">
       <IssueTab v-if="tab" />
-      <Icon size="1.75rem" name="mdi:logout" />
+      <div
+        @click="handleLogout"
+        class="cursor-pointer transition-all hover:text-gray-300"
+      >
+        <Icon size="1.75rem" name="mdi:logout" />
+      </div>
     </div>
   </div>
 </template>
@@ -20,7 +25,10 @@
 import { storeToRefs } from 'pinia';
 
 const route = useRoute();
+const router = useRouter();
 const tabStore = useTabStore();
+const authStore = useAuthStore();
+
 const { tab } = storeToRefs(tabStore);
 
 onMounted(() => {
@@ -30,4 +38,15 @@ onMounted(() => {
 watch(route, (newRoute) => {
   tabStore.setTabByPath(newRoute.fullPath);
 });
+
+const handleLogout = async () => {
+  authStore.clearAccessToken();
+  const { error } = await useFetch('/api/logout', { method: 'DELETE' });
+
+  if (error.value) {
+    console.error(error.value);
+  }
+
+  router.push('/login');
+};
 </script>

@@ -1,5 +1,5 @@
 import { zh_TW, fakerZH_TW, fa } from '@faker-js/faker';
-import { User } from '@/types/user';
+import { Role, Roles, User } from '@/types/user';
 import { Base } from '@/types/base';
 import { BaseIssue, Issue } from '@/types/issue';
 import {
@@ -11,7 +11,7 @@ import {
 import { Character } from '@/types/character';
 import { Case } from '@/types/case';
 import { Keyword } from '@/types/keyword';
-import { Schema } from 'mongoose';
+import { Schema, Types } from 'mongoose';
 
 export const getUser = (): User => {
   const updatedAt = fakerZH_TW.date.recent();
@@ -22,8 +22,8 @@ export const getUser = (): User => {
     updatedAt: updatedAt,
     name: fakerZH_TW.person.fullName(),
     uid: fakerZH_TW.database.mongodbObjectId(),
-    isAdmin: false,
-    issues: [new Schema.ObjectId(fakerZH_TW.database.mongodbObjectId())],
+    role: fakerZH_TW.helpers.arrayElement(Object.keys(Roles) as Role[]),
+    issues: [],
   };
 };
 
