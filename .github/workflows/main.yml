@@ -67,7 +67,7 @@ jobs:
             mkdir src || true
             cd src || exit 1
 
-            export IMAGE_NAME=${{ env.IMAGE_NAME }}
+            export IMAGE_NAME=${{ env.IMAGE_NAME }}:main
             export MONGO_USER=${{ env.MONGO_USER }}
             export MONGO_DB=${{ env.MONGO_DB }}
             export MONGO_PASSWORD=${{ env.MONGO_PASSWORD }}
