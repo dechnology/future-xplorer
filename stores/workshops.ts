@@ -1,10 +1,11 @@
-import { BaseWorkshop } from '@/types/workshop';
+import { Workshop } from '@/types/workshop';
 
 export const useWorkshopsStore = definePiniaStore('workshops', () => {
-  const workshops = ref<BaseWorkshop[] | null>(null);
+  const workshops = ref<Workshop[] | null>(null);
 
-  async function init() {
-    workshops.value = await fetchAllWorkshops();
+  async function init(token: string) {
+    workshops.value = await fetchAllWorkshops(token);
+    console.log(workshops.value);
   }
 
   return { workshops, init };

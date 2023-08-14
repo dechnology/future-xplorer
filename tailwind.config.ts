@@ -23,10 +23,10 @@ module.exports = {
           800: '#2d451c',
           900: '#16230e',
         },
-        'vtd-primary': colors.sky, // Light mode Datepicker color
-        'vtd-secondary': colors.gray, // Dark mode Datepicker color
+        'vtd-primary': colors.sky,
+        'vtd-secondary': colors.white,
       },
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/forms')],
 };

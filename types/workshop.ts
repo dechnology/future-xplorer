@@ -1,6 +1,4 @@
 import { Base } from '@/types/base';
-import { User } from '@/types/user';
-import { BaseIssue } from '@/types/issue';
 
 export const ElementCategories = {
   object: 1,
@@ -16,18 +14,31 @@ export interface WorkshopElement {
   readonly category: ElementCategory;
 }
 
-export interface NewWorkshop {
+export interface BaseWorkshop {
   name: string;
   description: string;
   startAt: Date;
   endAt: Date;
+}
 
+export interface Workshop extends Base, BaseWorkshop {
   elements: WorkshopElement[];
 }
 
-export type BaseWorkshop = Base & NewWorkshop;
-
-export interface Workshop extends BaseWorkshop {
-  users: User[];
-  issues: BaseIssue[];
+export interface ElementGroup {
+  object: string[];
+  environment: string[];
+  message: string[];
+  service: string[];
 }
+
+export interface BaseCardWorkshop
+  extends Omit<BaseWorkshop, 'startAt' | 'endAt'>,
+    ElementGroup {
+  dateValue: {
+    start: string;
+    end: string;
+  };
+}
+
+export type CardWorkshop = BaseCardWorkshop & Base;

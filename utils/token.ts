@@ -1,5 +1,3 @@
-import { FetchError } from 'ofetch';
-
 export const refreshAccessToken = async () => {
   const { data: accessToken, error } = await useFetch('/api/refresh');
 
@@ -8,7 +6,7 @@ export const refreshAccessToken = async () => {
   }
 
   if (!accessToken.value) {
-    throw new FetchError('no token were responded');
+    throw new Error('no token were responded');
   }
 
   return accessToken.value;

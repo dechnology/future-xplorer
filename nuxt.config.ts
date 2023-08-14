@@ -21,7 +21,11 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
-    mongoConnectionStr: process.env.MONGO_CONNECTION_STR,
+    mongoUser: process.env.MONGO_USER,
+    mongoPassword: process.env.MONGO_PASSWORD,
+    mongoHost: process.env.MONGO_HOST,
+    mongoPort: process.env.MONGO_PORT,
+    mongoDb: process.env.MONGO_DB,
     jwtSecretKey: process.env.JWT_SECRET_KEY,
   },
   imports: { dirs: ['stores'] },

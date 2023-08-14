@@ -29,11 +29,14 @@ export const useAuth = async () => {
   const { user, accessToken } = storeToRefs(store);
   const error = ref<Error | null>(null);
 
-  try {
-    if (needRefresh(accessToken.value)) {
-      accessToken.value = await refreshAccessToken();
-    }
+  const getTokenSilently = async () => {
+    return needRefresh(accessToken.value)
+      ? await refreshAccessToken()
+      : accessToken.value;
+  };
 
+  try {
+    accessToken.value = await getTokenSilently();
     if (!user.value) {
       user.value = await fetchUser();
     }
@@ -45,5 +48,5 @@ export const useAuth = async () => {
     }
   }
 
-  return { user, error };
+  return { user, error, getTokenSilently };
 };

@@ -1,4 +1,3 @@
-import { FetchError } from 'ofetch';
 import { storeToRefs } from 'pinia';
 
 export const fetchUser = async () => {
@@ -6,7 +5,7 @@ export const fetchUser = async () => {
   const { accessToken } = storeToRefs(store);
 
   if (!accessToken.value) {
-    throw new FetchError('No access token');
+    throw new Error('No access token');
   }
 
   const { data, error } = await useFetch('/api/user', {
@@ -18,7 +17,7 @@ export const fetchUser = async () => {
   }
 
   if (!data.value) {
-    throw new FetchError('User data is null');
+    throw new Error('user is null');
   }
 
   return deserializeUser(data.value);

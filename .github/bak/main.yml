@@ -14,9 +14,6 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ghcr.io/${{ github.repository }}
-  MONGO_USER: hindenburg
-  MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
-  MONGO_DB: future-xplorer
 
 jobs:
   build-and-push-images:
@@ -63,21 +60,9 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: 22
           script: |
-            cd ~
-            mkdir src || true
-            cd src || exit 1
+            docker stop fx-ci || true
+            docker rm fx-ci || true
+            docker rmi ${{ env.IMAGE_NAME }}:main || true
 
-            export IMAGE_NAME=${{ env.IMAGE_NAME }}
-            export MONGO_USER=${{ env.MONGO_USER }}
-            export MONGO_DB=${{ env.MONGO_DB }}
-            export MONGO_PASSWORD=${{ env.MONGO_PASSWORD }}
-
-            git clone https://github.com/eesoymilk/future-xplorer.git || true
-            cd future-xplorer || exit 1
-            git reset --hard
-            git pull --force
-
-            docker compose down
-            docker system prune -f
-            docker compose pull
-            docker compose up -d
+            docker pull ${{ env.IMAGE_NAME }}:main
+            docker run -p 3000:3000 -d --name fx-ci ${{ env.IMAGE_NAME }}:main

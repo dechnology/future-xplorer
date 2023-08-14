@@ -5,6 +5,11 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     return;
   }
 
+  if (to.fullPath === '/test') {
+    console.log('skip test route');
+    return;
+  }
+
   const refreshToken = useCookie('refresh_token');
 
   if (!refreshToken.value) {
