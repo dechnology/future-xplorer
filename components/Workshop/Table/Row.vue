@@ -7,13 +7,13 @@
     </td>
     <td class="py-6">
       <div class="flex items-center justify-center">
-        {{ formatDate(workshop.startAt, 'yyyy/MM/dd') }} -
-        {{ formatDate(workshop.endAt, 'yyyy/MM/dd') }}
+        {{ workshop.dateValue.start }} -
+        {{ workshop.dateValue.end }}
       </div>
     </td>
     <td class="py-6">
       <div class="flex items-center justify-center">
-        {{ workshop.creatorId }}
+        {{ workshop.creator.name }}
       </div>
     </td>
     <td class="py-6">
@@ -30,9 +30,9 @@
 </template>
 
 <script setup lang="ts">
-import { BaseWorkshop, Workshop } from '@/types/workshop';
+import { Workshop } from '@/types/workshop';
 interface Props {
-  workshop: Workshop | BaseWorkshop;
+  workshop: Workshop;
 }
 defineProps<Props>();
 </script>

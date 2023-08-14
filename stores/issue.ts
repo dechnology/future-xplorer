@@ -1,5 +1,5 @@
 import { Character } from 'types/character';
-import { BaseWorkshop, Workshop, WorkshopElement } from '@/types/workshop';
+import { Workshop } from '@/types/workshop';
 import { Issue } from '@/types/issue';
 import { Case } from '@/types/case';
 import { Keyword } from '@/types/keyword';
@@ -24,12 +24,11 @@ export const useIssueStore = definePiniaStore('issue', () => {
     issue.value.keywords[idx] = { ...k };
   }
 
-  async function init(workshopId: string, issueId: string) {
-    const data = await fetchIssueById(workshopId, issueId, {
-      withWorkshop: true,
-    });
+  async function init(token: string, workshopId: string, issueId: string) {
+    const data = await fetchWorkshop(token, workshopId);
+    const data = await fetchWorkshopIssue(token, workshopId, issueId);
 
-    workshop.value = data.workshop as BaseWorkshop;
+    workshop.value = data.workshop;
     issue.value = data.issue;
   }
 

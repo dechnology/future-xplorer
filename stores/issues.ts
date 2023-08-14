@@ -3,13 +3,17 @@ import { BaseIssue } from '@/types/issue';
 
 export const useIssuesStore = definePiniaStore('issues', () => {
   const workshop = ref<Workshop | null>(null);
-  const issues = ref<BaseIssue[] | null>(null);
+  const issues = ref<BaseIssue[]>([]);
 
-  async function init(workshopId: string) {
-    const data = await fetchWorkshopById(workshopId);
+  async function init(token: string, workshopId: string) {
+    const workshopData = await fetchWorkshop(token, workshopId);
+    const issuesData = await fetchWorkshopIssues(token, workshopId);
 
-    workshop.value = data.workshop;
-    issues.value = data.workshop.issues;
+    workshop.value = workshopData.workshop;
+    issues.value = issuesData.issues;
+
+    console.log('workshop: ', workshop.value);
+    console.log('issues: ', issues.value);
   }
 
   return { workshop, issues, init };

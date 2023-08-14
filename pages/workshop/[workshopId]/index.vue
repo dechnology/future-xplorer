@@ -13,5 +13,7 @@
 <script setup lang="ts">
 const route = useRoute();
 const store = useIssuesStore();
-await store.init(route.params.workshopId as string);
+const { getTokenSilently } = await useAuth();
+const token = await getTokenSilently();
+await store.init(token, route.params.workshopId as string);
 </script>

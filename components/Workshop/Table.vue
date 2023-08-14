@@ -20,7 +20,7 @@
           @click="() => (state = CardStates.New)"
           class="cursor-pointer border-b border-solid border-gray-300 transition-all ease-in-out"
           :class="[
-            activeWorkshop === null
+            activeId === null
               ? 'bg-gray-200'
               : 'bg-white hover:bg-gray-100 hover:text-gray-500',
           ]"
@@ -33,11 +33,11 @@
         </tr>
         <WorkshopTableRow
           v-for="workshop in workshops"
-          :key="workshop.id"
-          @dblclick="() => $router.push(`/workshop/${workshop?.id}`)"
+          :key="workshop._id"
+          @dblclick="() => $router.push(`/workshop/${workshop._id}`)"
           @click="
             () => {
-              cardStore.setActiveWorkshop(workshop);
+              cardStore.setActiveId(workshop._id);
               cardStore.setCurrentWorkshop(workshop);
               state = CardStates.Detail;
             }
@@ -45,7 +45,7 @@
           :workshop="workshop"
           class="= cursor-pointer border-b border-solid border-gray-300 transition-all"
           :class="[
-            activeWorkshop?.id === workshop.id
+            activeId === workshop._id
               ? 'bg-gray-200'
               : 'bg-white hover:bg-gray-100',
           ]"
@@ -62,6 +62,6 @@ import { CardStates } from '@/types/cardState';
 const store = useWorkshopsStore();
 const cardStore = useWorkshopCardStore();
 const { workshops } = storeToRefs(store);
-const { activeWorkshop, state } = storeToRefs(cardStore);
+const { activeId, state } = storeToRefs(cardStore);
 const tableHeaders = ['名稱', '工作坊時間', '建立者', '建立日期', '更新日期'];
 </script>

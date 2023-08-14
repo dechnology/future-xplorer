@@ -2,16 +2,11 @@ import { zh_TW, fakerZH_TW, fa } from '@faker-js/faker';
 import { Role, Roles, User } from '@/types/user';
 import { Base } from '@/types/base';
 import { BaseIssue, Issue } from '@/types/issue';
-import {
-  BaseWorkshop,
-  ElementCategories,
-  Workshop,
-  WorkshopElement,
-} from '@/types/workshop';
+import { Workshop } from '@/types/workshop';
 import { Character } from '@/types/character';
 import { Case } from '@/types/case';
 import { Keyword } from '@/types/keyword';
-import { Schema, Types } from 'mongoose';
+import { format } from 'date-fns';
 
 export const getUser = (): User => {
   const updatedAt = fakerZH_TW.date.recent();
@@ -37,43 +32,9 @@ const getBase = (): Base => {
     id: fakerZH_TW.database.mongodbObjectId(),
     createdAt: createdAt,
     updatedAt: updatedAt,
-    creatorId: fakerZH_TW.database.mongodbObjectId(),
-    creator: getUser(),
+    creator: fakerZH_TW.database.mongodbObjectId(),
   };
 };
-
-export const getWorkshopElement = (): WorkshopElement => ({
-  ...getBase(),
-  name: fakerZH_TW.lorem.word(),
-  category: fakerZH_TW.helpers.arrayElement([
-    'object',
-    'environment',
-    'message',
-    'service',
-  ]),
-});
-
-export const getWorkshopElements = (n: number): WorkshopElement[] =>
-  Array.from({ length: n }, () => getWorkshopElement()).sort(
-    (a, b) => ElementCategories[a.category] - ElementCategories[b.category]
-  );
-
-export const getBaseWorkshop = (): BaseWorkshop => {
-  const base = getBase();
-  const startAt = fakerZH_TW.date.soon({ refDate: base.updatedAt });
-  const endAt = fakerZH_TW.date.future({ refDate: startAt });
-  return {
-    ...base,
-    name: fakerZH_TW.lorem.word(),
-    description: fakerZH_TW.lorem.paragraph(),
-    startAt: startAt,
-    endAt: endAt,
-    elements: getWorkshopElements(10),
-  };
-};
-
-export const getBaseWorkshops = (n: number): BaseWorkshop[] =>
-  Array.from({ length: n }, () => getBaseWorkshop());
 
 export const getWorkshop = (): Workshop => {
   const base = getBase();
@@ -83,11 +44,14 @@ export const getWorkshop = (): Workshop => {
     ...base,
     name: fakerZH_TW.lorem.word(),
     description: fakerZH_TW.lorem.paragraph(),
-    startAt: startAt,
-    endAt: endAt,
-    elements: getWorkshopElements(10),
-    issues: getIssues(10),
-    users: getUsers(10),
+    dateValue: {
+      start: format(startAt, 'yyyy/MM/dd'),
+      end: format(startAt, 'yyyy/MM/dd'),
+    },
+    objects: [],
+    environments: [],
+    messages: [],
+    services: [],
   };
 };
 

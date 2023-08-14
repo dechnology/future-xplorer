@@ -13,7 +13,7 @@ export interface NewUser {
   uid: string;
   name: string;
   role: Role;
-  issues: (Schema.Types.ObjectId | BaseIssue | string)[];
+  issues: string[];
 }
 
-export type User = Omit<Base, 'creatorId' | 'creator'> & NewUser;
+export type User = Omit<Base, 'creator'> & NewUser;
