@@ -1,19 +1,19 @@
 <template>
   <div class="relative flex items-center justify-between">
     <CardButton
-      @click="handleRemoveWorkshopClick"
       class="h-12 w-28 rounded-lg bg-red-400 text-white hover:bg-red-500"
       :icon="{ name: 'mdi:delete', size: '3rem' }"
       body="刪除"
-    />
-    <CardButton
-      class="h-12 w-28 rounded-lg bg-blue-400 text-white hover:bg-blue-500"
-      :icon="{ name: 'mdi:play', size: '3rem' }"
-      body="開始"
       type="submit"
     />
     <CardButton
-      @click="handleEditWorkshopClick"
+      @click="handleStartClick"
+      class="h-12 w-28 rounded-lg bg-blue-400 text-white hover:bg-blue-500"
+      :icon="{ name: 'mdi:play', size: '3rem' }"
+      body="開始"
+    />
+    <CardButton
+      @click="handleEditClick"
       class="h-12 w-28 rounded-lg bg-gray-400 text-white hover:bg-gray-500"
       :icon="{ name: 'mdi:application-edit', size: '3rem' }"
       body="編輯"
@@ -25,15 +25,15 @@
 import { storeToRefs } from 'pinia';
 import { CardStates } from '@/types/cardState';
 
+const router = useRouter();
 const store = useWorkshopCardStore();
-const { currentWorkshop, state } = storeToRefs(store);
+const { currentWorkshop, activeId, state } = storeToRefs(store);
 
-const handleRemoveWorkshopClick = (e: Event) => {
-  console.log(currentWorkshop.value);
-  // TODO
+const handleStartClick = (e: Event) => {
+  router.push(`/workshop/${activeId.value}`);
 };
 
-const handleEditWorkshopClick = (e: Event) => {
+const handleEditClick = (e: Event) => {
   console.log(currentWorkshop.value);
   state.value = CardStates.Editing;
 };

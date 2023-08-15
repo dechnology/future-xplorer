@@ -28,11 +28,13 @@
     "mongoose": "^7.4.2",
     "nuxt": "^3.6.5",
     "nuxt-icon": "^0.4.2",
+    "openai": "^3.3.0",
     "pinia": "^2.1.6",
     "prettier": "^3.0.0",
     "prettier-plugin-tailwindcss": "^0.4.1",
     "tailwind-merge": "^1.14.0",
     "typescript": "^5.1.6",
-    "vue-tailwind-datepicker": "^1.4.5"
+    "vue-tailwind-datepicker": "^1.4.5",
+    "zod": "^3.22.0"
   }
 }

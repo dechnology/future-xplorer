@@ -1,45 +1,44 @@
-import { Character } from 'types/character';
+import { Persona } from '@/types/persona';
 import { Workshop } from '@/types/workshop';
 import { Issue } from '@/types/issue';
 import { Case } from '@/types/case';
 import { Keyword } from '@/types/keyword';
 
 export const useIssueStore = definePiniaStore('issue', () => {
-  const workshop = ref<BaseWorkshop | null>(null);
+  const workshop = ref<Workshop | null>(null);
   const issue = ref<Issue | null>(null);
 
-  const elements = computed(
-    () => workshop.value?.elements as WorkshopElement[]
+  const personas = computed(
+    () => issue.value && (issue.value.personas as Persona[])
   );
-  const characters = computed(() => issue.value?.charaters as Character[]);
-  const cases = computed(() => issue.value?.cases as Case[]);
-  const keywords = computed(() => issue.value?.keywords as Keyword[]);
-
-  function updateKeywordById(id: string, k: Keyword) {
-    if (!(issue.value && issue.value.keywords)) {
-      return;
-    }
-
-    const idx = issue.value?.keywords.findIndex((k) => k.id === id);
-    issue.value.keywords[idx] = { ...k };
-  }
 
   async function init(token: string, workshopId: string, issueId: string) {
-    const data = await fetchWorkshop(token, workshopId);
-    const data = await fetchWorkshopIssue(token, workshopId, issueId);
+    const results = await Promise.allSettled([
+      fetchWorkshop(token, workshopId),
+      fetchWorkshopIssue(token, workshopId, issueId),
+    ]);
 
-    workshop.value = data.workshop;
-    issue.value = data.issue;
+    const workshopResult = results[0];
+    if (workshopResult.status === 'fulfilled') {
+      workshop.value = workshopResult.value.workshop;
+    } else {
+      console.error('Error fetching workshop:', workshopResult.reason);
+      // Handle the workshop fetch error
+    }
+
+    const issueResult = results[1];
+    if (issueResult.status === 'fulfilled') {
+      issue.value = issueResult.value.issue;
+    } else {
+      console.error('Error fetching issues:', issueResult.reason);
+      // Handle the issues fetch error
+    }
   }
 
   return {
     workshop,
-    elements,
     issue,
-    characters,
-    cases,
-    keywords,
+    personas,
     init,
-    updateKeywordById,
   };
 });

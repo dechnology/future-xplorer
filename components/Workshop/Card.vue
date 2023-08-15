@@ -7,7 +7,8 @@
       <h3 class="text-2xl font-medium text-blue-950">
         工作坊{{ state.formTitle }}
       </h3>
-      <div>
+      <div class="text-sm text-gray-500">
+        <span>建立者：</span>
         <span v-if="'creator' in currentWorkshop">
           {{ currentWorkshop.creator.name }}
         </span>
@@ -70,32 +71,68 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { CardStates } from '@/types/cardState';
+import { User } from '@/types/user';
 
+const route = useRoute();
 const router = useRouter();
+
+const breadcrumbStore = useBreadcrumbStore();
 const workshopsStore = useWorkshopsStore();
 const cardStore = useWorkshopCardStore();
 const { user, getTokenSilently } = await useAuth();
 const { activeId, currentWorkshop, state } = storeToRefs(cardStore);
 
+breadcrumbStore.clearWorkshop();
+breadcrumbStore.clearIssue();
+
 const handleSubmit = async () => {
-  if (state.value.name === CardStates.Detail.name) {
-    router.push(`/workshop/${activeId.value}`);
-    return;
-  }
+  try {
+    const token = await getTokenSilently();
 
-  const token = await getTokenSilently();
+    switch (state.value.name) {
+      case CardStates.New.name:
+        const createdWorkshop = await cardStore.submit(token);
 
-  if (!token) {
-    console.error('no token');
-    return;
-  }
+        createdWorkshop.creator = user.value as User;
+        console.log('created workshop: ', createdWorkshop);
+        workshopsStore.upsert(createdWorkshop);
 
-  if (state.value.name === CardStates.New.name) {
-    const createdWorkshop = await cardStore.submitWorkshop(token);
-    console.log('created workshop: ', createdWorkshop);
-    workshopsStore.push(createdWorkshop);
-  } else {
-    await cardStore.editWorkshop(token);
+        cardStore.setActiveId(createdWorkshop._id);
+        cardStore.setCurrentWorkshop(createdWorkshop);
+        state.value = CardStates.Detail;
+        break;
+
+      case CardStates.Detail.name:
+        if (!activeId.value) {
+          throw new Error('No active workshop to remove');
+        }
+
+        await cardStore.remove(token, activeId.value);
+        workshopsStore.remove(activeId.value);
+        state.value = CardStates.New;
+        console.log('workshop removed');
+        break;
+
+      case CardStates.Editing.name:
+        if (!activeId.value) {
+          throw new Error('No active workshop to edit');
+        }
+
+        const editedWorkshop = await cardStore.edit(token, activeId.value);
+        editedWorkshop.creator = user.value as User;
+        console.log('edited workshop: ', editedWorkshop);
+        workshopsStore.upsert(editedWorkshop);
+
+        cardStore.setActiveId(editedWorkshop._id);
+        cardStore.setCurrentWorkshop(editedWorkshop);
+        state.value = CardStates.Detail;
+        break;
+
+      default:
+        throw new Error(`Unknown state: ${state.value.name}`);
+    }
+  } catch (e) {
+    console.error(e);
   }
 };
 </script>

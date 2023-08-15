@@ -17,7 +17,7 @@ const schema = new Schema<Workshop>(
     messages: [{ type: String, required: true }],
     services: [{ type: String, required: true }],
   },
-  { timestamps: true, strictQuery: true, id: true, _id: true }
+  { timestamps: true, strictQuery: true }
 );
 
 export default mongoose.model<Workshop>('Workshop', schema, 'workshop');

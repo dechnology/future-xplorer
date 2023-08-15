@@ -3,7 +3,7 @@ import { Role, Roles, User } from '@/types/user';
 import { Base } from '@/types/base';
 import { BaseIssue, Issue } from '@/types/issue';
 import { Workshop } from '@/types/workshop';
-import { Character } from '@/types/character';
+import { Character } from '../../types/persona';
 import { Case } from '@/types/case';
 import { Keyword } from '@/types/keyword';
 import { format } from 'date-fns';

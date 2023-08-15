@@ -11,4 +11,11 @@ const schema = new Schema<Issue>(
   { timestamps: true, strictQuery: true, id: true, _id: true }
 );
 
+schema.virtual('personas', {
+  ref: 'Persona',
+  localField: '_id',
+  foreignField: 'issue',
+  justOne: false,
+});
+
 export default mongoose.model<Issue>('Issue', schema, 'issue');

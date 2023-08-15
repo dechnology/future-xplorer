@@ -3,7 +3,7 @@ import { Base } from '@/types/base';
 import { User } from '@/types/user';
 import { Workshop } from '@/types/workshop';
 import { BaseIssue, Issue } from '@/types/issue';
-import { Character } from '@/types/character';
+import { Character } from '../types/persona';
 import { Case } from '@/types/case';
 import { Keyword } from '@/types/keyword';
 
@@ -26,23 +26,31 @@ export const deserializeUser = (serialized: Serialize<User>): User => ({
   updatedAt: convertDateStr(serialized.updatedAt),
 });
 
+export const deserializeBase = baseDeserializerFactory<Base>();
 export const deserializeWorkshop = baseDeserializerFactory<Workshop>();
-export const deserializeBaseIssue = baseDeserializerFactory<BaseIssue>();
-
 export const deserializeCharacter = baseDeserializerFactory<Character>();
-export const deserializeCase = baseDeserializerFactory<Case>();
-export const deserializeKeyword = baseDeserializerFactory<Keyword>();
 
-// export const deserializeIssue = (serialized: Serialize<Issue>): Issue => ({
-//   ...serialized,
-//   createdAt: convertDateStr(serialized.createdAt),
-//   updatedAt: convertDateStr(serialized.updatedAt),
-//   creator:
-//     typeof serialized.creator === 'string'
-//       ? serialized.creator
-//       : deserializeUser(serialized.creator),
-//   users: serialized.users.map((user) => deserializeUser(user)),
-//   charaters: serialized.charaters.map((c) => deserializeCharacter(c)),
-//   cases: serialized.cases.map((c) => deserializeCase(c)),
-//   keywords: serialized.keywords.map((k) => deserializeKeyword(k)),
-// });
+// export const deserializeCase = baseDeserializerFactory<Case>();
+// export const deserializeKeyword = baseDeserializerFactory<Keyword>();
+
+export const deserializeBaseIssue = (
+  serialized: Serialize<BaseIssue>
+): BaseIssue => {
+  const { title, description, workshop, ...serializedBase } = serialized;
+  return {
+    ...deserializeBase(serializedBase),
+    title,
+    description,
+    workshop:
+      typeof workshop === 'string' ? workshop : deserializeWorkshop(workshop),
+  };
+};
+
+export const deserializeIssue = (serialized: Serialize<Issue>): Issue => {
+  const { users, charaters, ...serializedBaseIssue } = serialized;
+  return {
+    ...deserializeBaseIssue(serializedBaseIssue),
+    users: users && users.map((u) => deserializeUser(u)),
+    charaters: charaters && charaters.map((c) => deserializeCharacter(c)),
+  };
+};

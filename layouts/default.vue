@@ -5,7 +5,7 @@
     class="flex items-stretch justify-center gap-8 overflow-hidden bg-[#F7F8F9] px-14 pb-8 pt-16"
   >
     <div class="flex basis-1/3 flex-col gap-5 overflow-hidden">
-      <Breadcrumb />
+      <Breadcrumbs />
       <slot name="detail-pane" class="grow" />
     </div>
     <div class="basis-2/3 overflow-hidden">

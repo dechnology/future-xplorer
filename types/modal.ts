@@ -3,4 +3,5 @@ export interface ModalConent {
   description?: string;
   lines?: string[];
   footnotes?: string[];
+  image?: string;
 }

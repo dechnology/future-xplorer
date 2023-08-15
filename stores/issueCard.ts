@@ -1,47 +1,63 @@
-import { BaseIssue, Issue, NewIssue } from '@/types/issue';
+import { BaseIssue, NewIssue, NewIssueSchema } from '@/types/issue';
 import { CardState, CardStates } from '@/types/cardState';
 
-const newIssue = {
+const getNewIssue = (): NewIssue => ({
   title: '',
   description: '',
-} as NewIssue;
+});
 
 export const useIssueCardStore = definePiniaStore('issue card', () => {
-  const activeIssue = ref<Issue | BaseIssue | null>(null);
-  const currentIssue = ref<Issue | BaseIssue | NewIssue>(newIssue);
+  const currentIssue = ref<BaseIssue | NewIssue>(getNewIssue());
+  const activeId = ref<string | null>(null);
   const state = ref<CardState>(CardStates.New);
 
   function clearCurrentIssue() {
-    currentIssue.value = { ...newIssue };
+    currentIssue.value = getNewIssue();
   }
 
-  function clearActiveIssue() {
-    activeIssue.value = null;
+  function clearActiveId() {
+    activeId.value = null;
   }
 
-  function setCurrentIssue(w: Issue | BaseIssue) {
-    currentIssue.value = { ...w };
+  function setCurrentIssue(i: BaseIssue) {
+    currentIssue.value = { ...i };
   }
 
-  function setActiveIssue(w: Issue | BaseIssue) {
-    activeIssue.value = { ...w };
+  function setActiveId(id: string) {
+    activeId.value = id;
   }
+
+  async function submit(token: string, workshopId: string): Promise<BaseIssue> {
+    const validationResult = NewIssueSchema.parse(currentIssue.value);
+
+    console.log('Creating: ', validationResult);
+    const createdIssue = await createIssue(token, workshopId, {
+      ...validationResult,
+    });
+
+    return createdIssue;
+  }
+
+  async function edit(token: string) {}
 
   watch(state, (newState) => {
     if (newState.name === CardStates.New.name) {
-      clearActiveIssue();
+      clearActiveId();
       clearCurrentIssue();
     }
   });
 
   return {
-    activeIssue,
+    activeId,
     currentIssue,
     state,
 
     clearCurrentIssue,
     setCurrentIssue,
-    clearActiveIssue,
-    setActiveIssue,
+    clearActiveId,
+    setActiveId,
+
+    submit,
+    edit,
   };
 });

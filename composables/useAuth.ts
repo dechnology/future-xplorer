@@ -29,10 +29,16 @@ export const useAuth = async () => {
   const { user, accessToken } = storeToRefs(store);
   const error = ref<Error | null>(null);
 
-  const getTokenSilently = async () => {
-    return needRefresh(accessToken.value)
-      ? await refreshAccessToken()
-      : accessToken.value;
+  const getTokenSilently = async (): Promise<string> => {
+    if (needRefresh(accessToken.value)) {
+      accessToken.value = await refreshAccessToken();
+    }
+
+    if (!accessToken.value) {
+      throw Error('Unable to get token');
+    }
+
+    return accessToken.value;
   };
 
   try {

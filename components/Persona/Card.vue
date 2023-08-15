@@ -4,16 +4,18 @@
     class="relative flex flex-col gap-10 rounded-md bg-white p-8 shadow-2xl"
   >
     <div class="flex items-end gap-4">
-      <h3 class="text-2xl font-medium text-blue-950">{{ state.formTitle }}</h3>
+      <h3 class="text-2xl font-medium text-blue-950">
+        角色{{ state.formTitle }}
+      </h3>
       <div class="text-sm text-gray-500">
         <span>建立者：</span>
-        <span v-if="state.name === CardStates.New.name"> You </span>
-        <span
-          v-else-if="'creator' in currentCharacter && currentCharacter.creator"
-        >
-          {{ currentCharacter.creator.name }}
+        <span v-if="'creator' in currentPersona">
+          {{ currentPersona.creator.name }}
         </span>
-        <span v-else>Unknown</span>
+        <span v-else-if="state.name === CardStates.New.name && user">
+          {{ user.name }}
+        </span>
+        <span v-else> Unknown </span>
       </div>
     </div>
     <div class="grid grid-cols-2 gap-x-5 gap-y-7 rounded-lg">
@@ -21,28 +23,28 @@
         title="角色"
         placeholder="角色名稱"
         :disabled="disabled"
-        :select-options="characterOptions.role"
-        v-model="currentCharacter.role"
+        :select-options="[...personaPresets.role]"
+        v-model="currentPersona.role"
       />
       <InputText
         title="姓名"
         placeholder="姓名"
         :disabled="disabled"
-        v-model="currentCharacter.name"
+        v-model="currentPersona.name"
       />
       <InputText
         title="年齡"
         placeholder="年齡"
         :disabled="disabled"
-        :select-options="characterOptions.age"
-        v-model="currentCharacter.age"
+        :select-options="[...personaPresets.age]"
+        v-model="currentPersona.age"
       />
       <InputText
         title="性別"
         placeholder="性別"
         :disabled="disabled"
-        :select-options="characterOptions.gender"
-        v-model="currentCharacter.gender"
+        :select-options="[...personaPresets.gender]"
+        v-model="currentPersona.gender"
         select-only
       />
     </div>
@@ -50,24 +52,20 @@
       title="特徵"
       placeholder="特徵"
       :disabled="disabled"
-      :select-options="characterOptions.trait"
-      v-model="currentCharacter.trait"
+      :select-options="[...personaPresets.trait]"
+      v-model="currentPersona.trait"
     />
     <InputTextarea
       title="其他"
       placeholder="其他"
       :disabled="disabled"
-      v-model="currentCharacter.other"
+      v-model="currentPersona.other"
     />
     <div
-      v-if="currentCharacter.imageUrl"
+      v-if="currentPersona.image"
       class="flex min-h-[296px] overflow-hidden rounded-lg"
     >
-      <img
-        class="w-full object-contain"
-        :src="currentCharacter.imageUrl"
-        alt=""
-      />
+      <img class="w-full object-contain" :src="currentPersona.image" alt="" />
     </div>
     <Card
       v-else
@@ -82,19 +80,19 @@
       body="AI生成圖片"
     />
     <div
-      v-if="'createdAt' in currentCharacter && 'updatedAt' in currentCharacter"
+      v-if="'createdAt' in currentPersona && 'updatedAt' in currentPersona"
       class="flex items-center justify-center gap-2"
     >
-      <div v-if="currentCharacter.createdAt">
-        建立時間：{{ format(currentCharacter.createdAt, 'yyyy-MM-dd') }}
+      <div v-if="currentPersona.createdAt">
+        建立時間：{{ format(currentPersona.createdAt, 'yyyy-MM-dd') }}
       </div>
-      <div v-if="currentCharacter.updatedAt">
-        建立時間：{{ format(currentCharacter.updatedAt, 'yyyy-MM-dd') }}
+      <div v-if="currentPersona.updatedAt">
+        建立時間：{{ format(currentPersona.updatedAt, 'yyyy-MM-dd') }}
       </div>
     </div>
-    <CharacterActionsNew v-if="state.name === CardStates.New.name" />
-    <CharacterActionsDetail v-if="state.name === CardStates.Detail.name" />
-    <CharacterActionsEditing v-if="state.name === CardStates.Editing.name" />
+    <PersonaActionsNew v-if="state.name === CardStates.New.name" />
+    <PersonaActionsDetail v-if="state.name === CardStates.Detail.name" />
+    <PersonaActionsEditing v-if="state.name === CardStates.Editing.name" />
     <Icon
       v-if="state.name === CardStates.Detail.name"
       @click="() => modalStore.show()"
@@ -108,24 +106,13 @@
 <script setup lang="ts">
 import { format } from 'date-fns';
 import { storeToRefs } from 'pinia';
+import { personaPresets } from '@/types/persona';
 import { CardStates } from '@/types/cardState';
 
-const characterOptions = {
-  role: ['教師', '學生', '媽媽', '爸爸'],
-  gender: ['男', '女'],
-  age: ['青少年', 'Z世代 (Gen Z)', '嬰兒'],
-  trait: [
-    '行為數位化',
-    '資訊素養高',
-    '環境意識高',
-    '習慣科技運用',
-    '需關注心理健康',
-  ],
-};
-
-const store = useCharacterCardStore();
+const store = usePersonaCardStore();
 const modalStore = useModalStore();
-const { currentCharacter, state } = storeToRefs(store);
+const { currentPersona, state } = storeToRefs(store);
+const { user, getTokenSilently } = await useAuth();
 
 const disabled = computed(() => state.value.name === CardStates.Detail.name);
 

@@ -1,13 +1,22 @@
 <template>
   <form
-    @submit="handleSubmit"
+    @submit.prevent="handleSubmit"
     class="relative flex flex-col gap-10 rounded-md bg-white p-8 shadow-2xl"
   >
     <div class="flex items-end gap-4">
-      <h3 class="text-2xl font-medium text-blue-950">{{ state.formTitle }}</h3>
-      <span v-if="'creatorId' in currentIssue" class="text-sm text-gray-500"
-        >建立者：{{ currentIssue.creatorId }}</span
-      >
+      <h3 class="text-2xl font-medium text-blue-950">
+        議題{{ state.formTitle }}
+      </h3>
+      <div class="text-sm text-gray-500">
+        <span>建立者：</span>
+        <span v-if="'creator' in currentIssue">
+          {{ currentIssue.creator.name }}
+        </span>
+        <span v-else-if="state.name === CardStates.New.name && user">
+          {{ user.name }}
+        </span>
+        <span v-else> Unknown </span>
+      </div>
     </div>
     <div class="flex flex-col gap-7 rounded-lg">
       <InputText
@@ -28,12 +37,8 @@
       v-if="'createdAt' in currentIssue && 'updatedAt' in currentIssue"
       class="flex items-center justify-center gap-2"
     >
-      <div v-if="currentIssue.createdAt">
-        建立時間：{{ format(currentIssue.createdAt, 'yyyy-MM-dd') }}
-      </div>
-      <div v-if="currentIssue.updatedAt">
-        建立時間：{{ format(currentIssue.updatedAt, 'yyyy-MM-dd') }}
-      </div>
+      <div>建立時間：{{ format(currentIssue.createdAt, 'yyyy-MM-dd') }}</div>
+      <div>建立時間：{{ format(currentIssue.updatedAt, 'yyyy-MM-dd') }}</div>
     </div>
     <IssueActionsNew v-if="state.name === CardStates.New.name" />
     <IssueActionsDetail v-if="state.name === CardStates.Detail.name" />
@@ -51,40 +56,46 @@
 <script setup lang="ts">
 import { format } from 'date-fns';
 import { storeToRefs } from 'pinia';
-import { twMerge, ClassNameValue } from 'tailwind-merge';
 import { CardStates } from '@/types/cardState';
+import { User } from '@/types/user';
 
 const route = useRoute();
 const router = useRouter();
+const workshopId = route.params.workshopId as string;
 
-const store = useIssueCardStore();
+const issuesStore = useIssuesStore();
+const cardStore = useIssueCardStore();
 const modalStore = useModalStore();
-const { currentIssue, state, activeIssue } = storeToRefs(store);
+const { user, getTokenSilently } = await useAuth();
+const { currentIssue, state, activeId } = storeToRefs(cardStore);
 
-const handleSubmit = (e: Event) => {
-  e.preventDefault();
-  switch (state.value.name) {
-    // TODO
-    case 'new':
-      console.log('submiting new...');
-      console.log(currentIssue.value);
+const handleSubmit = async (e: Event) => {
+  if (state.value.name === CardStates.Detail.name) {
+    router.push(
+      `${route.fullPath.replace(/\/+$/, '')}/issue/${activeId}/personas`
+    );
+    return;
+  }
 
-      break;
-    case 'detail':
-      console.log('submiting detail...');
+  try {
+    const token = await getTokenSilently();
 
-      router.push(
-        `${route.fullPath.replace(/\/+$/, '')}/issue/${activeIssue.value
-          ?.id}/characters`
-      );
-      break;
-    // TODO
-    case 'editing':
-      console.log('submiting editing...');
+    if (state.value.name === CardStates.New.name) {
+      const createdIssue = await cardStore.submit(token, workshopId);
+
+      createdIssue.creator = user.value as User;
+      issuesStore.push(createdIssue);
+      console.log('created issue: ', createdIssue);
+
+      cardStore.setActiveId(createdIssue._id);
+      cardStore.setCurrentIssue(createdIssue);
       state.value = CardStates.Detail;
-      break;
-    default:
-      throw Error('Unknown state');
+    } else {
+      await cardStore.edit(token);
+    }
+  } catch (e) {
+    // TODO: make helper for better UX
+    console.error(e);
   }
 };
 </script>

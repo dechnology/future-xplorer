@@ -27,6 +27,7 @@ export default defineNuxtConfig({
     mongoPort: process.env.MONGO_PORT,
     mongoDb: process.env.MONGO_DB,
     jwtSecretKey: process.env.JWT_SECRET_KEY,
+    openaiApiKey: process.env.OPENAI_API_KEY,
   },
   imports: { dirs: ['stores'] },
   devtools: { enabled: true },

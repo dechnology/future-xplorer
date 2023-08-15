@@ -1,4 +1,4 @@
-import { NewWorkshop, Workshop } from '@/types/workshop';
+import { NewWorkshopSchema, NewWorkshop, Workshop } from '@/types/workshop';
 import { CardState, CardStates } from '@/types/cardState';
 import { format } from 'date-fns';
 import { createWorkshop } from '@/utils/workshop';
@@ -43,12 +43,32 @@ export const useWorkshopCardStore = definePiniaStore('workshop card', () => {
     activeId.value = id;
   }
 
-  async function submitWorkshop(token: string): Promise<Workshop> {
-    console.log(currentWorkshop.value);
-    return await createWorkshop(token, { ...currentWorkshop.value });
+  async function submit(token: string): Promise<Workshop> {
+    const validationResult = NewWorkshopSchema.parse(currentWorkshop.value);
+
+    console.log('Creating: ', validationResult);
+    const createdWorkshop = await createWorkshop(token, {
+      ...currentWorkshop.value,
+    });
+
+    return createdWorkshop;
   }
 
-  async function editWorkshop(token: string) {}
+  async function edit(token: string, workshopId: string): Promise<Workshop> {
+    const validationResult = NewWorkshopSchema.parse(currentWorkshop.value);
+
+    console.log('Patch: ', validationResult);
+    const editedWorkshop = await updateWorkshop(token, workshopId, {
+      ...currentWorkshop.value,
+    });
+
+    return editedWorkshop;
+  }
+
+  async function remove(token: string, workshopId: string) {
+    const data = await deleteWorkshop(token, workshopId);
+    console.log(data);
+  }
 
   watch(state, (newState) => {
     if (newState.name === CardStates.New.name) {
@@ -67,7 +87,8 @@ export const useWorkshopCardStore = definePiniaStore('workshop card', () => {
     clearActiveId,
     setActiveId,
 
-    submitWorkshop,
-    editWorkshop,
+    submit,
+    edit,
+    remove,
   };
 });

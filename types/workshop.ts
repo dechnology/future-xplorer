@@ -1,19 +1,24 @@
 import { Base } from '@/types/base';
 import { User } from '@/types/user';
+import { z } from 'zod';
 
-export interface DateValue {
-  start: string;
-  end: string;
-}
+export const DataValueSchema = z.object({
+  start: z.string().trim().nonempty(),
+  end: z.string().trim().nonempty(),
+});
 
-export interface NewWorkshop {
-  name: string;
-  description: string;
-  dateValue: DateValue;
-  objects: string[];
-  environments: string[];
-  messages: string[];
-  services: string[];
-}
+export type DateValue = z.infer<typeof DataValueSchema>;
+
+export const NewWorkshopSchema = z.object({
+  name: z.string().trim().nonempty(),
+  description: z.string().trim().nonempty(),
+  dateValue: DataValueSchema,
+  objects: z.string().trim().nonempty().array().nonempty(),
+  environments: z.string().trim().nonempty().array().nonempty(),
+  messages: z.string().trim().nonempty().array().nonempty(),
+  services: z.string().trim().nonempty().array().nonempty(),
+});
+
+export type NewWorkshop = z.infer<typeof NewWorkshopSchema>;
 
 export type Workshop = Base & NewWorkshop;

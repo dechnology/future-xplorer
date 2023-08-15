@@ -19,16 +19,16 @@
 import { storeToRefs } from 'pinia';
 import { CardStates } from '@/types/cardState';
 
-const store = useCharacterCardStore();
-const { currentCharacter, state } = storeToRefs(store);
+const store = usePersonaCardStore();
+const { currentPersona, state } = storeToRefs(store);
 
 const handleRemoveClick = (e: Event) => {
-  console.log(currentCharacter.value);
+  console.log(currentPersona.value);
   // TODO
 };
 
 const handleEditClick = (e: Event) => {
-  console.log(currentCharacter.value);
+  console.log(currentPersona.value);
   state.value = CardStates.Editing;
 };
 </script>

@@ -1,7 +1,7 @@
 import { errors } from 'jose';
 import { NoTokenError } from '@/types/errors';
 import { User } from '@/types/user';
-import UserModel from '@/server/models/user';
+import { UserModel } from '@/server/models';
 
 export default defineEventHandler(async (event): Promise<User> => {
   const { error, payload } = event.context;

@@ -65,8 +65,8 @@ interface Props {
   placeholder: string;
   disabled: boolean;
   modelValue: string | number;
-  selectOptions?: string[];
   selectOnly: boolean;
+  readonly selectOptions?: string[];
 }
 
 const props = withDefaults(defineProps<Props>(), {

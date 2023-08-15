@@ -7,6 +7,7 @@
       工作坊時間
     </label>
     <VueTailwindDatepicker
+      :key="`${dateModelValue.start} - ${dateModelValue.end}`"
       v-model="dateModelValue"
       use-range
       :formatter="{ date: 'YYYY/MM/DD', month: 'MM' }"
@@ -20,13 +21,14 @@
 import VueTailwindDatepicker, {
   DatepickerProps,
 } from 'vue-tailwind-datepicker';
+import { DateValue } from '@/types/workshop';
 
 const emit = defineEmits<{
-  (e: 'update:dateValue', dateValue: { start: string; end: string }): void;
+  (e: 'update:dateValue', dateValue: DateValue): void;
 }>();
 
 interface Props {
-  dateValue: { start: string; end: string };
+  dateValue: DateValue;
 }
 
 const props = defineProps<Props>();

@@ -1,4 +1,4 @@
-import UserModel from '@/server/models/user';
+import { UserModel } from '@/server/models';
 import { generateToken } from '@/server/utils/token';
 
 export default defineEventHandler(async (event) => {

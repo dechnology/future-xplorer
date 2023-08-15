@@ -11,9 +11,21 @@
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from 'pinia';
+
 const route = useRoute();
 const store = useIssuesStore();
+const breadcrumbStore = useBreadcrumbStore();
+const { workshop } = storeToRefs(store);
 const { getTokenSilently } = await useAuth();
+
+const workshopId = route.params.workshopId as string;
+
 const token = await getTokenSilently();
-await store.init(token, route.params.workshopId as string);
+await store.init(token, workshopId);
+
+breadcrumbStore.clearIssue();
+if (workshop.value) {
+  breadcrumbStore.setWorkshop(workshop.value.name, route.fullPath);
+}
 </script>
