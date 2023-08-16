@@ -1,6 +1,6 @@
-import { NewWorkshopSchema, NewWorkshop, Workshop } from '@/types/workshop';
-import { CardState, CardStates } from '@/types/cardState';
 import { format } from 'date-fns';
+import type { NewWorkshop, Workshop, CardState } from '@/types';
+import { NewWorkshopSchema, CardStates } from '@/types';
 import { createWorkshop } from '@/utils/workshop';
 
 const getNewWorkshop = (): NewWorkshop => {
@@ -47,9 +47,7 @@ export const useWorkshopCardStore = definePiniaStore('workshop card', () => {
     const validationResult = NewWorkshopSchema.parse(currentWorkshop.value);
 
     console.log('Creating: ', validationResult);
-    const createdWorkshop = await createWorkshop(token, {
-      ...currentWorkshop.value,
-    });
+    const createdWorkshop = await createWorkshop(token, validationResult);
 
     return createdWorkshop;
   }

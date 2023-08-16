@@ -74,7 +74,7 @@
     />
     <CardButton
       v-if="state.name !== CardStates.Detail.name"
-      @click="() => {}"
+      @click.prevent="handlePortraitGeneration"
       class="h-12 rounded-lg bg-blue-400 text-white hover:bg-blue-500"
       :icon="{ name: 'mdi:play', size: '3rem' }"
       body="AI生成圖片"
@@ -100,6 +100,13 @@
       name="material-symbols:pan-zoom-rounded"
       size="3rem"
     />
+    <Icon
+      v-if="state.name === CardStates.New.name"
+      @click="handleDiceClick"
+      class="absolute right-6 top-6 cursor-pointer text-blue-950"
+      name="game-icons:rolling-dices"
+      size="3rem"
+    />
   </form>
 </template>
 
@@ -109,12 +116,34 @@ import { storeToRefs } from 'pinia';
 import { personaPresets } from '@/types/persona';
 import { CardStates } from '@/types/cardState';
 
-const store = usePersonaCardStore();
+const cardStore = usePersonaCardStore();
+const issueStore = useIssueStore();
 const modalStore = useModalStore();
-const { currentPersona, state } = storeToRefs(store);
+const { currentPersona, state } = storeToRefs(cardStore);
+const { workshop, issue } = storeToRefs(issueStore);
 const { user, getTokenSilently } = await useAuth();
 
 const disabled = computed(() => state.value.name === CardStates.Detail.name);
+
+const handleDiceClick = () => {
+  cardStore.randomizeCurrentPersona();
+};
+
+const handlePortraitGeneration = async () => {
+  try {
+    if (!(workshop.value && issue.value)) {
+      throw new Error('no workshop or issue');
+    }
+
+    const token = await getTokenSilently();
+    await cardStore.generatePortrait(token, {
+      workshop: workshop.value,
+      issue: issue.value,
+    });
+  } catch (e) {
+    console.error(e);
+  }
+};
 
 const handleSubmit = (e: Event) => {
   e.preventDefault();

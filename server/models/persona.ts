@@ -23,4 +23,4 @@ const schema = new Schema<Persona>(
   { timestamps: true, strictQuery: true }
 );
 
-export default mongoose.model<Persona>('Persona', schema, 'character');
+export default mongoose.model<Persona>('Persona', schema, 'persona');

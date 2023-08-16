@@ -28,7 +28,7 @@ export default defineEventHandler(async (event): Promise<User> => {
     });
   }
 
-  const user = await UserModel.findById(payload.id, 'name role issues').exec();
+  const user = await UserModel.findById(payload.id, '-uid');
 
   if (!user) {
     throw createError({

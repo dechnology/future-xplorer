@@ -1,5 +1,5 @@
 import { Issue } from '@/types/issue';
-import { IssueModel, CharacterModel } from '@/server/models';
+import { IssueModel } from '@/server/models';
 
 export default defineEventHandler(async (event): Promise<{ issue: Issue }> => {
   authenticate(event.context);
@@ -12,7 +12,7 @@ export default defineEventHandler(async (event): Promise<{ issue: Issue }> => {
   const issue = await IssueModel.findOne({
     _id,
     workshop,
-  }).populate('characters');
+  }).populate('personas');
 
   if (!issue) {
     throw createError({

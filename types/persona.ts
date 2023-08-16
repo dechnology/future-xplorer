@@ -1,5 +1,5 @@
-import { Base } from '@/types/base';
-import { Issue } from '@/types/issue';
+import { z } from 'zod';
+import { Base, Issue, Workshop } from '@/types';
 
 export const personaPresets = {
   role: ['教師', '學生', '媽媽', '爸爸'],
@@ -14,17 +14,30 @@ export const personaPresets = {
   ],
 } as const;
 
-export interface NewPersona {
-  role: string;
-  name: string;
-  age: string | number;
-  gender: 'male' | 'female';
-  trait: string;
-  other: string;
+export const NewPersonaSchema = z.object({
+  role: z.string().trim().nonempty(),
+  name: z.string().trim().nonempty(),
+  age: z.union([
+    z.string().trim().nonempty(),
+    z.number().int().positive().finite().safe(),
+  ]),
+  gender: z.enum(personaPresets.gender),
+  trait: z.string().trim().nonempty(),
+  other: z.string().trim(),
+  image: z.string().url().optional(),
+});
 
-  image?: string;
-}
+export type NewPersona = z.infer<typeof NewPersonaSchema>;
 
 export interface Persona extends Base, NewPersona {
   issue: Issue | string;
+}
+
+export interface PersonaContext {
+  workshop: Pick<Workshop, '_id' | 'name' | 'description'>;
+  issue: Pick<Issue, '_id' | 'title' | 'description'>;
+}
+
+export interface PortraitRequestBody extends PersonaContext {
+  persona: NewPersona;
 }

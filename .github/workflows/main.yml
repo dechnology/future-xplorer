@@ -17,6 +17,7 @@ env:
   MONGO_USER: hindenburg
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
   MONGO_DB: future-xplorer
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
 jobs:
   build-and-push-images:
@@ -71,6 +72,7 @@ jobs:
             export MONGO_USER=${{ env.MONGO_USER }}
             export MONGO_DB=${{ env.MONGO_DB }}
             export MONGO_PASSWORD=${{ env.MONGO_PASSWORD }}
+            export OPENAI_API_KEY=${{ env.OPENAI_API_KEY }}
 
             git clone https://github.com/eesoymilk/future-xplorer.git || true
             cd future-xplorer || exit 1

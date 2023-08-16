@@ -1,5 +1,4 @@
 import { Base } from '@/types/base';
-import { User } from '@/types/user';
 import { z } from 'zod';
 
 export const DataValueSchema = z.object({

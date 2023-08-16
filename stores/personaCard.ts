@@ -1,18 +1,33 @@
-import { Persona, NewPersona } from '../types/persona';
-import { CardState, CardStates } from '@/types/cardState';
 import { fakerZH_TW } from '@faker-js/faker';
+import { CardStates, NewPersonaSchema, personaPresets } from '@/types';
+import type {
+  Workshop,
+  Issue,
+  Persona,
+  NewPersona,
+  CardState,
+  PortraitRequestBody,
+} from '@/types';
 
 const getNewPersona = (): NewPersona => ({
   role: '',
   name: '',
   age: '',
   trait: '',
-  gender: fakerZH_TW.helpers.arrayElement(['male', 'female']),
+  gender: '男',
+  other: '',
+});
+
+const getRandomNewPersona = (): NewPersona => ({
+  role: fakerZH_TW.helpers.arrayElement(personaPresets.role),
+  name: fakerZH_TW.person.fullName(),
+  age: fakerZH_TW.helpers.arrayElement(personaPresets.age),
+  trait: fakerZH_TW.helpers.arrayElement(personaPresets.trait),
+  gender: fakerZH_TW.helpers.arrayElement(['男', '女']),
   other: '',
 });
 
 export const usePersonaCardStore = definePiniaStore('persona card', () => {
-  // current session usage
   const currentPersona = ref<Persona | NewPersona>(getNewPersona());
   const activeId = ref<string | null>(null);
   const state = ref<CardState>(CardStates.New);
@@ -33,7 +48,29 @@ export const usePersonaCardStore = definePiniaStore('persona card', () => {
     activeId.value = id;
   }
 
-  watch(state, (newState, oldState) => {
+  function randomizeCurrentPersona() {
+    currentPersona.value = getRandomNewPersona();
+  }
+
+  async function generatePortrait(
+    token: string,
+    body: Omit<PortraitRequestBody, 'persona'>
+  ) {
+    const persona = NewPersonaSchema.parse(currentPersona.value);
+    console.log('generating portrait for persona: ', persona);
+
+    const { prompt } = await generatePrompt(token, { ...body, persona });
+    console.log('prompt: ', prompt);
+
+    const { image } = await generateImage(token, {
+      prompt: `Generate a calm and neutral upper body photo style based on the description: ${prompt}`,
+    });
+    console.log('image: ', image);
+
+    currentPersona.value.image = image;
+  }
+
+  watch(state, (newState) => {
     if (newState.name === CardStates.New.name) {
       clearActiveId();
       clearCurrentPersona();
@@ -49,5 +86,7 @@ export const usePersonaCardStore = definePiniaStore('persona card', () => {
     clearCurrentPersona,
     setActiveId,
     setCurrentPersona,
+    randomizeCurrentPersona,
+    generatePortrait,
   };
 });

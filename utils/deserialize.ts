@@ -3,7 +3,7 @@ import { Base } from '@/types/base';
 import { User } from '@/types/user';
 import { Workshop } from '@/types/workshop';
 import { BaseIssue, Issue } from '@/types/issue';
-import { Character } from '../types/persona';
+import { Persona } from '../types/persona';
 import { Case } from '@/types/case';
 import { Keyword } from '@/types/keyword';
 
@@ -28,7 +28,7 @@ export const deserializeUser = (serialized: Serialize<User>): User => ({
 
 export const deserializeBase = baseDeserializerFactory<Base>();
 export const deserializeWorkshop = baseDeserializerFactory<Workshop>();
-export const deserializeCharacter = baseDeserializerFactory<Character>();
+export const deserializePersona = baseDeserializerFactory<Persona>();
 
 // export const deserializeCase = baseDeserializerFactory<Case>();
 // export const deserializeKeyword = baseDeserializerFactory<Keyword>();
@@ -47,10 +47,10 @@ export const deserializeBaseIssue = (
 };
 
 export const deserializeIssue = (serialized: Serialize<Issue>): Issue => {
-  const { users, charaters, ...serializedBaseIssue } = serialized;
+  const { users, personas, ...serializedBaseIssue } = serialized;
   return {
     ...deserializeBaseIssue(serializedBaseIssue),
     users: users && users.map((u) => deserializeUser(u)),
-    charaters: charaters && charaters.map((c) => deserializeCharacter(c)),
+    personas: personas && personas.map((c) => deserializeCharacter(c)),
   };
 };

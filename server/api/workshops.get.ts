@@ -1,4 +1,3 @@
-import { H3Error } from 'h3';
 import { Workshop } from '@/types/workshop';
 import { WorkshopModel } from '@/server/models';
 
