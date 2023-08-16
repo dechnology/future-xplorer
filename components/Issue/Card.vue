@@ -70,32 +70,81 @@ const { user, getTokenSilently } = await useAuth();
 const { currentIssue, state, activeId } = storeToRefs(cardStore);
 
 const handleSubmit = async (e: Event) => {
-  if (state.value.name === CardStates.Detail.name) {
-    router.push(
-      `${route.fullPath.replace(/\/+$/, '')}/issue/${activeId}/personas`
-    );
-    return;
-  }
-
   try {
     const token = await getTokenSilently();
 
-    if (state.value.name === CardStates.New.name) {
-      const createdIssue = await cardStore.submit(token, workshopId);
+    switch (state.value.name) {
+      case CardStates.New.name:
+        const createdIssue = await cardStore.submit(token, workshopId);
 
-      createdIssue.creator = user.value as User;
-      issuesStore.push(createdIssue);
-      console.log('created issue: ', createdIssue);
+        createdIssue.creator = user.value as User;
+        console.log('created issue: ', createdIssue);
+        issuesStore.upsert(createdIssue);
 
-      cardStore.setActiveId(createdIssue._id);
-      cardStore.setCurrentIssue(createdIssue);
-      state.value = CardStates.Detail;
-    } else {
-      await cardStore.edit(token);
+        cardStore.setActiveId(createdIssue._id);
+        cardStore.setCurrentIssue(createdIssue);
+        state.value = CardStates.Detail;
+        break;
+
+      case CardStates.Detail.name:
+        if (!activeId.value) {
+          throw new Error('No active issue to remove');
+        }
+
+        await cardStore.remove(token, activeId.value);
+        issuesStore.remove(activeId.value);
+        state.value = CardStates.New;
+        console.log('issue removed');
+        break;
+
+      case CardStates.Editing.name:
+        if (!activeId.value) {
+          throw new Error('No active issue to edit');
+        }
+
+        const editedIssue = await cardStore.edit(token, activeId.value);
+        editedIssue.creator = user.value as User;
+        console.log('edited issue: ', editedIssue);
+        issuesStore.upsert(editedIssue);
+
+        cardStore.setActiveId(editedIssue._id);
+        cardStore.setCurrentIssue(editedIssue);
+        state.value = CardStates.Detail;
+        break;
+
+      default:
+        throw new Error(`Unknown state: ${state.value.name}`);
     }
   } catch (e) {
-    // TODO: make helper for better UX
     console.error(e);
   }
+
+  // if (state.value.name === CardStates.Detail.name) {
+  //   router.push(
+  //     `${route.fullPath.replace(/\/+$/, '')}/issue/${activeId}/personas`
+  //   );
+  //   return;
+  // }
+
+  // try {
+  //   const token = await getTokenSilently();
+
+  //   if (state.value.name === CardStates.New.name) {
+  //     const createdIssue = await cardStore.submit(token, workshopId);
+
+  //     createdIssue.creator = user.value as User;
+  //     issuesStore.push(createdIssue);
+  //     console.log('created issue: ', createdIssue);
+
+  //     cardStore.setActiveId(createdIssue._id);
+  //     cardStore.setCurrentIssue(createdIssue);
+  //     state.value = CardStates.Detail;
+  //   } else {
+  //     await cardStore.edit(token);
+  //   }
+  // } catch (e) {
+  //   // TODO: make helper for better UX
+  //   console.error(e);
+  // }
 };
 </script>

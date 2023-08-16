@@ -102,7 +102,7 @@ const classes = computed(() => {
     resultClasses = twMerge(resultClasses, 'pr-12');
   }
 
-  return twMerge(resultClasses, ['border-gray-500', 'bg-white']);
+  return twMerge(resultClasses, ['border-gray-500', 'bg-transparent']);
 });
 </script>
 

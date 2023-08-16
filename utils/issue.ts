@@ -26,17 +26,13 @@ export const fetchWorkshopIssues = async (
   };
 };
 
-export const fetchWorkshopIssue = async (
+export const fetchIssue = async (
   token: string,
-  workshopId: string,
   issueId: string
 ): Promise<{ issue: Issue }> => {
-  const { data, error } = await useFetch(
-    `/api/workshops/${workshopId}/issues/${issueId}`,
-    {
-      headers: { Authorization: `Bearer ${token}` },
-    }
-  );
+  const { data, error } = await useFetch(`/api/issues/${issueId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 
   if (error.value) {
     throw error.value;
@@ -78,4 +74,53 @@ export const createIssue = async (
   const { issue: serializedBaseIssue } = data.value;
 
   return deserializeBaseIssue(serializedBaseIssue);
+};
+
+export const updateIssue = async (
+  token: string,
+  issueId: string,
+  i: NewIssue
+): Promise<Issue> => {
+  const { data, error } = await useFetch(`/api/issues/${issueId}`, {
+    method: 'put',
+    headers: { Authorization: `Bearer ${token}` },
+    body: i,
+  });
+
+  if (error.value) {
+    throw error.value;
+  }
+
+  if (!data.value) {
+    throw new Error('data are null');
+  }
+
+  const { issue: serializedIssue } = data.value;
+
+  return deserializeIssue(serializedIssue);
+};
+
+export const deleteIssue = async (
+  token: string,
+  issueId: string
+): Promise<{ message: string; issue: Issue | null }> => {
+  const { data, error } = await useFetch(`/api/issues/${issueId}`, {
+    method: 'delete',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (error.value) {
+    throw error.value;
+  }
+
+  if (!data.value) {
+    throw new Error('data are null');
+  }
+
+  const { message, issue: serializedIssue } = data.value;
+
+  return {
+    message,
+    issue: serializedIssue && deserializeIssue(serializedIssue),
+  };
 };

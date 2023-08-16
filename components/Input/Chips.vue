@@ -8,30 +8,27 @@
     </label>
     <ul
       ref="ulRef"
-      class="flex h-20 items-center gap-2 rounded border border-solid border-gray-500 p-4"
+      :class="disabled ? 'border-gray-200 bg-gray-50' : 'border-gray-500'"
+      class="flex h-20 items-center gap-2 rounded border border-solid p-4"
     >
       <li
         v-for="(chip, idx) in chips"
         :key="`${idx}_${chip}`"
-        @dblclick="
-          (e) => {
-            focusIndex = idx;
-            (e.target as HTMLLIElement).focus();
-          }
-        "
+        @dblclick="(e) => handleDblClick(e, idx)"
         @keypress.enter.prevent="
           (e) => editChipsByIndex(idx, (e.target as HTMLLIElement).innerText)
         "
-        :contenteditable="idx === focusIndex"
+        :contenteditable="!disabled && idx === focusIndex"
         tabindex="-1"
         class="flex w-fit items-center gap-2 whitespace-nowrap rounded-2xl px-3 py-1"
-        :class="idx === focusIndex ? 'bg-slate-300' : 'bg-slate-100'"
+        :class="idx === focusIndex ? 'bg-slate-300' : 'bg-slate-200'"
       >
         <span>
           {{ chip }}
         </span>
         <Icon
-          @click="() => deleteChipsByIndex(idx)"
+          v-if="!disabled"
+          @click="() => !disabled && deleteChipsByIndex(idx)"
           name="typcn:delete-outline"
           size="2rem"
         />
@@ -39,7 +36,7 @@
       <div @click="handleClick" class="flex h-full w-full items-center">
         <li
           ref="lastListItem"
-          :contenteditable="chips.length === focusIndex"
+          :contenteditable="!disabled && chips.length === focusIndex"
           @keypress.enter.prevent="
             (e) => appendChip((e.target as HTMLLIElement).innerText)
           "
@@ -55,6 +52,7 @@
 interface Props {
   title?: string;
   chips: string[];
+  disabled: boolean;
 }
 const props = defineProps<Props>();
 
@@ -110,6 +108,14 @@ const appendChip = (chip: string) => {
     focusIndex.value = props.chips.length;
     lastListItem.value?.focus();
   });
+};
+
+const handleDblClick = (e: Event, idx: number) => {
+  if (props.disabled) {
+    return;
+  }
+  focusIndex.value = idx;
+  (e.target as HTMLLIElement).focus();
 };
 
 const handleOutsideClick = (e: MouseEvent) => {

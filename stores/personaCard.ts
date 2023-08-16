@@ -1,8 +1,6 @@
 import { fakerZH_TW } from '@faker-js/faker';
 import { CardStates, NewPersonaSchema, personaPresets } from '@/types';
 import type {
-  Workshop,
-  Issue,
   Persona,
   NewPersona,
   CardState,
@@ -14,7 +12,7 @@ const getNewPersona = (): NewPersona => ({
   name: '',
   age: '',
   trait: '',
-  gender: '男',
+  gender: 'male',
   other: '',
 });
 
@@ -23,7 +21,7 @@ const getRandomNewPersona = (): NewPersona => ({
   name: fakerZH_TW.person.fullName(),
   age: fakerZH_TW.helpers.arrayElement(personaPresets.age),
   trait: fakerZH_TW.helpers.arrayElement(personaPresets.trait),
-  gender: fakerZH_TW.helpers.arrayElement(['男', '女']),
+  gender: fakerZH_TW.helpers.arrayElement(personaPresets.gender),
   other: '',
 });
 
@@ -70,6 +68,15 @@ export const usePersonaCardStore = definePiniaStore('persona card', () => {
     currentPersona.value.image = image;
   }
 
+  async function submit(token: string, issueId: string) {
+    const persona = NewPersonaSchema.parse(currentPersona.value);
+
+    console.log('Creating: ', persona);
+    const createdPersona = await createPersona(token, issueId, persona);
+
+    return createdPersona;
+  }
+
   watch(state, (newState) => {
     if (newState.name === CardStates.New.name) {
       clearActiveId();
@@ -87,6 +94,8 @@ export const usePersonaCardStore = definePiniaStore('persona card', () => {
     setActiveId,
     setCurrentPersona,
     randomizeCurrentPersona,
+
     generatePortrait,
+    submit,
   };
 });

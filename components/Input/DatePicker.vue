@@ -9,18 +9,22 @@
     <VueTailwindDatepicker
       :key="`${dateModelValue.start} - ${dateModelValue.end}`"
       v-model="dateModelValue"
-      use-range
       :formatter="{ date: 'YYYY/MM/DD', month: 'MM' }"
+      :disabled="disabled"
+      use-range
       separator=" - "
-      class="h-16 rounded-md bg-transparent"
+      class="h-16 rounded-md"
+      :input-classes="
+        disabled
+          ? 'border-gray-200 bg-slate-50'
+          : 'border-gray-500 bg-transparent'
+      "
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import VueTailwindDatepicker, {
-  DatepickerProps,
-} from 'vue-tailwind-datepicker';
+import VueTailwindDatepicker from 'vue-tailwind-datepicker';
 import { DateValue } from '@/types/workshop';
 
 const emit = defineEmits<{
@@ -29,6 +33,7 @@ const emit = defineEmits<{
 
 interface Props {
   dateValue: DateValue;
+  disabled: boolean;
 }
 
 const props = defineProps<Props>();

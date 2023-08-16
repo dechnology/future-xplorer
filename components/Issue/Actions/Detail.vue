@@ -1,12 +1,13 @@
 <template>
   <div class="relative flex items-center justify-between">
     <CardButton
-      @click="handleRemoveIssueClick"
       class="h-12 w-28 rounded-lg bg-red-400 text-white hover:bg-red-500"
       :icon="{ name: 'mdi:delete', size: '3rem' }"
       body="刪除"
+      type="submit"
     />
     <CardButton
+      @click="handleStartClick"
       class="h-12 w-28 rounded-lg bg-blue-400 text-white hover:bg-blue-500"
       :icon="{ name: 'mdi:play', size: '3rem' }"
       body="開始"
@@ -25,12 +26,15 @@
 import { storeToRefs } from 'pinia';
 import { CardStates } from '@/types/cardState';
 
+const route = useRoute();
+const router = useRouter();
 const store = useIssueCardStore();
-const { currentIssue, state } = storeToRefs(store);
+const { currentIssue, activeId, state } = storeToRefs(store);
 
-const handleRemoveIssueClick = (e: Event) => {
-  console.log(currentIssue.value);
-  // TODO
+const handleStartClick = (e: Event) => {
+  router.push(
+    `${route.fullPath.replace(/\/+$/, '')}/issue/${activeId}/personas`
+  );
 };
 
 const handleEditIssueClick = (e: Event) => {

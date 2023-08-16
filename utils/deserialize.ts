@@ -51,6 +51,6 @@ export const deserializeIssue = (serialized: Serialize<Issue>): Issue => {
   return {
     ...deserializeBaseIssue(serializedBaseIssue),
     users: users && users.map((u) => deserializeUser(u)),
-    personas: personas && personas.map((c) => deserializeCharacter(c)),
+    personas: personas && personas.map((p) => deserializePersona(p)),
   };
 };

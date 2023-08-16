@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { CardStates } from '@/types/cardState';
+import { CardStates } from '@/types';
 
 const store = useWorkshopsStore();
 const cardStore = useWorkshopCardStore();

@@ -8,11 +8,23 @@ const schema = new Schema<Issue>(
     creator: { type: Schema.Types.ObjectId, ref: 'User' },
     workshop: { type: Schema.Types.ObjectId, ref: 'Workshop' },
   },
-  { timestamps: true, strictQuery: true, id: true, _id: true }
+  {
+    timestamps: true,
+    strictQuery: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
 
 schema.virtual('personas', {
   ref: 'Persona',
+  localField: '_id',
+  foreignField: 'issue',
+  justOne: false,
+});
+
+schema.virtual('users', {
+  ref: 'User',
   localField: '_id',
   foreignField: 'issue',
   justOne: false,

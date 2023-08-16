@@ -22,36 +22,42 @@
       <InputText
         title="工作坊名稱"
         placeholder="工作坊名稱"
-        :disabled="state.name === CardStates.Detail.name"
+        :disabled="disabled"
         v-model="currentWorkshop.name"
       />
-      <InputText
+      <InputTextarea
         title="工作坊描述"
         placeholder="工作坊描述"
-        :disabled="state.name === CardStates.Detail.name"
+        :disabled="disabled"
         v-model="currentWorkshop.description"
+        input-classes="h-28"
       />
       <InputDatePicker
         i18n="zh-tw"
         separator=" - "
         :formatter="{ date: 'YYYY/MM/DD' }"
+        :disabled="disabled"
         v-model:dateValue="currentWorkshop.dateValue"
       />
       <div class="text-center">預先設定工作坊POEMS分類</div>
       <InputChips
         title="Object - 物件 or 技術"
+        :disabled="disabled"
         v-model:chips="currentWorkshop.objects"
       />
       <InputChips
         title="Environment - 環境 or 場景"
+        :disabled="disabled"
         v-model:chips="currentWorkshop.environments"
       />
       <InputChips
         title="Message - 訊息 or 目標"
+        :disabled="disabled"
         v-model:chips="currentWorkshop.messages"
       />
       <InputChips
         title="Service - 服務、行動 or 經驗"
+        :disabled="disabled"
         v-model:chips="currentWorkshop.services"
       />
     </div>
@@ -70,17 +76,16 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { CardStates } from '@/types/cardState';
+import { CardStates } from '@/types';
 import { User } from '@/types/user';
-
-const route = useRoute();
-const router = useRouter();
 
 const breadcrumbStore = useBreadcrumbStore();
 const workshopsStore = useWorkshopsStore();
 const cardStore = useWorkshopCardStore();
+
 const { user, getTokenSilently } = await useAuth();
 const { activeId, currentWorkshop, state } = storeToRefs(cardStore);
+const disabled = computed(() => state.value.name === CardStates.Detail.name);
 
 breadcrumbStore.clearWorkshop();
 breadcrumbStore.clearIssue();

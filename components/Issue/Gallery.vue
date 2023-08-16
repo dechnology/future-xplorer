@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-4 gap-4">
+  <div class="grid grid-cols-4 justify-items-start gap-4 rounded-2xl">
     <Card
       @click="() => handleClick()"
       classes="h-[300px]"

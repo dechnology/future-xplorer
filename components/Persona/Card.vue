@@ -1,6 +1,6 @@
 <template>
   <form
-    @submit="handleSubmit"
+    @submit.prevent="handleSubmit"
     class="relative flex flex-col gap-10 rounded-md bg-white p-8 shadow-2xl"
   >
     <div class="flex items-end gap-4">
@@ -113,8 +113,8 @@
 <script setup lang="ts">
 import { format } from 'date-fns';
 import { storeToRefs } from 'pinia';
-import { personaPresets } from '@/types/persona';
-import { CardStates } from '@/types/cardState';
+import { personaPresets, CardStates } from '@/types';
+import type { User } from '@/types';
 
 const cardStore = usePersonaCardStore();
 const issueStore = useIssueStore();
@@ -145,23 +145,58 @@ const handlePortraitGeneration = async () => {
   }
 };
 
-const handleSubmit = (e: Event) => {
-  e.preventDefault();
-  switch (state.value.name) {
-    // TODO
-    case 'new':
-      console.log('submiting new...');
-      break;
-    case 'detail':
-      console.log('submiting detail...');
-      break;
-    // TODO
-    case 'editing':
-      console.log('submiting editing...');
-      state.value = CardStates.Detail;
-      break;
-    default:
-      throw Error('Unknown state');
+const handleSubmit = async (e: Event) => {
+  try {
+    const token = await getTokenSilently();
+
+    switch (state.value.name) {
+      case CardStates.New.name:
+        if (!issue.value) {
+          throw new Error('no issue to bind persona');
+        }
+
+        const createdPersona = await cardStore.submit(token, issue.value._id);
+
+        createdPersona.creator = user.value as User;
+        console.log('created persona: ', createdPersona);
+        issueStore.upsertPersona(createdPersona);
+
+        cardStore.setActiveId(createdPersona._id);
+        cardStore.setCurrentPersona(createdPersona);
+        state.value = CardStates.Detail;
+        break;
+
+      // case CardStates.Detail.name:
+      //   if (!activeId.value) {
+      //     throw new Error('No active persona to remove');
+      //   }
+
+      //   await cardStore.remove(token, activeId.value);
+      //   personasStore.remove(activeId.value);
+      //   state.value = CardStates.New;
+      //   console.log('persona removed');
+      //   break;
+
+      // case CardStates.Editing.name:
+      //   if (!activeId.value) {
+      //     throw new Error('No active persona to edit');
+      //   }
+
+      //   const editedPersona = await cardStore.edit(token, activeId.value);
+      //   editedPersona.creator = user.value as User;
+      //   console.log('edited persona: ', editedPersona);
+      //   personasStore.upsert(editedPersona);
+
+      //   cardStore.setActiveId(editedPersona._id);
+      //   cardStore.setCurrentPersona(editedPersona);
+      //   state.value = CardStates.Detail;
+      //   break;
+
+      default:
+        throw new Error(`Unknown state: ${state.value.name}`);
+    }
+  } catch (e) {
+    console.error(e);
   }
 };
 </script>

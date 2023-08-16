@@ -3,8 +3,8 @@ import { Base, Issue, Workshop } from '@/types';
 
 export const personaPresets = {
   role: ['教師', '學生', '媽媽', '爸爸'],
-  gender: ['男', '女'],
-  age: ['青少年', 'Z世代 (Gen Z)', '嬰兒'],
+  gender: ['male', 'female'],
+  age: ['青少年', 'Z世代 (Gen Z)', '老人'],
   trait: [
     '行為數位化',
     '資訊素養高',

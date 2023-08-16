@@ -6,11 +6,11 @@
       :isActivated="activeId === null"
       :icon="{ name: 'mdi:plus', size: '10rem' }"
     />
-    <Card
+    <ImageCard
       v-for="persona in personas"
       :key="persona._id"
       @click="() => handleClick(persona)"
-      classes="h-[350px]"
+      class="h-[350px]"
       :isActivated="persona._id === activeId"
       :image="persona.image"
       :lines="[

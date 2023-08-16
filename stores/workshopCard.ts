@@ -26,6 +26,7 @@ export const useWorkshopCardStore = definePiniaStore('workshop card', () => {
   const currentWorkshop = ref<NewWorkshop | Workshop>(getNewWorkshop());
   const activeId = ref<string | null>(null);
   const state = ref<CardState>(CardStates.New);
+  const loading = ref(false);
 
   function clearCurrentWorkshop() {
     currentWorkshop.value = getNewWorkshop();
@@ -44,28 +45,36 @@ export const useWorkshopCardStore = definePiniaStore('workshop card', () => {
   }
 
   async function submit(token: string): Promise<Workshop> {
+    loading.value = true;
     const validationResult = NewWorkshopSchema.parse(currentWorkshop.value);
 
     console.log('Creating: ', validationResult);
     const createdWorkshop = await createWorkshop(token, validationResult);
 
+    loading.value = false;
     return createdWorkshop;
   }
 
   async function edit(token: string, workshopId: string): Promise<Workshop> {
+    loading.value = true;
     const validationResult = NewWorkshopSchema.parse(currentWorkshop.value);
 
     console.log('Patch: ', validationResult);
-    const editedWorkshop = await updateWorkshop(token, workshopId, {
-      ...currentWorkshop.value,
-    });
+    const editedWorkshop = await updateWorkshop(
+      token,
+      workshopId,
+      currentWorkshop.value
+    );
 
+    loading.value = false;
     return editedWorkshop;
   }
 
   async function remove(token: string, workshopId: string) {
+    loading.value = true;
     const data = await deleteWorkshop(token, workshopId);
     console.log(data);
+    loading.value = false;
   }
 
   watch(state, (newState) => {
@@ -79,6 +88,7 @@ export const useWorkshopCardStore = definePiniaStore('workshop card', () => {
     activeId,
     currentWorkshop,
     state,
+    loading,
 
     clearCurrentWorkshop,
     setCurrentWorkshop,

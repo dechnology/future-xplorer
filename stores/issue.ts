@@ -1,8 +1,4 @@
-import { Persona } from '@/types/persona';
-import { Workshop } from '@/types/workshop';
-import { Issue } from '@/types/issue';
-import { Case } from '@/types/case';
-import { Keyword } from '@/types/keyword';
+import { Persona, Workshop, Issue } from '@/types';
 
 export const useIssueStore = definePiniaStore('issue', () => {
   const workshop = ref<Workshop | null>(null);
@@ -15,23 +11,39 @@ export const useIssueStore = definePiniaStore('issue', () => {
   async function init(token: string, workshopId: string, issueId: string) {
     const results = await Promise.allSettled([
       fetchWorkshop(token, workshopId),
-      fetchWorkshopIssue(token, workshopId, issueId),
+      fetchIssue(token, issueId),
     ]);
 
     const workshopResult = results[0];
     if (workshopResult.status === 'fulfilled') {
       workshop.value = workshopResult.value.workshop;
     } else {
-      console.error('Error fetching workshop:', workshopResult.reason);
-      // Handle the workshop fetch error
+      throw new Error(`Error fetching issues: ${workshopResult.reason}`);
     }
 
     const issueResult = results[1];
     if (issueResult.status === 'fulfilled') {
       issue.value = issueResult.value.issue;
     } else {
-      console.error('Error fetching issues:', issueResult.reason);
-      // Handle the issues fetch error
+      throw new Error(`Error fetching issues: ${issueResult.reason}`);
+    }
+
+    console.log(issue.value);
+  }
+
+  function upsertPersona(p: Persona) {
+    if (!issue.value) {
+      throw new Error('issue is null');
+    }
+
+    const index = issue.value.personas.findIndex(
+      (persona) => persona._id === p._id
+    );
+
+    if (index === -1) {
+      issue.value.personas.push(p);
+    } else {
+      issue.value.personas[index] = p;
     }
   }
 
@@ -40,5 +52,6 @@ export const useIssueStore = definePiniaStore('issue', () => {
     issue,
     personas,
     init,
+    upsertPersona,
   };
 });

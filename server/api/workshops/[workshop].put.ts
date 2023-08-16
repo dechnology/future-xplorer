@@ -8,7 +8,8 @@ export default defineEventHandler(
     const newWorkshop: NewWorkshop = await readBody(event);
     const workshop = await WorkshopModel.findByIdAndUpdate(
       workshopId,
-      newWorkshop
+      newWorkshop,
+      { new: true }
     );
     if (!workshop) {
       throw Error('Workshop creation failed');

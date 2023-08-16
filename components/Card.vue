@@ -4,8 +4,8 @@
   </div>
   <div v-else :class="cardClasses">
     <!-- Image -->
-    <div v-if="imageUrl" class="h-44 w-full">
-      <img class="h-full w-full object-cover" :src="imageUrl" alt="" />
+    <div v-if="image" class="h-44 w-full">
+      <img class="h-full w-full object-cover" :src="image" alt="" />
     </div>
     <div class="flex h-full flex-col px-5 py-6">
       <!--  Title -->
@@ -37,7 +37,7 @@ interface Props {
   description?: string;
   lines?: string[];
   footnotes?: string[];
-  imageUrl?: string;
+  image?: string;
   classes?: string;
   isActivated: boolean;
 

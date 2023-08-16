@@ -1,7 +1,7 @@
 <template>
   <div class="flex h-full flex-col gap-5">
     <InputSearchBar v-model="searchQuery" placeholder="輸入關鍵字" />
-    <PersonaGallery class="h-full overflow-y-auto" />
+    <PersonaGallery class="overflow-y-auto" />
   </div>
 </template>
 

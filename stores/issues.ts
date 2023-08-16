@@ -5,10 +5,6 @@ export const useIssuesStore = definePiniaStore('issues', () => {
   const workshop = ref<Workshop | null>(null);
   const issues = ref<BaseIssue[]>([]);
 
-  function push(i: BaseIssue) {
-    issues.value.push({ ...i });
-  }
-
   async function init(token: string, workshopId: string) {
     const results = await Promise.allSettled([
       fetchWorkshop(token, workshopId),
@@ -32,5 +28,30 @@ export const useIssuesStore = definePiniaStore('issues', () => {
     }
   }
 
-  return { workshop, issues, push, init };
+  function findById(id: string): BaseIssue | null {
+    const index = issues.value.findIndex((issue) => issue._id === id);
+
+    return index === -1 ? null : issues.value[index];
+  }
+
+  function upsert(w: BaseIssue) {
+    const index = issues.value.findIndex((issue) => issue._id === w._id);
+    if (index === -1) {
+      issues.value.push(w);
+    } else {
+      issues.value[index] = w;
+    }
+  }
+
+  function remove(id: string) {
+    const index = issues.value.findIndex((issue) => issue._id === id);
+
+    if (index === -1) {
+      throw new Error('no issue match given id');
+    } else {
+      issues.value.splice(index, 1);
+    }
+  }
+
+  return { workshop, issues, init, findById, upsert, remove };
 });
