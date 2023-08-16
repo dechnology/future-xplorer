@@ -7,7 +7,7 @@ const { mongoUser, mongoPassword, mongoHost, mongoPort, mongoDb } =
 export default defineNitroPlugin(async (nitroApp) => {
   try {
     const mongoUrl = `mongodb://${mongoUser}:${mongoPassword}@${mongoHost}:${mongoPort}/${mongoDb}?authSource=admin`;
-    console.log('Connecting to: ', mongoUrl);
+    console.log(`Connecting to mongodb as ${mongoUser}`);
 
     await mongoose.connect(mongoUrl);
     console.log('DB connection established');

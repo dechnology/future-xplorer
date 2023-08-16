@@ -72,6 +72,7 @@ jobs:
             export MONGO_USER=${{ env.MONGO_USER }}
             export MONGO_DB=${{ env.MONGO_DB }}
             export MONGO_PASSWORD=${{ env.MONGO_PASSWORD }}
+            export MONGO_PORT=27017
             export OPENAI_API_KEY=${{ env.OPENAI_API_KEY }}
 
             git clone https://github.com/eesoymilk/future-xplorer.git || true
