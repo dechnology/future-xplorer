@@ -67,10 +67,11 @@
     >
       <img class="w-full object-contain" :src="currentPersona.image" alt="" />
     </div>
-    <Card
+    <IconCard
       v-else
       class="min-h-[296px] bg-slate-400"
       :icon="{ name: 'material-symbols:add-photo-alternate', size: '5rem' }"
+      :is-activated="false"
     />
     <CardButton
       v-if="state.name !== CardStates.Detail.name"
@@ -84,10 +85,10 @@
       class="flex items-center justify-center gap-2"
     >
       <div v-if="currentPersona.createdAt">
-        建立時間：{{ format(currentPersona.createdAt, 'yyyy-MM-dd') }}
+        建立時間：{{ formatDate(currentPersona.createdAt) }}
       </div>
       <div v-if="currentPersona.updatedAt">
-        建立時間：{{ format(currentPersona.updatedAt, 'yyyy-MM-dd') }}
+        建立時間：{{ formatDate(currentPersona.updatedAt) }}
       </div>
     </div>
     <PersonaActionsNew v-if="state.name === CardStates.New.name" />
@@ -111,7 +112,6 @@
 </template>
 
 <script setup lang="ts">
-import { format } from 'date-fns';
 import { storeToRefs } from 'pinia';
 import { personaPresets, CardStates } from '@/types';
 import type { User } from '@/types';

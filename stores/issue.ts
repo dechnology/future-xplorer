@@ -1,4 +1,4 @@
-import { Persona, Workshop, Issue } from '@/types';
+import { Persona, Workshop, Issue, Case } from '@/types';
 
 export const useIssueStore = definePiniaStore('issue', () => {
   const workshop = ref<Workshop | null>(null);
@@ -8,27 +8,18 @@ export const useIssueStore = definePiniaStore('issue', () => {
     () => issue.value && (issue.value.personas as Persona[])
   );
 
+  const cases = computed(() => issue.value && (issue.value.cases as Case[]));
+
   async function init(token: string, workshopId: string, issueId: string) {
-    const results = await Promise.allSettled([
-      fetchWorkshop(token, workshopId),
-      fetchIssue(token, issueId),
+    const [workshopResponse, issuesResponse] = await Promise.all([
+      fetchResource<Workshop>(token, `/api/workshops/${workshopId}`),
+      fetchResource<Issue>(token, `/api/issues/${issueId}`, {
+        deserializer: deserializeIssue,
+      }),
     ]);
 
-    const workshopResult = results[0];
-    if (workshopResult.status === 'fulfilled') {
-      workshop.value = workshopResult.value.workshop;
-    } else {
-      throw new Error(`Error fetching issues: ${workshopResult.reason}`);
-    }
-
-    const issueResult = results[1];
-    if (issueResult.status === 'fulfilled') {
-      issue.value = issueResult.value.issue;
-    } else {
-      throw new Error(`Error fetching issues: ${issueResult.reason}`);
-    }
-
-    console.log(issue.value);
+    workshop.value = workshopResponse.data;
+    issue.value = issuesResponse.data;
   }
 
   function upsertPersona(p: Persona) {
@@ -65,6 +56,8 @@ export const useIssueStore = definePiniaStore('issue', () => {
     workshop,
     issue,
     personas,
+    cases,
+
     init,
     upsertPersona,
     removePersona,

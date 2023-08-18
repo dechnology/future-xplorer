@@ -1,7 +1,6 @@
 import { format } from 'date-fns';
 import type { NewWorkshop, Workshop, CardState } from '@/types';
 import { NewWorkshopSchema, CardStates } from '@/types';
-import { createWorkshop } from '@/utils/workshop';
 
 const getNewWorkshop = (): NewWorkshop => {
   const now = format(new Date(), 'yyyy/MM/dd');
@@ -55,7 +54,7 @@ export const useWorkshopCardStore = definePiniaStore('workshop card', () => {
       body: w,
     });
 
-    console.log('Created: ', w);
+    console.log('Created: ', data);
     loading.value = false;
 
     return data;

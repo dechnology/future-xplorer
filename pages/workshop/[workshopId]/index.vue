@@ -13,6 +13,8 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 
+console.log('workshop page');
+
 const route = useRoute();
 const store = useIssuesStore();
 const breadcrumbStore = useBreadcrumbStore();

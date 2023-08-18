@@ -1,16 +1,22 @@
-import type { Persona } from '@/types';
+import type { Persona, ResourceObject } from '@/types';
 import { PersonaModel } from '@/server/models';
 
 export default defineEventHandler(
-  async (event): Promise<{ message: string; persona: Persona | null }> => {
+  async (event): Promise<ResourceObject<Persona>> => {
     authenticate(event.context);
     const personaId = getRouterParam(event, 'persona');
-    const deletedPersona = await PersonaModel.findByIdAndDelete(personaId);
+    const persona = await PersonaModel.findByIdAndDelete(personaId);
+
+    if (!persona) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'issue does not exist',
+      });
+    }
+
     return {
-      message: deletedPersona
-        ? 'persona successfully deleted'
-        : 'persona not found',
-      persona: deletedPersona,
+      message: 'persona successfully deleted',
+      data: persona,
     };
   }
 );

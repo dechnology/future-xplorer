@@ -2,42 +2,43 @@
   <div class="grid grid-cols-4 gap-4">
     <Card
       classes="h-80"
-      @click="
-        () => {
-          state = CardStates.New;
-        }
-      "
-      :isActivated="activeCase === null"
+      @click="() => (state = CardStates.New)"
+      :isActivated="activeId === null"
       :icon="{ name: 'mdi:plus', size: '10rem' }"
     />
     <Card
       classes="h-80"
-      v-for="_case in cases"
-      :key="_case.id"
-      @click="
-        () => {
-          cardStore.setActiveCase(_case);
-          cardStore.setCurrentCase(_case);
-          state = CardStates.Detail;
-        }
-      "
-      :isActivated="_case.id === activeCase?.id"
-      :imageUrl="_case.imageUrl"
-      :lines="[
-        `標題：${_case.title}`,
-        `目標：${_case.goal}`,
-        `作法：${_case.method}`,
-      ]"
-      :footnotes="[`建立者：${_case.creatorId}`]"
+      v-for="c in cases"
+      :key="c._id"
+      @click="() => handleClick(c)"
+      :isActivated="c._id === activeId"
+      :imageUrl="c.image"
+      :lines="[`標題：${c.title}`, `目標：${c.goal}`, `作法：${c.method}`]"
+      :footnotes="[`建立者：${c.creator.name}`]"
     />
   </div>
 </template>
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { CardStates } from '@/types/cardState';
+import type { Case } from '@/types';
+import { CardStates } from '@/types';
+
 const issueStore = useIssueStore();
+const modalStore = useModalStore();
 const cardStore = useCaseCardStore();
 const { cases } = storeToRefs(issueStore);
-const { activeCase, state } = storeToRefs(cardStore);
+const { activeId, state } = storeToRefs(cardStore);
+
+const handleClick = (c?: Case) => {
+  if (c) {
+    modalStore.setContent(c);
+    cardStore.setActiveId(c._id);
+    cardStore.setCurrentCase(c);
+    state.value = CardStates.Detail;
+  } else {
+    modalStore.setContent({});
+    state.value = CardStates.New;
+  }
+};
 </script>

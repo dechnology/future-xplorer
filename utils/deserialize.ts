@@ -1,5 +1,13 @@
 import { Serialize } from 'nitropack';
-import type { Base, User, Workshop, BaseIssue, Issue, Persona } from '@/types';
+import type {
+  Base,
+  User,
+  Workshop,
+  BaseIssue,
+  Issue,
+  Persona,
+  Case,
+} from '@/types';
 
 export const deserializerFactory =
   <T extends Base>() =>
@@ -20,31 +28,16 @@ export const deserializeUser = (serialized: Serialize<User>): User => ({
   updatedAt: convertDateStr(serialized.updatedAt),
 });
 
-export const deserializeBase = deserializerFactory<Base>();
-export const deserializeWorkshop = deserializerFactory<Workshop>();
+export const deserializeBaseIssue = deserializerFactory<BaseIssue>();
 export const deserializePersona = deserializerFactory<Persona>();
-
-// export const deserializeCase = baseDeserializerFactory<Case>();
-// export const deserializeKeyword = baseDeserializerFactory<Keyword>();
-
-export const deserializeBaseIssue = (
-  serialized: Serialize<BaseIssue>
-): BaseIssue => {
-  const { title, description, workshop, ...serializedBase } = serialized;
-  return {
-    ...deserializeBase(serializedBase),
-    title,
-    description,
-    workshop:
-      typeof workshop === 'string' ? workshop : deserializeWorkshop(workshop),
-  };
-};
+export const deserializeCase = deserializerFactory<Case>();
 
 export const deserializeIssue = (serialized: Serialize<Issue>): Issue => {
-  const { users, personas, ...serializedBaseIssue } = serialized;
+  const { users, personas, cases, ...serializedBaseIssue } = serialized;
   return {
     ...deserializeBaseIssue(serializedBaseIssue),
     users: users && users.map((u) => deserializeUser(u)),
-    personas: personas && personas.map((p) => deserializePersona(p)),
+    personas: personas.map((p) => deserializePersona(p)),
+    cases: cases.map((c) => deserializeCase(c)),
   };
 };

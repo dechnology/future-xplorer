@@ -1,5 +1,5 @@
 export const issueTabs = [
-  { title: '人物清單', name: 'characters' },
+  { title: '人物清單', name: 'personas' },
   { title: '案例整理', name: 'cases' },
   { title: '關鍵字萃取', name: 'keywords' },
   { title: '關鍵字分享', name: 'sharing' },

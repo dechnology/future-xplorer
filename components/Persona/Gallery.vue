@@ -1,26 +1,27 @@
 <template>
   <div class="grid grid-cols-4 gap-4 rounded-2xl">
-    <Card
+    <IconCard
       @click="() => handleClick()"
       classes="h-[350px]"
       :isActivated="activeId === null"
-      :icon="{ name: 'mdi:plus', size: '10rem' }"
+      :icon="{ name: 'mdi:plus', size: '5rem' }"
+      text="新增角色"
     />
-    <ImageCard
-      v-for="persona in personas"
-      :key="persona._id"
-      @click="() => handleClick(persona)"
+    <Card
+      v-for="p in personas"
+      :key="p._id"
+      @click="() => handleClick(p)"
       class="h-[350px]"
-      :isActivated="persona._id === activeId"
-      :image="persona.image"
+      :isActivated="p._id === activeId"
+      :image="p.image ? p.image : null"
       :lines="[
-        `角色：${persona.role}`,
-        `姓名：${persona.name}`,
-        `性別：${persona.gender}`,
-        `年齡：${persona.age}`,
-        `特徵：${persona.trait}`,
+        `角色：${p.role}`,
+        `姓名：${p.name}`,
+        `性別：${p.gender}`,
+        `年齡：${p.age}`,
+        `特徵：${p.trait}`,
       ]"
-      :footnotes="[`建立者：${persona.creator.name}`]"
+      :footnotes="[`建立者：${p.creator.name}`]"
     />
   </div>
 </template>
@@ -36,6 +37,8 @@ const cardStore = usePersonaCardStore();
 const { personas } = storeToRefs(issueStore);
 const { activeId, state } = storeToRefs(cardStore);
 
+console.log(personas.value);
+
 const handleClick = (p?: Persona) => {
   if (p) {
     modalStore.setContent(p);
@@ -48,4 +51,3 @@ const handleClick = (p?: Persona) => {
   }
 };
 </script>
-types/persona

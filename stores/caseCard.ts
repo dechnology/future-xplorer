@@ -1,7 +1,7 @@
-import { Case, NewCase } from '@/types/case';
-import { CardState, CardStates } from '@/types/cardState';
+import type { Case, NewCase, CardState } from '@/types';
+import { CardStates } from '@/types';
 
-const newCase = {
+const getNewCase = (): NewCase => ({
   title: '',
   background: '',
   method: '',
@@ -10,47 +10,44 @@ const newCase = {
   result: '',
   reference: '',
   other: '',
-
-  keywords: [],
-} as NewCase;
+});
 
 export const useCaseCardStore = definePiniaStore('case card', () => {
-  // current session usage
-  const activeCase = ref<Case | null>(null);
-  const currentCase = ref<Case | NewCase>(newCase);
+  const currentCase = ref<Case | NewCase>(getNewCase());
+  const activeId = ref<string | null>(null);
   const state = ref<CardState>(CardStates.New);
 
   function clearCurrentCase() {
-    currentCase.value = { ...newCase, creatorId: "HEHE's id" };
+    currentCase.value = getNewCase();
   }
 
-  function clearActiveCase() {
-    activeCase.value = null;
+  function clearActiveId() {
+    activeId.value = null;
   }
 
   function setCurrentCase(c: Case) {
     currentCase.value = { ...c };
   }
 
-  function setActiveCase(c: Case) {
-    activeCase.value = { ...c };
+  function setActiveId(id: string) {
+    activeId.value = id;
   }
 
-  watch(state, (newState, oldState) => {
+  watch(state, (newState) => {
     if (newState.name === CardStates.New.name) {
-      clearActiveCase();
+      clearActiveId();
       clearCurrentCase();
     }
   });
 
   return {
-    activeCase,
     currentCase,
+    activeId,
     state,
 
-    clearActiveCase,
     clearCurrentCase,
-    setActiveCase,
+    clearActiveId,
     setCurrentCase,
+    setActiveId,
   };
 });

@@ -1,13 +1,22 @@
 <template>
-  <div v-if="icon" :class="cardClasses" class="items-center justify-center">
-    <Icon v-bind="icon" />
-  </div>
-  <div v-else :class="cardClasses">
+  <div
+    class="flex w-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-solid border-gray-400 transition-all hover:shadow-2xl"
+    :class="isActivated ? 'bg-gray-200' : 'bg-white hover:bg-gray-100'"
+  >
     <!-- Image -->
-    <div v-if="image" class="h-44 w-full">
-      <img class="h-full w-full object-cover" :src="image" alt="" />
+    <div v-if="image || image === null" class="h-52 w-full shrink-0">
+      <img
+        v-if="image"
+        class="h-full w-full object-cover"
+        :src="image"
+        alt=""
+      />
+      <div v-else class="flex h-full items-center justify-center bg-gray-300">
+        <Icon name="mdi:image" size="5rem" />
+      </div>
     </div>
-    <div class="flex h-full flex-col px-5 py-6">
+
+    <div class="relative flex shrink grow basis-auto px-5 py-6">
       <!--  Title -->
       <h3 v-if="title" class="text-2xl font-bold">{{ title }}</h3>
       <!-- Description (use this as the main content of the card) -->
@@ -21,7 +30,7 @@
       <!-- Footnotes -->
       <div
         v-if="footnotes"
-        class="mt-auto flex flex-col items-end justify-self-end text-[10px] text-gray-300"
+        class="absolute bottom-6 right-5 flex flex-col items-end justify-self-end text-[10px] text-gray-300"
       >
         <div v-for="note in footnotes" class="truncate">{{ note }}</div>
       </div>
@@ -37,22 +46,11 @@ interface Props {
   description?: string;
   lines?: string[];
   footnotes?: string[];
-  image?: string;
+  image?: string | null;
   classes?: string;
   isActivated: boolean;
 
   icon?: { name: string; size: string };
 }
 const props = defineProps<Props>();
-
-const defaultClasses =
-  'flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-solid border-gray-400 transition-all hover:shadow-2xl';
-
-const cardClasses = computed(() =>
-  twMerge(
-    defaultClasses,
-    props.isActivated ? 'bg-gray-200' : 'bg-white hover:bg-gray-100',
-    props.classes
-  )
-);
 </script>

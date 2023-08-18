@@ -1,15 +1,20 @@
-import { Base } from '@/types/base';
+import { z } from 'zod';
+import { Base, Issue } from '@/types';
 
-export interface NewCase {
-  title: string;
-  background: string;
-  method: string;
-  goal: string;
-  challenge: string;
-  result: string;
-  reference: string;
-  imageUrl?: string;
-  other: string;
+export const NewCaseSchema = z.object({
+  title: z.string().trim().nonempty(),
+  background: z.string().trim().nonempty(),
+  method: z.string().trim().nonempty(),
+  goal: z.string().trim().nonempty(),
+  challenge: z.string().trim().nonempty(),
+  result: z.string().trim().nonempty(),
+  reference: z.string().trim().nonempty(),
+  other: z.string().trim(),
+  image: z.string().trim().optional(),
+});
+
+export type NewCase = z.infer<typeof NewCaseSchema>;
+
+export interface Case extends Base, NewCase {
+  issue: Issue | string;
 }
-
-export type Case = NewCase & Base;

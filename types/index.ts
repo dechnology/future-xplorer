@@ -4,5 +4,6 @@ export * from './workshop';
 export * from './issue';
 export * from './cardState';
 export * from './persona';
+export * from './case';
 
 export * from './response';

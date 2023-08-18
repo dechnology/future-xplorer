@@ -1,8 +1,8 @@
 import { PersonaModel } from '@/server/models';
-import { NewPersona, Persona } from '@/types/persona';
+import { ResourceObject, NewPersona, Persona } from '@/types';
 
 export default defineEventHandler(
-  async (event): Promise<{ persona: Persona }> => {
+  async (event): Promise<ResourceObject<Persona>> => {
     const { id: creator } = authenticate(event.context);
     const issue = getRouterParam(event, 'issue');
 
@@ -12,9 +12,10 @@ export default defineEventHandler(
       issue,
       ...newPersona,
     });
+
     if (!persona) {
       throw Error('Persona creation failed');
     }
-    return { persona };
+    return { data: persona };
   }
 );

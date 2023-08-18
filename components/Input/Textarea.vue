@@ -1,13 +1,16 @@
 <template>
   <div class="flex flex-col gap-2">
-    <label v-if="title" :class="resultTitleClasses">
+    <label
+      v-if="title"
+      class="bg-transparent px-1 text-lg font-semibold text-gray-700"
+    >
       {{ title }}
     </label>
     <div class="relative h-full w-full">
       <textarea
         :placeholder="placeholder"
         :disabled="disabled"
-        :class="resultInputClasses"
+        :class="classes"
         :value="modelValue"
         @input="
           $emit('update:modelValue', ($event.target as HTMLInputElement).value)
@@ -70,41 +73,30 @@ const emit = defineEmits<{
 
 const dropdownShown = ref(false);
 
-const defaultTitleClasses: ClassNameValue = [
-  'bg-white',
-  'px-1',
-  'text-lg',
-  'font-semibold',
-  'text-gray-700',
-];
-
-const defaultInputClasses: ClassNameValue = [
+const defaultClasses: ClassNameValue = [
   'resize-none',
   'text-start',
   'w-full',
-  'h-full',
   'rounded',
-  'px-3',
+  'pl-4',
+  'pr-4',
   'py-4',
   'border',
   'border-solid',
   'border-gray-200',
 ];
 
-const resultInputClasses = computed(() => {
-  const result = twMerge(defaultInputClasses, props.inputClasses);
+const classes = computed(() => {
+  let resultClasses = twMerge(defaultClasses);
   if (props.disabled) {
-    return twMerge(result, 'bg-slate-50');
+    return twMerge(resultClasses, 'bg-slate-50');
   }
-  return twMerge(result, ['border-gray-500', 'bg-white']);
-});
 
-const resultTitleClasses = computed(() => {
-  const result = twMerge(defaultTitleClasses, props.titleClasses);
-  if (props.disabled) {
-    return twMerge(result, 'bg-slate-50');
+  if (props.selectOptions) {
+    resultClasses = twMerge(resultClasses, 'pr-12');
   }
-  return twMerge(result, ['border-gray-500', 'bg-white']);
+
+  return twMerge(resultClasses, ['border-gray-500', 'bg-transparent']);
 });
 </script>
 

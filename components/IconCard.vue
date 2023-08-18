@@ -4,12 +4,11 @@
     :class="isActivated ? 'bg-gray-200' : 'bg-white hover:bg-gray-100'"
   >
     <Icon v-bind="icon" />
+    <div v-if="text">{{ text }}</div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { twMerge } from 'tailwind-merge';
-
 interface Props {
   isActivated: boolean;
 

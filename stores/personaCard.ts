@@ -39,8 +39,8 @@ export const usePersonaCardStore = definePiniaStore('persona card', () => {
     activeId.value = null;
   }
 
-  function setCurrentPersona(w: Persona) {
-    currentPersona.value = { ...w };
+  function setCurrentPersona(p: Persona) {
+    currentPersona.value = { ...p };
   }
 
   function setActiveId(id: string) {
@@ -69,35 +69,54 @@ export const usePersonaCardStore = definePiniaStore('persona card', () => {
     currentPersona.value.image = image;
   }
 
-  async function submit(token: string, issueId: string) {
-    const persona = NewPersonaSchema.parse(currentPersona.value);
+  async function submit(token: string, issueId: string): Promise<Persona> {
+    const p = NewPersonaSchema.parse(currentPersona.value);
 
-    console.log('Creating: ', persona);
-    const createdPersona = await createPersona(token, issueId, persona);
+    console.log('Creating: ', p);
+    const { data } = await fetchResource<Persona>(
+      token,
+      `/api/issues/${issueId}/personas`,
+      {
+        method: 'post',
+        body: p,
+      }
+    );
+    console.log('Created:', data);
 
-    return createdPersona;
+    return data;
   }
 
-  async function edit(token: string, issueId: string): Promise<Persona> {
+  async function edit(token: string, id: string): Promise<Persona> {
     loading.value = true;
-    const validationResult = NewPersonaSchema.parse(currentPersona.value);
+    const i = NewPersonaSchema.parse(currentPersona.value);
 
-    console.log('Patch: ', validationResult);
-    const editedPersona = await updatePersona(
+    console.log('Patch: ', i);
+    const { data } = await fetchResource<Persona>(
       token,
-      issueId,
-      currentPersona.value
+      `/api/personas/${id}`,
+      {
+        method: 'put',
+        body: i,
+      }
     );
 
-    console.log('Edited: ', editedPersona);
+    console.log('Edited: ', data);
     loading.value = false;
-    return editedPersona;
+    return data;
   }
 
-  async function remove(token: string, issueId: string) {
+  async function remove(token: string, id: string) {
     loading.value = true;
-    const data = await deletePersona(token, issueId);
-    console.log(data);
+
+    const { message } = await fetchResource<Persona>(
+      token,
+      `/api/personas/${id}`,
+      {
+        method: 'delete',
+      }
+    );
+
+    console.log(message);
     loading.value = false;
   }
 
@@ -112,6 +131,7 @@ export const usePersonaCardStore = definePiniaStore('persona card', () => {
     activeId,
     currentPersona,
     state,
+    loading,
 
     clearActiveId,
     clearCurrentPersona,

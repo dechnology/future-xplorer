@@ -13,6 +13,8 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 
+console.log('persona page');
+
 const route = useRoute();
 const workshopId = route.params.workshopId as string;
 const issueId = route.params.issueId as string;

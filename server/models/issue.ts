@@ -23,6 +23,13 @@ schema.virtual('personas', {
   justOne: false,
 });
 
+schema.virtual('cases', {
+  ref: 'Case',
+  localField: '_id',
+  foreignField: 'issue',
+  justOne: false,
+});
+
 schema.virtual('users', {
   ref: 'User',
   localField: '_id',

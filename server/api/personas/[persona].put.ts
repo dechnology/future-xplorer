@@ -1,8 +1,8 @@
-import type { NewPersona, Persona } from '@/types';
+import type { NewPersona, Persona, ResourceObject } from '@/types';
 import { PersonaModel } from '@/server/models';
 
 export default defineEventHandler(
-  async (event): Promise<{ persona: Persona }> => {
+  async (event): Promise<ResourceObject<Persona>> => {
     authenticate(event.context);
     const personaId = getRouterParam(event, 'persona');
     const newPersona: NewPersona = await readBody(event);
@@ -13,9 +13,10 @@ export default defineEventHandler(
         new: true,
       }
     );
+
     if (!persona) {
       throw Error('Persona update failed');
     }
-    return { persona };
+    return { data: persona };
   }
 );

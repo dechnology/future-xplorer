@@ -1,10 +1,5 @@
 import { z } from 'zod';
-import { Base } from '@/types/base';
-import { User } from '@/types/user';
-import { Persona } from './persona';
-import { Case } from '@/types/case';
-import { Keyword } from '@/types/keyword';
-import { Workshop } from '@/types/workshop';
+import { Base, Workshop, User, Persona, Case } from '@/types';
 
 export const NewIssueSchema = z.object({
   title: z.string().trim().nonempty(),
@@ -13,13 +8,11 @@ export const NewIssueSchema = z.object({
 
 export type NewIssue = z.infer<typeof NewIssueSchema>;
 
-export interface BaseIssue extends NewIssue, Base {
-  workshop: string | Workshop;
-}
+export type BaseIssue = NewIssue & Base;
 
 export interface Issue extends BaseIssue {
+  workshop?: Workshop;
   users?: User[];
   personas: Persona[];
-  // cases: Case[];
-  // keywords: Keyword[];
+  cases: Case[];
 }

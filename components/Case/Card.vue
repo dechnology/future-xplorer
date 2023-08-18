@@ -69,10 +69,10 @@
       v-model="currentCase.other"
     />
     <div
-      v-if="currentCase.imageUrl"
+      v-if="currentCase.image"
       class="flex min-h-[296px] overflow-hidden rounded-lg"
     >
-      <img class="w-full object-contain" :src="currentCase.imageUrl" alt="" />
+      <img class="w-full object-contain" :src="currentCase.image" alt="" />
     </div>
     <Card
       v-else

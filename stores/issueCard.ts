@@ -29,32 +29,53 @@ export const useIssueCardStore = definePiniaStore('issue card', () => {
   }
 
   async function submit(token: string, workshopId: string): Promise<BaseIssue> {
-    const validationResult = NewIssueSchema.parse(currentIssue.value);
+    const i = NewIssueSchema.parse(currentIssue.value);
 
-    console.log('Creating: ', validationResult);
-    const createdIssue = await createIssue(token, workshopId, {
-      ...validationResult,
-    });
+    console.log('Creating: ', i);
+    const { data } = await fetchResource<BaseIssue>(
+      token,
+      `/api/workshops/${workshopId}/issues`,
+      {
+        method: 'post',
+        body: i,
+      }
+    );
+    console.log('Created:', data);
 
-    return createdIssue;
+    return data;
   }
 
-  async function edit(token: string, issueId: string): Promise<Issue> {
+  async function edit(token: string, issueId: string): Promise<BaseIssue> {
     loading.value = true;
-    const validationResult = NewIssueSchema.parse(currentIssue.value);
+    const i = NewIssueSchema.parse(currentIssue.value);
 
-    console.log('Patch: ', validationResult);
-    const editedIssue = await updateIssue(token, issueId, currentIssue.value);
+    console.log('Patch: ', i);
+    const { data } = await fetchResource<BaseIssue>(
+      token,
+      `/api/issues/${issueId}`,
+      {
+        method: 'put',
+        body: i,
+      }
+    );
 
-    console.log('Edited: ', editedIssue);
+    console.log('Edited: ', data);
     loading.value = false;
-    return editedIssue;
+    return data;
   }
 
   async function remove(token: string, issueId: string) {
     loading.value = true;
-    const data = await deleteIssue(token, issueId);
-    console.log(data);
+
+    const { message } = await fetchResource<BaseIssue>(
+      token,
+      `/api/issues/${issueId}`,
+      {
+        method: 'delete',
+      }
+    );
+
+    console.log(message);
     loading.value = false;
   }
 
