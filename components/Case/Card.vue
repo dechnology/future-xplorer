@@ -117,7 +117,7 @@ import { CardStates } from '@/types/cardState';
 
 const store = useCaseCardStore();
 const modalStore = useModalStore();
-const { currentCase, state, activeCase } = storeToRefs(store);
+const { currentCase, state, activeId } = storeToRefs(store);
 
 const disabled = computed(() => state.value.name === CardStates.Detail.name);
 

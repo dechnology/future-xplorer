@@ -28,6 +28,8 @@ export default defineNuxtConfig({
     mongoDb: process.env.MONGO_DB,
     jwtSecretKey: process.env.JWT_SECRET_KEY,
     openaiApiKey: process.env.OPENAI_API_KEY,
+    s3AccessKeyId: process.env.S3_ACCESS_KEY_ID,
+    s3SecretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
   },
   imports: { dirs: ['stores'] },
   devtools: { enabled: true },

@@ -5,7 +5,9 @@ import type {
   NewPersona,
   CardState,
   PortraitRequestBody,
+  ResourceObject,
 } from '@/types';
+import { AsyncData } from 'nuxt/app';
 
 const getNewPersona = (): NewPersona => ({
   role: '',
@@ -27,6 +29,7 @@ const getRandomNewPersona = (): NewPersona => ({
 
 export const usePersonaCardStore = definePiniaStore('persona card', () => {
   const currentPersona = ref<Persona | NewPersona>(getNewPersona());
+  const imageBuffer = ref<string | null>(null);
   const activeId = ref<string | null>(null);
   const state = ref<CardState>(CardStates.New);
   const loading = ref(false);
@@ -71,6 +74,27 @@ export const usePersonaCardStore = definePiniaStore('persona card', () => {
 
   async function submit(token: string, issueId: string): Promise<Persona> {
     const p = NewPersonaSchema.parse(currentPersona.value);
+
+    // upload image
+    if (p.image) {
+      const { data, error } = (await useFetch('/api/s3/images', {
+        method: 'post',
+        headers: { Authorization: `Bearer ${token}` },
+        body: { url: p.image },
+      })) as AsyncData<ResourceObject<string> | null, Error>;
+
+      if (error.value) {
+        throw error.value;
+      }
+
+      if (!data.value) {
+        throw new Error('data are null');
+      }
+
+      const { data: url, message } = data.value;
+
+      console.log(data.value.data);
+    }
 
     console.log('Creating: ', p);
     const { data } = await fetchResource<Persona>(
@@ -128,8 +152,9 @@ export const usePersonaCardStore = definePiniaStore('persona card', () => {
   });
 
   return {
-    activeId,
     currentPersona,
+    imageBuffer,
+    activeId,
     state,
     loading,
 
