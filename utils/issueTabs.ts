@@ -6,4 +6,4 @@ export const issueTabs = [
   { title: '模板設計', name: 'templates' },
   { title: '故事產製', name: 'stories' },
   { title: '圖片產製', name: 'images' },
-];
+] as const;

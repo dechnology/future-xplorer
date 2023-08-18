@@ -1,4 +1,4 @@
-import { NewWorkshop, Workshop } from '@/types/workshop';
+import { NewWorkshop, Workshop } from '@/types';
 
 export const fetchWorkshops = async (token: string): Promise<Workshop[]> => {
   const { data, error } = await useFetch('/api/workshops', {

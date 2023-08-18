@@ -13,7 +13,7 @@ export const NewIssueSchema = z.object({
 
 export type NewIssue = z.infer<typeof NewIssueSchema>;
 
-export interface BaseIssue extends z.infer<typeof NewIssueSchema>, Base {
+export interface BaseIssue extends NewIssue, Base {
   workshop: string | Workshop;
 }
 

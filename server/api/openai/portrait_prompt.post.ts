@@ -67,18 +67,3 @@ export default defineEventHandler(
     return { prompt: response.data.choices[0].message.content };
   }
 );
-
-// let personalData = generateData.personaData;
-// let toGPTPrompt = `請用一句英文表達一名年齡為${personalData.age}的${personalData.sex}${personalData.persona}${personalData.name} 的persona的外在描述，
-//     使其符合「${personalData.feature}」這個行為特徵，並在某個與行為特徵適配的情境中將臉部略偏向鏡頭。 -> `;
-// let toGPTData = {
-//   ...config.chatgptAPI.data,
-//   messages: [
-//     { role: 'system', content: 'You are a helpful assistant.' },
-//     { role: 'user', content: toGPTPrompt },
-//   ],
-// };
-// let toDalleData = {
-//   ...config.dalleAPI.data,
-//   prompt: '',
-// };

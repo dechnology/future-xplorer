@@ -34,14 +34,8 @@
         <WorkshopTableRow
           v-for="workshop in workshops"
           :key="workshop._id"
-          @dblclick="() => $router.push(`/workshop/${workshop._id}`)"
-          @click="
-            () => {
-              cardStore.setActiveId(workshop._id);
-              cardStore.setCurrentWorkshop(workshop);
-              state = CardStates.Detail;
-            }
-          "
+          @dblclick="() => handleDbllick(workshop._id)"
+          @click="() => handleClick(workshop)"
           :workshop="workshop"
           class="= cursor-pointer border-b border-solid border-gray-300 transition-all"
           :class="[
@@ -57,11 +51,23 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { CardStates } from '@/types/cardState';
+import { CardStates } from '@/types';
+import { Workshop } from '@/types';
 
+const router = useRouter();
 const store = useWorkshopsStore();
 const cardStore = useWorkshopCardStore();
 const { workshops } = storeToRefs(store);
 const { activeId, state } = storeToRefs(cardStore);
 const tableHeaders = ['名稱', '工作坊時間', '建立者', '建立日期', '更新日期'];
+
+const handleClick = (w: Workshop) => {
+  cardStore.setActiveId(w._id);
+  cardStore.setCurrentWorkshop(w);
+  state.value = CardStates.Detail;
+};
+
+const handleDbllick = (id: string) => {
+  router.push(`/workshop/${id}`);
+};
 </script>

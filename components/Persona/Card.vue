@@ -119,7 +119,7 @@ import type { User } from '@/types';
 const cardStore = usePersonaCardStore();
 const issueStore = useIssueStore();
 const modalStore = useModalStore();
-const { currentPersona, state } = storeToRefs(cardStore);
+const { currentPersona, activeId, state } = storeToRefs(cardStore);
 const { workshop, issue } = storeToRefs(issueStore);
 const { user, getTokenSilently } = await useAuth();
 
@@ -166,31 +166,31 @@ const handleSubmit = async (e: Event) => {
         state.value = CardStates.Detail;
         break;
 
-      // case CardStates.Detail.name:
-      //   if (!activeId.value) {
-      //     throw new Error('No active persona to remove');
-      //   }
+      case CardStates.Detail.name:
+        if (!activeId.value) {
+          throw new Error('No active persona to remove');
+        }
 
-      //   await cardStore.remove(token, activeId.value);
-      //   personasStore.remove(activeId.value);
-      //   state.value = CardStates.New;
-      //   console.log('persona removed');
-      //   break;
+        await cardStore.remove(token, activeId.value);
+        issueStore.removePersona(activeId.value);
+        state.value = CardStates.New;
+        console.log('persona removed');
+        break;
 
-      // case CardStates.Editing.name:
-      //   if (!activeId.value) {
-      //     throw new Error('No active persona to edit');
-      //   }
+      case CardStates.Editing.name:
+        if (!activeId.value) {
+          throw new Error('No active persona to edit');
+        }
 
-      //   const editedPersona = await cardStore.edit(token, activeId.value);
-      //   editedPersona.creator = user.value as User;
-      //   console.log('edited persona: ', editedPersona);
-      //   personasStore.upsert(editedPersona);
+        const editedPersona = await cardStore.edit(token, activeId.value);
+        editedPersona.creator = user.value as User;
+        console.log('edited persona: ', editedPersona);
+        issueStore.upsertPersona(editedPersona);
 
-      //   cardStore.setActiveId(editedPersona._id);
-      //   cardStore.setCurrentPersona(editedPersona);
-      //   state.value = CardStates.Detail;
-      //   break;
+        cardStore.setActiveId(editedPersona._id);
+        cardStore.setCurrentPersona(editedPersona);
+        state.value = CardStates.Detail;
+        break;
 
       default:
         throw new Error(`Unknown state: ${state.value.name}`);

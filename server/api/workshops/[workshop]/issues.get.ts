@@ -1,8 +1,8 @@
-import { BaseIssue } from '@/types/issue';
+import { BaseIssue, ResourceObject } from '@/types';
 import { IssueModel } from '@/server/models';
 
 export default defineEventHandler(
-  async (event): Promise<{ issues: BaseIssue[] }> => {
+  async (event): Promise<ResourceObject<BaseIssue[]>> => {
     authenticate(event.context);
     const workshop = getRouterParam(event, 'workshop');
     const issues = await IssueModel.find({ workshop }).populate('creator');
@@ -13,6 +13,6 @@ export default defineEventHandler(
         statusMessage: 'Issues do not exist',
       });
     }
-    return { issues };
+    return { data: issues };
   }
 );

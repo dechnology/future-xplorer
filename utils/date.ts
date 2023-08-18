@@ -1,4 +1,3 @@
-import { Serialize } from 'nitropack';
 import { format } from 'date-fns';
 
 export const formatDate = (

@@ -1,8 +1,8 @@
 import { IssueModel } from '@/server/models';
-import { NewIssue, BaseIssue } from '@/types/issue';
+import { ResourceObject, NewIssue, BaseIssue } from '@/types';
 
 export default defineEventHandler(
-  async (event): Promise<{ issue: BaseIssue }> => {
+  async (event): Promise<ResourceObject<BaseIssue>> => {
     const { id: creator } = authenticate(event.context);
     const workshop = getRouterParam(event, 'workshop');
 
@@ -15,6 +15,6 @@ export default defineEventHandler(
     if (!issue) {
       throw Error('Issue creation failed');
     }
-    return { issue };
+    return { data: issue };
   }
 );

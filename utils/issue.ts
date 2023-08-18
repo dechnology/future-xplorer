@@ -1,4 +1,4 @@
-import { NewIssue, Issue, BaseIssue } from '@/types/issue';
+import { NewIssue, Issue, BaseIssue } from '@/types';
 
 export const fetchWorkshopIssues = async (
   token: string,

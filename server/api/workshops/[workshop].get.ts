@@ -1,8 +1,8 @@
-import { Workshop } from '@/types/workshop';
+import { Workshop, ResourceObject } from '@/types';
 import { WorkshopModel } from '@/server/models';
 
 export default defineEventHandler(
-  async (event): Promise<{ workshop: Workshop }> => {
+  async (event): Promise<ResourceObject<Workshop>> => {
     authenticate(event.context);
     const workshopId = getRouterParam(event, 'workshop');
     const workshop = await WorkshopModel.findById(workshopId);
@@ -13,6 +13,6 @@ export default defineEventHandler(
         statusMessage: 'Workshop does not exist',
       });
     }
-    return { workshop };
+    return { data: workshop };
   }
 );

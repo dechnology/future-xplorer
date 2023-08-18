@@ -1,8 +1,8 @@
 import { WorkshopModel } from '@/server/models';
-import { NewWorkshop, Workshop } from '@/types/workshop';
+import { ResourceObject, NewWorkshop, Workshop } from '@/types';
 
 export default defineEventHandler(
-  async (event): Promise<{ workshop: Workshop }> => {
+  async (event): Promise<ResourceObject<Workshop>> => {
     const { id: creator } = authenticate(event.context);
     const newWorkshop: NewWorkshop = await readBody(event);
     const workshop = await WorkshopModel.create({
@@ -12,6 +12,6 @@ export default defineEventHandler(
     if (!workshop) {
       throw Error('Workshop creation failed');
     }
-    return { workshop };
+    return { data: workshop };
   }
 );

@@ -47,11 +47,26 @@ export const useIssueStore = definePiniaStore('issue', () => {
     }
   }
 
+  function removePersona(id: string) {
+    if (!issue.value) {
+      throw new Error('no issue available');
+    }
+
+    const index = issue.value.personas.findIndex((p) => p._id === id);
+
+    if (index === -1) {
+      throw new Error('no issue match given id');
+    } else {
+      issue.value.personas.splice(index, 1);
+    }
+  }
+
   return {
     workshop,
     issue,
     personas,
     init,
     upsertPersona,
+    removePersona,
   };
 });

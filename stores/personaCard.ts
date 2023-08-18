@@ -29,6 +29,7 @@ export const usePersonaCardStore = definePiniaStore('persona card', () => {
   const currentPersona = ref<Persona | NewPersona>(getNewPersona());
   const activeId = ref<string | null>(null);
   const state = ref<CardState>(CardStates.New);
+  const loading = ref(false);
 
   function clearCurrentPersona() {
     currentPersona.value = getNewPersona();
@@ -77,6 +78,29 @@ export const usePersonaCardStore = definePiniaStore('persona card', () => {
     return createdPersona;
   }
 
+  async function edit(token: string, issueId: string): Promise<Persona> {
+    loading.value = true;
+    const validationResult = NewPersonaSchema.parse(currentPersona.value);
+
+    console.log('Patch: ', validationResult);
+    const editedPersona = await updatePersona(
+      token,
+      issueId,
+      currentPersona.value
+    );
+
+    console.log('Edited: ', editedPersona);
+    loading.value = false;
+    return editedPersona;
+  }
+
+  async function remove(token: string, issueId: string) {
+    loading.value = true;
+    const data = await deletePersona(token, issueId);
+    console.log(data);
+    loading.value = false;
+  }
+
   watch(state, (newState) => {
     if (newState.name === CardStates.New.name) {
       clearActiveId();
@@ -97,5 +121,7 @@ export const usePersonaCardStore = definePiniaStore('persona card', () => {
 
     generatePortrait,
     submit,
+    edit,
+    remove,
   };
 });

@@ -4,11 +4,8 @@ export const useWorkshopsStore = definePiniaStore('workshops', () => {
   const workshops = ref<Workshop[]>([]);
 
   async function init(token: string) {
-    try {
-      workshops.value = await fetchWorkshops(token);
-    } catch (e) {
-      console.error(e);
-    }
+    const { data } = await fetchResources<Workshop>(token, '/api/workshops');
+    workshops.value = data;
   }
 
   function findById(id: string): Workshop | null {

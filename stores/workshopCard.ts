@@ -46,34 +46,45 @@ export const useWorkshopCardStore = definePiniaStore('workshop card', () => {
 
   async function submit(token: string): Promise<Workshop> {
     loading.value = true;
-    const validationResult = NewWorkshopSchema.parse(currentWorkshop.value);
+    const w = NewWorkshopSchema.parse(currentWorkshop.value);
 
-    console.log('Creating: ', validationResult);
-    const createdWorkshop = await createWorkshop(token, validationResult);
+    console.log('Creating: ', w);
+    // const createdWorkshop = await createWorkshop(token, validationResult);
+    const { data } = await fetchResource<Workshop>(token, `/api/workshops`, {
+      method: 'post',
+      body: w,
+    });
 
+    console.log('Created: ', w);
     loading.value = false;
-    return createdWorkshop;
+
+    return data;
   }
 
   async function edit(token: string, workshopId: string): Promise<Workshop> {
     loading.value = true;
-    const validationResult = NewWorkshopSchema.parse(currentWorkshop.value);
+    const w = NewWorkshopSchema.parse(currentWorkshop.value);
 
-    console.log('Patch: ', validationResult);
-    const editedWorkshop = await updateWorkshop(
+    console.log('Patch: ', w);
+    const { data } = await fetchResource<Workshop>(
       token,
-      workshopId,
-      currentWorkshop.value
+      `/api/workshops/${workshopId}`,
+      { method: 'put', body: w }
     );
 
     loading.value = false;
-    return editedWorkshop;
+    return data;
   }
 
   async function remove(token: string, workshopId: string) {
     loading.value = true;
-    const data = await deleteWorkshop(token, workshopId);
-    console.log(data);
+    const { message } = await fetchResource<Workshop>(
+      token,
+      `/api/workshops/${workshopId}`,
+      { method: 'delete' }
+    );
+    // const data = await deleteWorkshop(token, workshopId);
+    console.log(message);
     loading.value = false;
   }
 

@@ -6,26 +6,13 @@ export const useIssuesStore = definePiniaStore('issues', () => {
   const issues = ref<BaseIssue[]>([]);
 
   async function init(token: string, workshopId: string) {
-    const results = await Promise.allSettled([
-      fetchWorkshop(token, workshopId),
-      fetchWorkshopIssues(token, workshopId),
+    const [workshopResponse, issuesResponse] = await Promise.all([
+      fetchResource<Workshop>(token, `/api/workshops/${workshopId}`),
+      fetchResources<BaseIssue>(token, `/api/workshops/${workshopId}/issues`),
     ]);
 
-    const workshopResult = results[0];
-    if (workshopResult.status === 'fulfilled') {
-      workshop.value = workshopResult.value.workshop;
-    } else {
-      console.error('Error fetching workshop:', workshopResult.reason);
-      // Handle the workshop fetch error
-    }
-
-    const issuesResult = results[1];
-    if (issuesResult.status === 'fulfilled') {
-      issues.value = issuesResult.value.issues;
-    } else {
-      console.error('Error fetching issues:', issuesResult.reason);
-      // Handle the issues fetch error
-    }
+    workshop.value = workshopResponse.data;
+    issues.value = issuesResponse.data;
   }
 
   function findById(id: string): BaseIssue | null {

@@ -11,6 +11,7 @@
       :class="disabled ? 'border-gray-200 bg-gray-50' : 'border-gray-500'"
       class="flex h-20 items-center gap-2 rounded border border-solid p-4"
     >
+      <!-- @click="() => !disabled && deleteChipsByIndex(idx)" -->
       <li
         v-for="(chip, idx) in chips"
         :key="`${idx}_${chip}`"
@@ -26,12 +27,13 @@
         <span>
           {{ chip }}
         </span>
-        <Icon
-          v-if="!disabled"
-          @click="() => !disabled && deleteChipsByIndex(idx)"
-          name="typcn:delete-outline"
-          size="2rem"
-        />
+        <div v-if="!disabled">
+          <Icon
+            @click="() => !disabled && deleteChipsByIndex(idx)"
+            name="typcn:delete-outline"
+            size="2rem"
+          />
+        </div>
       </li>
       <div @click="handleClick" class="flex h-full w-full items-center">
         <li
@@ -61,8 +63,8 @@ const emit = defineEmits<{
 }>();
 
 const ulRef = ref<HTMLUListElement | null>(null);
-const focusIndex = ref<number | null>(null);
 const lastListItem = ref<HTMLLIElement | null>(null);
+const focusIndex = ref<number | null>(null);
 
 const handleClick = (e: MouseEvent) => {
   if (!lastListItem.value) {

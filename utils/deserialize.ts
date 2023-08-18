@@ -1,13 +1,7 @@
 import { Serialize } from 'nitropack';
-import { Base } from '@/types/base';
-import { User } from '@/types/user';
-import { Workshop } from '@/types/workshop';
-import { BaseIssue, Issue } from '@/types/issue';
-import { Persona } from '../types/persona';
-import { Case } from '@/types/case';
-import { Keyword } from '@/types/keyword';
+import type { Base, User, Workshop, BaseIssue, Issue, Persona } from '@/types';
 
-const baseDeserializerFactory =
+export const deserializerFactory =
   <T extends Base>() =>
   (serialized: Serialize<T>): T =>
     ({
@@ -26,9 +20,9 @@ export const deserializeUser = (serialized: Serialize<User>): User => ({
   updatedAt: convertDateStr(serialized.updatedAt),
 });
 
-export const deserializeBase = baseDeserializerFactory<Base>();
-export const deserializeWorkshop = baseDeserializerFactory<Workshop>();
-export const deserializePersona = baseDeserializerFactory<Persona>();
+export const deserializeBase = deserializerFactory<Base>();
+export const deserializeWorkshop = deserializerFactory<Workshop>();
+export const deserializePersona = deserializerFactory<Persona>();
 
 // export const deserializeCase = baseDeserializerFactory<Case>();
 // export const deserializeKeyword = baseDeserializerFactory<Keyword>();
