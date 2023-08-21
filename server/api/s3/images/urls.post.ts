@@ -2,8 +2,8 @@ import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { ResourceObject } from '@/types';
 
 export default defineEventHandler(
-  async (event): Promise<ResourceObject<string>> => {
-    const s3 = useNitroApp().s3;
+  async (event): Promise<ResourceObject<null>> => {
+    const { s3 } = useNitroApp();
     const { url, key }: { url: string; key: string } = await readBody(event);
 
     try {
@@ -15,11 +15,14 @@ export default defineEventHandler(
         Bucket: 'dechnology',
         Key: key,
         Body: Buffer.from(await data.arrayBuffer()),
-        ContentType: 'image/png',
+        ContentType: `image/${key.split('.').pop()}`,
       });
       const result = await s3.send(command);
       console.log('Upload success', result);
-      return { data: 'Image uploaded successfully to S3.' };
+      return {
+        data: null,
+        message: 'Image uploaded successfully to S3 via URL.',
+      };
     } catch (e) {
       console.error('Error uploading to S3', e);
       throw new Error('Failed to upload image to S3.');

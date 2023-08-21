@@ -61,19 +61,19 @@
       :disabled="disabled"
       v-model="currentPersona.other"
     />
-    <div class="flex min-h-[296px] flex-col overflow-hidden rounded-lg">
-      <NuxtImg v-if="imageBuffer" class="w-full" :src="imageBuffer" alt="" />
+    <div class="flex flex-col overflow-hidden rounded-lg">
+      <NuxtImg v-if="imageUrlBuffer" :src="imageUrlBuffer" alt="" />
       <NuxtImg
         v-else-if="currentPersona.image"
-        class="w-full"
         :src="currentPersona.image"
         alt=""
       />
-      <IconCard
+      <InputFileDropzone
         v-else
-        class="flex-1"
+        @blob-url-created="handleBlobUrlChange"
+        class="h-72 flex-1"
+        v-model:file="imageFileBuffer"
         :icon="{ name: 'material-symbols:add-photo-alternate', size: '5rem' }"
-        :is-activated="false"
       />
     </div>
     <CardButton
@@ -122,7 +122,8 @@ import type { User } from '@/types';
 const cardStore = usePersonaCardStore();
 const issueStore = useIssueStore();
 const modalStore = useModalStore();
-const { currentPersona, imageBuffer, activeId, state } = storeToRefs(cardStore);
+const { currentPersona, imageUrlBuffer, imageFileBuffer, activeId, state } =
+  storeToRefs(cardStore);
 const { workshop, issue } = storeToRefs(issueStore);
 const { user, getTokenSilently } = await useAuth();
 
@@ -146,6 +147,10 @@ const handlePortraitGeneration = async () => {
   } catch (e) {
     console.error(e);
   }
+};
+
+const handleBlobUrlChange = (url: string) => {
+  cardStore.setImageUrl(url);
 };
 
 const handleSubmit = async (e: Event) => {

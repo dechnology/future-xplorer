@@ -18,4 +18,4 @@ const schema = new Schema<Case>(
   { timestamps: true, strictQuery: true }
 );
 
-export default mongoose.model<Case>('Case', schema, 'persona');
+export default mongoose.model<Case>('Case', schema, 'case');

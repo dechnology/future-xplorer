@@ -6,7 +6,7 @@
     >
       {{ title }}
     </label>
-    <div class="relative h-full w-full">
+    <div class="relative w-full">
       <textarea
         :placeholder="placeholder"
         :disabled="disabled"
@@ -87,7 +87,7 @@ const defaultClasses: ClassNameValue = [
 ];
 
 const classes = computed(() => {
-  let resultClasses = twMerge(defaultClasses);
+  let resultClasses = twMerge(defaultClasses, props.inputClasses);
   if (props.disabled) {
     return twMerge(resultClasses, 'bg-slate-50');
   }

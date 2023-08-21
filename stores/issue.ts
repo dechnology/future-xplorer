@@ -5,10 +5,10 @@ export const useIssueStore = definePiniaStore('issue', () => {
   const issue = ref<Issue | null>(null);
 
   const personas = computed(
-    () => issue.value && (issue.value.personas as Persona[])
+    (): Persona[] | null => issue.value && (issue.value.personas as Persona[])
   );
 
-  const cases = computed(() => issue.value && (issue.value.cases as Case[]));
+  const cases = computed((): Case[] | null => issue.value && issue.value.cases);
 
   async function init(token: string, workshopId: string, issueId: string) {
     const [workshopResponse, issuesResponse] = await Promise.all([
@@ -20,6 +20,8 @@ export const useIssueStore = definePiniaStore('issue', () => {
 
     workshop.value = workshopResponse.data;
     issue.value = issuesResponse.data;
+
+    console.log(issue.value.cases);
   }
 
   function upsertPersona(p: Persona) {

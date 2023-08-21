@@ -66,45 +66,50 @@ export const fetchResources = async <T extends Base>(
   return { ...data.value, data: data.value.data.map((d) => deserializer(d)) };
 };
 
-// export const fetchIssueById = async (
-//   workshopId: string,
-//   issueId: string,
-//   opts: { withWorkshop: boolean } = { withWorkshop: false }
-// ): Promise<{ workshop?: BaseWorkshop; issue: Issue }> => {
-//   const { data } = await useFetch(
-//     `/api/workshops/${workshopId}/issues/${issueId}`
-//   );
+export const uploadImageUrl = async (
+  token: string,
+  url: string,
+  key: string
+): Promise<{ message?: string }> => {
+  const { data, error } = await useFetch('/api/s3/images/urls', {
+    method: 'post',
+    headers: { Authorization: `Bearer ${token}` },
+    body: { url, key },
+  });
 
-//   // Fetching error
-//   if (data.value === null) {
-//     throw createError({
-//       statusCode: 400,
-//       statusMessage: 'Failed to fetch workshop by id',
-//     });
-//   }
+  if (error.value) {
+    throw error.value;
+  }
 
-//   const { workshop: w, issue: i } = data.value;
+  if (!data.value) {
+    throw new Error('data are null');
+  }
 
-//   return {
-//     workshop: opts.withWorkshop ? deserializeBaseWorkshop(w) : undefined,
-//     issue: deserializeIssue(i),
-//   };
-// };
+  return data.value;
+};
 
-// export const fetchWorkshopById = async (
-//   id: string
-// ): Promise<{ workshop: Workshop }> => {
-//   const { data } = await useFetch(`/api/workshops/${id}`);
+export const uploadImageFile = async (
+  token: string,
+  file: File,
+  key: string
+): Promise<{ message?: string }> => {
+  const formData = new FormData();
+  formData.append('image', file);
+  formData.append('key', key);
 
-//   // Fetching error
-//   if (data.value === null) {
-//     throw createError({
-//       statusCode: 400,
-//       statusMessage: 'Failed to fetch workshop by id',
-//     });
-//   }
+  const { data, error } = await useFetch('/api/s3/images/files', {
+    method: 'post',
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  });
 
-//   const { workshop: serializedWorkshop } = data.value;
+  if (error.value) {
+    throw error.value;
+  }
 
-//   return { workshop: deserializeWorkshop(serializedWorkshop) };
-// };
+  if (!data.value) {
+    throw new Error('data are null');
+  }
+
+  return data.value;
+};

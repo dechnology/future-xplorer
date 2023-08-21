@@ -7,7 +7,7 @@
       type="submit"
     />
     <CardButton
-      @click="() => store.clearCurrentCharacter()"
+      @click="() => store.clearCurrentCase()"
       class="absolute inset-0 h-12 w-28 rounded-lg bg-red-400 text-white hover:bg-red-500"
       :icon="{ name: 'mdi:delete', size: '3rem' }"
       body="清除"
@@ -16,5 +16,5 @@
 </template>
 
 <script setup lang="ts">
-const store = useCharacterCardStore();
+const store = useCaseCardStore();
 </script>

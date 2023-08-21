@@ -1,4 +1,5 @@
 import { fakerZH_TW } from '@faker-js/faker';
+import { v4 as uuidv4 } from 'uuid';
 import { CardStates, NewPersonaSchema, personaPresets } from '@/types';
 import type {
   Persona,
@@ -8,6 +9,8 @@ import type {
   ResourceObject,
 } from '@/types';
 import { AsyncData } from 'nuxt/app';
+
+const baseFilepath = 'tdri/imgs/personas/originals';
 
 const getNewPersona = (): NewPersona => ({
   role: '',
@@ -29,18 +32,24 @@ const getRandomNewPersona = (): NewPersona => ({
 
 export const usePersonaCardStore = definePiniaStore('persona card', () => {
   const currentPersona = ref<Persona | NewPersona>(getNewPersona());
-  const imageBuffer = ref<string | null>(null);
+  const imageUrlBuffer = ref<string | null>(null);
+  const imageFileBuffer = ref<File | null>(null);
   const activeId = ref<string | null>(null);
   const state = ref<CardState>(CardStates.New);
   const loading = ref(false);
 
   function clearCurrentPersona() {
-    imageBuffer.value = null;
+    imageUrlBuffer.value = null;
+    imageFileBuffer.value = null;
     currentPersona.value = getNewPersona();
   }
 
   function clearActiveId() {
     activeId.value = null;
+  }
+
+  function clearImageUrl() {
+    imageUrlBuffer.value = null;
   }
 
   function setCurrentPersona(p: Persona) {
@@ -49,6 +58,10 @@ export const usePersonaCardStore = definePiniaStore('persona card', () => {
 
   function setActiveId(id: string) {
     activeId.value = id;
+  }
+
+  function setImageUrl(url: string) {
+    imageUrlBuffer.value = url;
   }
 
   function randomizeCurrentPersona() {
@@ -70,43 +83,44 @@ export const usePersonaCardStore = definePiniaStore('persona card', () => {
     });
     console.log('image: ', image);
 
-    imageBuffer.value = image;
+    imageFileBuffer.value = null;
+    imageUrlBuffer.value = image;
   }
 
   async function submit(token: string, issueId: string): Promise<Persona> {
+    const config = useRuntimeConfig();
     const p = NewPersonaSchema.parse(currentPersona.value);
 
-    // upload image
-    if (imageBuffer.value) {
-      const config = useRuntimeConfig();
-      const ext = imageBuffer.value.split('?')[0].split('.').pop();
-      const fileName = `${p.name}_${p.gender}_${p.age}.${ext}`;
-      const filePath = `tdri/imgs/personas/originals/${fileName}`;
+    let filepath: string | null = null;
 
-      p.image = `https://${config.public.s3Domain}/${filePath}`;
-      console.log(`image url: ${p.image}`);
+    if (imageFileBuffer.value) {
+      filepath = `${baseFilepath}/${uuidv4()}.${imageFileBuffer.value.type}`;
 
-      const { data, error } = (await useFetch('/api/s3/images', {
-        method: 'post',
-        headers: { Authorization: `Bearer ${token}` },
-        body: {
-          url: imageBuffer.value,
-          key: filePath,
-        },
-      })) as AsyncData<ResourceObject<string> | null, Error>;
-
-      if (error.value) {
-        throw error.value;
-      }
-
-      if (!data.value) {
-        throw new Error('data are null');
-      }
-
-      const { message } = data.value;
+      const { message } = await uploadImageFile(
+        token,
+        imageFileBuffer.value,
+        filepath
+      );
 
       console.log(message);
-      imageBuffer.value = null;
+    } else if (imageUrlBuffer.value) {
+      const ext = imageUrlBuffer.value.split('?')[0].split('.').pop();
+      filepath = `${baseFilepath}/${uuidv4()}.${ext}`;
+
+      const { message } = await uploadImageUrl(
+        token,
+        imageUrlBuffer.value,
+        filepath
+      );
+
+      console.log(message);
+    }
+
+    imageUrlBuffer.value = null;
+
+    if (filepath) {
+      p.image = `https://${config.public.s3Domain}/${filepath}`;
+      console.log(`image url: ${p.image}`);
     }
 
     console.log('Creating: ', p);
@@ -118,7 +132,7 @@ export const usePersonaCardStore = definePiniaStore('persona card', () => {
         body: p,
       }
     );
-    console.log('Created:', data);
+    console.log('Created: ', data);
 
     return data;
   }
@@ -166,15 +180,18 @@ export const usePersonaCardStore = definePiniaStore('persona card', () => {
 
   return {
     currentPersona,
-    imageBuffer,
+    imageUrlBuffer,
+    imageFileBuffer,
     activeId,
     state,
     loading,
 
     clearActiveId,
     clearCurrentPersona,
+    clearImageUrl,
     setActiveId,
     setCurrentPersona,
+    setImageUrl,
     randomizeCurrentPersona,
 
     generatePortrait,

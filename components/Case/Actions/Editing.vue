@@ -19,7 +19,7 @@
 import { storeToRefs } from 'pinia';
 import { CardStates } from '@/types/cardState';
 
-const store = useCharacterCardStore();
+const store = useCaseCardStore();
 const { state } = storeToRefs(store);
 </script>
 

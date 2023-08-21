@@ -18,45 +18,45 @@
       title="標題"
       placeholder="案例標題"
       :disabled="disabled"
-      v-model="currentCase.other"
+      v-model="currentCase.title"
     />
     <InputTextarea
-      inputClasses="h-28"
+      inputClasses="h-32"
       title="背景介紹"
       placeholder="案例背景"
       :disabled="disabled"
-      v-model="currentCase.other"
+      v-model="currentCase.background"
     />
     <InputTextarea
-      inputClasses="h-28"
+      inputClasses="h-32"
       title="作法"
       placeholder="案例作法"
       :disabled="disabled"
-      v-model="currentCase.other"
+      v-model="currentCase.method"
     />
     <InputTextarea
-      inputClasses="h-28"
+      inputClasses="h-32"
       title="目標"
       placeholder="案例目標"
       :disabled="disabled"
-      v-model="currentCase.other"
+      v-model="currentCase.goal"
     />
     <InputTextarea
-      inputClasses="h-28"
+      inputClasses="h-32"
       title="問題與挑戰"
       placeholder="案例的問題與挑戰"
       :disabled="disabled"
-      v-model="currentCase.other"
+      v-model="currentCase.challenge"
     />
     <InputTextarea
-      inputClasses="h-28"
+      inputClasses="h-32"
       title="成果"
       placeholder="成果"
       :disabled="disabled"
-      v-model="currentCase.other"
+      v-model="currentCase.result"
     />
     <InputTextarea
-      inputClasses="h-28"
+      inputClasses="h-32"
       title="其他"
       placeholder="其他"
       :disabled="disabled"
@@ -66,35 +66,31 @@
       title="參考資料"
       placeholder="參考資料"
       :disabled="disabled"
-      v-model="currentCase.other"
+      v-model="currentCase.reference"
     />
-    <div
-      v-if="currentCase.image"
-      class="flex min-h-[296px] overflow-hidden rounded-lg"
-    >
-      <img class="w-full object-contain" :src="currentCase.image" alt="" />
+    <div class="flex min-h-[296px] overflow-hidden rounded-lg">
+      <NuxtImg
+        v-if="currentCase.image"
+        class="w-full"
+        :src="currentCase.image"
+        alt=""
+      />
+      <IconCard
+        v-else
+        class="flex-1"
+        :icon="{ name: 'material-symbols:add-photo-alternate', size: '5rem' }"
+        :is-activated="false"
+      />
     </div>
-    <Card
-      v-else
-      class="min-h-[296px] bg-slate-400"
-      :icon="{ name: 'material-symbols:add-photo-alternate', size: '5rem' }"
-    />
-    <CardButton
-      v-if="state.name !== CardStates.Detail.name"
-      @click="() => {}"
-      class="h-12 rounded-lg bg-blue-400 text-white hover:bg-blue-500"
-      :icon="{ name: 'mdi:play', size: '3rem' }"
-      body="AI生成圖片"
-    />
     <div
       v-if="'createdAt' in currentCase && 'updatedAt' in currentCase"
       class="flex items-center justify-center gap-2"
     >
       <div v-if="currentCase.createdAt">
-        建立時間：{{ format(currentCase.createdAt, 'yyyy-MM-dd') }}
+        建立時間：{{ formatDate(currentCase.createdAt) }}
       </div>
       <div v-if="currentCase.updatedAt">
-        建立時間：{{ format(currentCase.updatedAt, 'yyyy-MM-dd') }}
+        建立時間：{{ formatDate(currentCase.updatedAt) }}
       </div>
     </div>
     <CaseActionsNew v-if="state.name === CardStates.New.name" />
@@ -111,33 +107,70 @@
 </template>
 
 <script setup lang="ts">
-import { format } from 'date-fns';
-import { storeToRefs } from 'pinia';
-import { CardStates } from '@/types/cardState';
+import { CardStates } from '@/types';
+import type { User } from '@/types';
 
-const store = useCaseCardStore();
+const cardStore = useCaseCardStore();
+const issueStore = useIssueStore();
 const modalStore = useModalStore();
-const { currentCase, state, activeId } = storeToRefs(store);
+const { currentCase, activeId, state } = storeToRefs(cardStore);
+const { workshop, issue } = storeToRefs(issueStore);
+const { user, getTokenSilently } = await useAuth();
 
 const disabled = computed(() => state.value.name === CardStates.Detail.name);
 
-const handleSubmit = (e: Event) => {
-  e.preventDefault();
-  switch (state.value.name) {
-    // TODO
-    case 'new':
-      console.log('submiting new...');
-      break;
-    case 'detail':
-      console.log('submiting detail...');
-      break;
-    // TODO
-    case 'editing':
-      console.log('submiting editing...');
-      state.value = CardStates.Detail;
-      break;
-    default:
-      throw Error('Unknown state');
+const handleSubmit = async (e: Event) => {
+  try {
+    const token = await getTokenSilently();
+
+    switch (state.value.name) {
+      case CardStates.New.name:
+        if (!issue.value) {
+          throw new Error('no issue to bind persona');
+        }
+
+        const createdCase = await cardStore.submit(token, issue.value._id);
+
+        createdCase.creator = user.value as User;
+        console.log('created persona: ', createdCase);
+        issueStore.upsertCase(createdCase);
+
+        cardStore.setActiveId(createdCase._id);
+        cardStore.setCurrentCase(createdCase);
+        state.value = CardStates.Detail;
+        break;
+
+      case CardStates.Detail.name:
+        if (!activeId.value) {
+          throw new Error('No active persona to remove');
+        }
+
+        await cardStore.remove(token, activeId.value);
+        issueStore.removeCase(activeId.value);
+        state.value = CardStates.New;
+        console.log('persona removed');
+        break;
+
+      case CardStates.Editing.name:
+        if (!activeId.value) {
+          throw new Error('No active persona to edit');
+        }
+
+        const editedCase = await cardStore.edit(token, activeId.value);
+        editedCase.creator = user.value as User;
+        console.log('edited persona: ', editedCase);
+        issueStore.upsertCase(editedCase);
+
+        cardStore.setActiveId(editedCase._id);
+        cardStore.setCurrentCase(editedCase);
+        state.value = CardStates.Detail;
+        break;
+
+      default:
+        throw new Error(`Unknown state: ${state.value.name}`);
+    }
+  } catch (e) {
+    console.error(e);
   }
 };
 </script>

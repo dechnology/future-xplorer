@@ -2,7 +2,7 @@
   <div class="grid grid-cols-4 gap-4 rounded-2xl">
     <IconCard
       @click="() => handleClick()"
-      classes="h-[350px]"
+      class="h-[350px]"
       :isActivated="activeId === null"
       :icon="{ name: 'mdi:plus', size: '5rem' }"
       text="新增角色"

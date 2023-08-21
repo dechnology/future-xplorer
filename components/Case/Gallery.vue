@@ -1,18 +1,19 @@
 <template>
   <div class="grid grid-cols-4 gap-4">
-    <Card
-      classes="h-80"
-      @click="() => (state = CardStates.New)"
+    <IconCard
+      @click="() => handleClick()"
+      class="h-80"
       :isActivated="activeId === null"
-      :icon="{ name: 'mdi:plus', size: '10rem' }"
+      :icon="{ name: 'mdi:plus', size: '5rem' }"
+      text="新增案例"
     />
     <Card
-      classes="h-80"
+      class="h-80"
       v-for="c in cases"
       :key="c._id"
       @click="() => handleClick(c)"
       :isActivated="c._id === activeId"
-      :imageUrl="c.image"
+      :image="c.image"
       :lines="[`標題：${c.title}`, `目標：${c.goal}`, `作法：${c.method}`]"
       :footnotes="[`建立者：${c.creator.name}`]"
     />
