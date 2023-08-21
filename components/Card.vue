@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <div class="relative flex shrink grow basis-auto px-5 py-6">
+    <div class="relative flex shrink grow basis-auto flex-col px-5 py-6">
       <!--  Title -->
       <h3 v-if="title" class="text-2xl font-bold">{{ title }}</h3>
       <!-- Description (use this as the main content of the card) -->
@@ -39,8 +39,6 @@
 </template>
 
 <script setup lang="ts">
-import { twMerge } from 'tailwind-merge';
-
 interface Props {
   title?: string;
   description?: string;

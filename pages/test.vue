@@ -1,5 +1,6 @@
 <template>
-  <div class="m-auto flex w-1/3 items-center justify-center gap-8">
+  <div class="m-auto flex w-1/3 flex-col items-center justify-center gap-8">
+    <NuxtImg src="/s3/test.png" format="webp" />
     <button
       @click="handleClick"
       class="text rounded-md bg-blue-300 p-4 text-white"

@@ -61,18 +61,21 @@
       :disabled="disabled"
       v-model="currentPersona.other"
     />
-    <div
-      v-if="currentPersona.image"
-      class="flex min-h-[296px] overflow-hidden rounded-lg"
-    >
-      <img class="w-full object-contain" :src="currentPersona.image" alt="" />
+    <div class="flex min-h-[296px] flex-col overflow-hidden rounded-lg">
+      <NuxtImg v-if="imageBuffer" class="w-full" :src="imageBuffer" alt="" />
+      <NuxtImg
+        v-else-if="currentPersona.image"
+        class="w-full"
+        :src="currentPersona.image"
+        alt=""
+      />
+      <IconCard
+        v-else
+        class="flex-1"
+        :icon="{ name: 'material-symbols:add-photo-alternate', size: '5rem' }"
+        :is-activated="false"
+      />
     </div>
-    <IconCard
-      v-else
-      class="min-h-[296px] bg-slate-400"
-      :icon="{ name: 'material-symbols:add-photo-alternate', size: '5rem' }"
-      :is-activated="false"
-    />
     <CardButton
       v-if="state.name !== CardStates.Detail.name"
       @click.prevent="handlePortraitGeneration"
@@ -119,7 +122,7 @@ import type { User } from '@/types';
 const cardStore = usePersonaCardStore();
 const issueStore = useIssueStore();
 const modalStore = useModalStore();
-const { currentPersona, activeId, state } = storeToRefs(cardStore);
+const { currentPersona, imageBuffer, activeId, state } = storeToRefs(cardStore);
 const { workshop, issue } = storeToRefs(issueStore);
 const { user, getTokenSilently } = await useAuth();
 

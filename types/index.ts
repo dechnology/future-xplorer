@@ -6,4 +6,5 @@ export * from './cardState';
 export * from './persona';
 export * from './case';
 
+export * from './errors';
 export * from './response';

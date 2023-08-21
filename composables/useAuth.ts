@@ -1,7 +1,7 @@
-import { UncaughtError } from '@/types/errors';
 import { storeToRefs } from 'pinia';
-import { useAuthStore } from '@/stores/auth';
 import { decodeJwt } from 'jose';
+import { UncaughtError } from '@/types';
+import { useAuthStore } from '@/stores/auth';
 
 const needRefresh = (accessToken: string | null): boolean => {
   if (!accessToken) {

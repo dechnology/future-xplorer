@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
 
   const { name, id, role } = userData;
 
-  const accessToken = await generateToken({ name, id, role }, '10s');
+  const accessToken = await generateToken({ name, id, role }, '10min');
 
   return accessToken;
 });

@@ -21,6 +21,9 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
+    public: {
+      s3Domain: process.env.S3_DOMAIN,
+    },
     mongoUser: process.env.MONGO_USER,
     mongoPassword: process.env.MONGO_PASSWORD,
     mongoHost: process.env.MONGO_HOST,
@@ -33,11 +36,31 @@ export default defineNuxtConfig({
   },
   imports: { dirs: ['stores'] },
   devtools: { enabled: true },
-  modules: ['@nuxtjs/tailwindcss', 'nuxt-icon', '@pinia/nuxt'],
+  modules: ['@nuxtjs/tailwindcss', 'nuxt-icon', '@pinia/nuxt', '@nuxt/image'],
   pinia: {
     autoImports: [
       // import { defineStore as definePiniaStore } from 'pinia'
       ['defineStore', 'definePiniaStore'],
+      'storeToRefs',
     ],
+  },
+  image: {
+    domains: [
+      'dechnology.s3.us-west-2.amazonaws.com',
+      'oaidalleapiprodscus.blob.core.windows.net',
+    ],
+    alias: {
+      s3: 'https://dechnology.s3.us-west-2.amazonaws.com/tdri',
+    },
+    ipx: {
+      maxAge: 2592000,
+    },
+    presets: {
+      card: {
+        modifiers: {
+          format: 'webp',
+        },
+      },
+    },
   },
 });

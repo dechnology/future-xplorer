@@ -35,6 +35,7 @@ export const usePersonaCardStore = definePiniaStore('persona card', () => {
   const loading = ref(false);
 
   function clearCurrentPersona() {
+    imageBuffer.value = null;
     currentPersona.value = getNewPersona();
   }
 
@@ -69,18 +70,29 @@ export const usePersonaCardStore = definePiniaStore('persona card', () => {
     });
     console.log('image: ', image);
 
-    currentPersona.value.image = image;
+    imageBuffer.value = image;
   }
 
   async function submit(token: string, issueId: string): Promise<Persona> {
     const p = NewPersonaSchema.parse(currentPersona.value);
 
     // upload image
-    if (p.image) {
+    if (imageBuffer.value) {
+      const config = useRuntimeConfig();
+      const ext = imageBuffer.value.split('?')[0].split('.').pop();
+      const fileName = `${p.name}_${p.gender}_${p.age}.${ext}`;
+      const filePath = `tdri/imgs/personas/originals/${fileName}`;
+
+      p.image = `https://${config.public.s3Domain}/${filePath}`;
+      console.log(`image url: ${p.image}`);
+
       const { data, error } = (await useFetch('/api/s3/images', {
         method: 'post',
         headers: { Authorization: `Bearer ${token}` },
-        body: { url: p.image },
+        body: {
+          url: imageBuffer.value,
+          key: filePath,
+        },
       })) as AsyncData<ResourceObject<string> | null, Error>;
 
       if (error.value) {
@@ -91,9 +103,10 @@ export const usePersonaCardStore = definePiniaStore('persona card', () => {
         throw new Error('data are null');
       }
 
-      const { data: url, message } = data.value;
+      const { message } = data.value;
 
-      console.log(data.value.data);
+      console.log(message);
+      imageBuffer.value = null;
     }
 
     console.log('Creating: ', p);
