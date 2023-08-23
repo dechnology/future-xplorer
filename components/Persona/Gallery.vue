@@ -13,7 +13,7 @@
       @click="() => handleClick(p)"
       class="h-[350px]"
       :isActivated="p._id === activeId"
-      :image="p.image ? p.image : null"
+      :image="p.image"
       :lines="[
         `角色：${p.role}`,
         `姓名：${p.name}`,
@@ -41,8 +41,8 @@ console.log(personas.value);
 
 const handleClick = (p?: Persona) => {
   if (p) {
-    modalStore.setContent(p);
-    cardStore.setActiveId(p._id);
+    // modalStore.setContent(p);
+    cardStore.setActivePersona(p);
     cardStore.setCurrentPersona(p);
     state.value = CardStates.Detail;
   } else {

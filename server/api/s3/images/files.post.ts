@@ -1,8 +1,10 @@
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { ResourceObject } from '@/types';
 
+const { s3Domain } = useRuntimeConfig();
+
 export default defineEventHandler(
-  async (event): Promise<ResourceObject<null>> => {
+  async (event): Promise<ResourceObject<string>> => {
     const s3 = useNitroApp().s3;
     const rawFormData = await readMultipartFormData(event);
     const formData: { key?: string; image?: Buffer; contentType?: string } = {};
@@ -50,7 +52,7 @@ export default defineEventHandler(
       const result = await s3.send(command);
       console.log('Upload success: ', result);
       return {
-        data: null,
+        data: `https://${s3Domain}/${formData.key}`,
         message: 'image uploaded successfully to S3 via formdata.',
       };
     } catch (e) {

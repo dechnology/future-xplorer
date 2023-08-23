@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { AsyncData } from 'nuxt/app';
 import { Serialize } from 'nitropack';
 import { Base, ResourceObject } from '@/types';
@@ -7,6 +8,8 @@ interface FetchResourceOptions<T> {
   deserializer: (data: Serialize<T>) => T;
   body?: Record<string, any>;
 }
+
+const baseFilepath = 'tdri/imgs/personas/originals';
 
 export const fetchResource = async <T extends Base>(
   token: string,
@@ -68,13 +71,15 @@ export const fetchResources = async <T extends Base>(
 
 export const uploadImageUrl = async (
   token: string,
-  url: string,
-  key: string
-): Promise<{ message?: string }> => {
+  url: string
+): Promise<ResourceObject<string>> => {
+  const ext = url.split('?')[0].split('.').pop();
+  const filepath = `${baseFilepath}/${uuidv4()}.${ext}`;
+
   const { data, error } = await useFetch('/api/s3/images/urls', {
     method: 'post',
     headers: { Authorization: `Bearer ${token}` },
-    body: { url, key },
+    body: { url, key: filepath },
   });
 
   if (error.value) {
@@ -90,12 +95,12 @@ export const uploadImageUrl = async (
 
 export const uploadImageFile = async (
   token: string,
-  file: File,
-  key: string
-): Promise<{ message?: string }> => {
+  file: File
+): Promise<ResourceObject<string>> => {
+  const filepath = `${baseFilepath}/${uuidv4()}.${file.type}`;
   const formData = new FormData();
   formData.append('image', file);
-  formData.append('key', key);
+  formData.append('key', filepath);
 
   const { data, error } = await useFetch('/api/s3/images/files', {
     method: 'post',

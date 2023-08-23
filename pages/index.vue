@@ -8,12 +8,13 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
-
 const store = useWorkshopsStore();
 const { workshops } = storeToRefs(store);
 const { getTokenSilently } = await useAuth();
-const token = await getTokenSilently();
-await store.init(token);
-console.log('workshops: ', workshops.value);
+
+onMounted(async () => {
+  const token = await getTokenSilently();
+  await store.init(token);
+  console.log('workshops: ', workshops.value);
+});
 </script>

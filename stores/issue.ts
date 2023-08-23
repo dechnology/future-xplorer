@@ -1,14 +1,48 @@
-import { Persona, Workshop, Issue, Case } from '@/types';
+import {
+  Persona,
+  Workshop,
+  Issue,
+  Case,
+  IssueResources,
+  WorkshopElements,
+  Keyword,
+} from '@/types';
 
 export const useIssueStore = definePiniaStore('issue', () => {
   const workshop = ref<Workshop | null>(null);
   const issue = ref<Issue | null>(null);
 
+  const elements = computed((): WorkshopElements | null => {
+    if (!workshop.value) {
+      return null;
+    }
+
+    const { objects, environments, messages, services } = workshop.value;
+    return {
+      objects,
+      environments,
+      messages,
+      services,
+    };
+  });
+
   const personas = computed(
-    (): Persona[] | null => issue.value && (issue.value.personas as Persona[])
+    (): Persona[] | null => issue.value && issue.value.personas
   );
 
   const cases = computed((): Case[] | null => issue.value && issue.value.cases);
+
+  const keywords = computed(() => {
+    if (!issue.value) {
+      return null;
+    }
+
+    const allKeywords: Keyword[] = [];
+    for (const c of issue.value.cases) {
+      allKeywords.push(...c.keywords);
+    }
+    return allKeywords;
+  });
 
   async function init(token: string, workshopId: string, issueId: string) {
     const [workshopResponse, issuesResponse] = await Promise.all([
@@ -54,14 +88,46 @@ export const useIssueStore = definePiniaStore('issue', () => {
     }
   }
 
+  function upsertCase(c: Case) {
+    if (!issue.value) {
+      throw new Error('issue is null');
+    }
+
+    const index = issue.value.cases.findIndex((_case) => _case._id === c._id);
+
+    if (index === -1) {
+      issue.value.cases.push(c);
+    } else {
+      issue.value.cases[index] = c;
+    }
+  }
+
+  function removeCase(id: string) {
+    if (!issue.value) {
+      throw new Error('no issue available');
+    }
+
+    const index = issue.value.cases.findIndex((c) => c._id === id);
+
+    if (index === -1) {
+      throw new Error('no issue match given id');
+    } else {
+      issue.value.cases.splice(index, 1);
+    }
+  }
+
   return {
     workshop,
     issue,
+    elements,
     personas,
     cases,
+    keywords,
 
     init,
     upsertPersona,
     removePersona,
+    upsertCase,
+    removeCase,
   };
 });

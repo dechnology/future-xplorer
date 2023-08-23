@@ -43,7 +43,7 @@ const { activeId, state } = storeToRefs(cardStore);
 const handleClick = (issue?: BaseIssue) => {
   if (issue) {
     modalStore.setContent(issue);
-    cardStore.setActiveId(issue._id);
+    cardStore.setActiveIssue(issue);
     cardStore.setCurrentIssue(issue);
     state.value = CardStates.Detail;
   } else {

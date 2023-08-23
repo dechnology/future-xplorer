@@ -62,7 +62,7 @@ const { activeId, state } = storeToRefs(cardStore);
 const tableHeaders = ['名稱', '工作坊時間', '建立者', '建立日期', '更新日期'];
 
 const handleClick = (w: Workshop) => {
-  cardStore.setActiveId(w._id);
+  cardStore.setActiveWorkshop(w);
   cardStore.setCurrentWorkshop(w);
   state.value = CardStates.Detail;
 };

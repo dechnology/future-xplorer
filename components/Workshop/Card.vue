@@ -3,26 +3,19 @@
     @submit.prevent="handleSubmit"
     class="relative flex flex-col gap-10 rounded-md bg-white p-8 shadow-2xl"
   >
-    <div class="flex items-end gap-4">
-      <h3 class="text-2xl font-medium text-blue-950">
-        工作坊{{ state.formTitle }}
-      </h3>
-      <div class="text-sm text-gray-500">
-        <span>建立者：</span>
-        <span v-if="'creator' in currentWorkshop">
-          {{ currentWorkshop.creator.name }}
-        </span>
-        <span v-else-if="state.name === CardStates.New.name && user">
-          {{ user.name }}
-        </span>
-        <span v-else> Unknown </span>
-      </div>
-    </div>
+    <CardHeader
+      :title="`工作坊${state.formTitle}`"
+      :creator="
+        'creator' in currentWorkshop ? currentWorkshop.creator : undefined
+      "
+      :user="user"
+    />
     <div class="flex flex-col gap-7 rounded-lg">
       <InputText
         title="工作坊名稱"
         placeholder="工作坊名稱"
         :disabled="disabled"
+        :select-only="false"
         v-model="currentWorkshop.name"
       />
       <InputTextarea
@@ -87,8 +80,10 @@ const { user, getTokenSilently } = await useAuth();
 const { activeId, currentWorkshop, state } = storeToRefs(cardStore);
 const disabled = computed(() => state.value.name === CardStates.Detail.name);
 
-breadcrumbStore.clearWorkshop();
-breadcrumbStore.clearIssue();
+onMounted(async () => {
+  breadcrumbStore.clearWorkshop();
+  breadcrumbStore.clearIssue();
+});
 
 const handleSubmit = async () => {
   try {
@@ -102,7 +97,7 @@ const handleSubmit = async () => {
         console.log('created workshop: ', createdWorkshop);
         workshopsStore.upsert(createdWorkshop);
 
-        cardStore.setActiveId(createdWorkshop._id);
+        cardStore.setActiveWorkshop(createdWorkshop);
         cardStore.setCurrentWorkshop(createdWorkshop);
         state.value = CardStates.Detail;
         break;
@@ -128,7 +123,7 @@ const handleSubmit = async () => {
         console.log('edited workshop: ', editedWorkshop);
         workshopsStore.upsert(editedWorkshop);
 
-        cardStore.setActiveId(editedWorkshop._id);
+        cardStore.setActiveWorkshop(editedWorkshop);
         cardStore.setCurrentWorkshop(editedWorkshop);
         state.value = CardStates.Detail;
         break;

@@ -56,7 +56,7 @@ import { ClassNameValue, twMerge } from 'tailwind-merge';
 interface Props {
   title?: string;
   placeholder: string;
-  disabled: boolean;
+  disabled?: boolean;
   modelValue: string;
 
   selectOptions?: string[];

@@ -21,9 +21,6 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
-    public: {
-      s3Domain: process.env.S3_DOMAIN,
-    },
     mongoUser: process.env.MONGO_USER,
     mongoPassword: process.env.MONGO_PASSWORD,
     mongoHost: process.env.MONGO_HOST,
@@ -31,6 +28,7 @@ export default defineNuxtConfig({
     mongoDb: process.env.MONGO_DB,
     jwtSecretKey: process.env.JWT_SECRET_KEY,
     openaiApiKey: process.env.OPENAI_API_KEY,
+    s3Domain: process.env.S3_DOMAIN,
     s3AccessKeyId: process.env.S3_ACCESS_KEY_ID,
     s3SecretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
   },

@@ -1,98 +1,121 @@
-import type { Case, NewCase, CardState } from '@/types';
+import { v4 as uuidv4 } from 'uuid';
 import { CardStates, NewCaseSchema } from '@/types';
+import type { Case, NewCase, CardState } from '@/types';
+
+const baseFilepath = 'tdri/imgs/cases/originals';
 
 const getNewCase = (): NewCase => ({
-  title: '',
-  background: '',
-  method: '',
-  goal: '',
-  challenge: '',
-  result: '',
-  reference: '',
+  title: 'testing title',
+  background: 'some bg...',
+  method: 'some methods',
+  goal: 'goals and stuffs',
+  challenge: 'some challenges',
+  result: 'some results',
+  reference: 'https://www.google.com',
   other: '',
+  // title: '',
+  // background: '',
+  // method: '',
+  // goal: '',
+  // challenge: '',
+  // result: '',
+  // reference: '',
+  // other: '',
+  image: null,
 });
 
 export const useCaseCardStore = definePiniaStore('case card', () => {
   const currentCase = ref<Case | NewCase>(getNewCase());
-  const imageBuffer = ref<string | null>(null);
-  const activeId = ref<string | null>(null);
+  const activeCase = ref<Case | null>(null);
+  const imageFileBuffer = ref<File | null>(null);
+  const imageUrlBuffer = ref<string | null>(null);
   const state = ref<CardState>(CardStates.New);
   const loading = ref(false);
+
+  const activeId = computed(
+    (): string | null => activeCase.value && activeCase.value._id
+  );
 
   function clearCurrentCase() {
     currentCase.value = getNewCase();
   }
 
-  function clearActiveId() {
-    activeId.value = null;
+  function clearActiveCase() {
+    activeCase.value = null;
+  }
+
+  function clearImage() {
+    imageUrlBuffer.value = null;
+    imageFileBuffer.value = null;
   }
 
   function setCurrentCase(c: Case) {
     currentCase.value = { ...c };
   }
 
-  function setActiveId(id: string) {
-    activeId.value = id;
+  function setActiveCase(c: Case) {
+    activeCase.value = c;
+  }
+
+  function setImageUrl(url: string) {
+    imageUrlBuffer.value = url;
   }
 
   async function submit(token: string, issueId: string): Promise<Case> {
     const c = NewCaseSchema.parse(currentCase.value);
 
-    // upload image
-    if (imageBuffer.value) {
-      const config = useRuntimeConfig();
-      const ext = imageBuffer.value.split('?')[0].split('.').pop();
-      const fileName = `${p.name}_${p.gender}_${p.age}.${ext}`;
-      const filePath = `tdri/imgs/personas/originals/${fileName}`;
+    if (imageUrlBuffer.value) {
+      let s3Url: string;
 
-      p.image = `https://${config.public.s3Domain}/${filePath}`;
-      console.log(`image url: ${p.image}`);
-
-      const { data, error } = (await useFetch('/api/s3/images', {
-        method: 'post',
-        headers: { Authorization: `Bearer ${token}` },
-        body: {
-          url: imageBuffer.value,
-          key: filePath,
-        },
-      })) as AsyncData<ResourceObject<string> | null, Error>;
-
-      if (error.value) {
-        throw error.value;
+      if (imageFileBuffer.value) {
+        s3Url = (await uploadImageFile(token, imageFileBuffer.value)).data;
+      } else {
+        s3Url = (await uploadImageUrl(token, imageUrlBuffer.value)).data;
       }
+      clearImage();
 
-      if (!data.value) {
-        throw new Error('data are null');
-      }
-
-      const { message } = data.value;
-
-      console.log(message);
-      imageBuffer.value = null;
+      console.log(`image url: ${s3Url}`);
+      c.image = s3Url;
     }
 
-    console.log('Creating: ', p);
+    imageUrlBuffer.value = null;
+
+    console.log('Creating: ', c);
     const { data } = await fetchResource<Case>(
       token,
-      `/api/issues/${issueId}/personas`,
+      `/api/issues/${issueId}/cases`,
       {
         method: 'post',
-        body: p,
+        body: c,
       }
     );
-    console.log('Created:', data);
+    console.log('Created: ', data);
 
     return data;
   }
 
   async function edit(token: string, id: string): Promise<Case> {
     loading.value = true;
-    const i = NewCaseSchema.parse(currentCase.value);
+    const c = NewCaseSchema.parse(currentCase.value);
 
-    console.log('Patch: ', i);
-    const { data } = await fetchResource<Case>(token, `/api/personas/${id}`, {
+    if (imageUrlBuffer.value) {
+      let s3Url: string;
+
+      if (imageFileBuffer.value) {
+        s3Url = (await uploadImageFile(token, imageFileBuffer.value)).data;
+      } else {
+        s3Url = (await uploadImageUrl(token, imageUrlBuffer.value)).data;
+      }
+      clearImage();
+
+      console.log(`image url: ${s3Url}`);
+      c.image = s3Url;
+    }
+
+    console.log('Patch: ', c);
+    const { data } = await fetchResource<Case>(token, `/api/cases/${id}`, {
       method: 'put',
-      body: i,
+      body: c,
     });
 
     console.log('Edited: ', data);
@@ -103,13 +126,9 @@ export const useCaseCardStore = definePiniaStore('case card', () => {
   async function remove(token: string, id: string) {
     loading.value = true;
 
-    const { message } = await fetchResource<Case>(
-      token,
-      `/api/personas/${id}`,
-      {
-        method: 'delete',
-      }
-    );
+    const { message } = await fetchResource<Case>(token, `/api/cases/${id}`, {
+      method: 'delete',
+    });
 
     console.log(message);
     loading.value = false;
@@ -117,19 +136,28 @@ export const useCaseCardStore = definePiniaStore('case card', () => {
 
   watch(state, (newState) => {
     if (newState.name === CardStates.New.name) {
-      clearActiveId();
+      clearActiveCase();
       clearCurrentCase();
     }
   });
 
   return {
     currentCase,
+    activeCase,
+    imageFileBuffer,
+    imageUrlBuffer,
     activeId,
     state,
 
     clearCurrentCase,
-    clearActiveId,
+    clearActiveCase,
+    clearImage,
     setCurrentCase,
-    setActiveId,
+    setActiveCase,
+    setImageUrl,
+
+    submit,
+    edit,
+    remove,
   };
 });

@@ -1,4 +1,3 @@
-import { storeToRefs } from 'pinia';
 import { decodeJwt } from 'jose';
 import { UncaughtError } from '@/types';
 import { useAuthStore } from '@/stores/auth';
@@ -41,18 +40,20 @@ export const useAuth = async () => {
     return accessToken.value;
   };
 
-  try {
-    accessToken.value = await getTokenSilently();
-    if (!user.value) {
-      user.value = await fetchUser();
+  const authenticate = async () => {
+    try {
+      accessToken.value = await getTokenSilently();
+      if (!user.value) {
+        user.value = await fetchUser();
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        error.value = e;
+      } else {
+        error.value = new UncaughtError();
+      }
     }
-  } catch (e) {
-    if (e instanceof Error) {
-      error.value = e;
-    } else {
-      error.value = new UncaughtError();
-    }
-  }
+  };
 
-  return { user, error, getTokenSilently };
+  return { user, error, getTokenSilently, authenticate };
 };

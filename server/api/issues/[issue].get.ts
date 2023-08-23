@@ -6,8 +6,11 @@ export default defineEventHandler(
     authenticate(event.context);
     const _id = getRouterParam(event, 'issue');
     const issue = await IssueModel.findById(_id)
-      .populate({ path: 'personas', populate: { path: 'creator' } })
-      .populate({ path: 'cases', populate: { path: 'creator' } });
+      .populate({ path: 'personas', populate: 'creator' })
+      .populate({
+        path: 'cases',
+        populate: ['creator', { path: 'keywords', populate: 'creator' }],
+      });
 
     if (!issue) {
       throw createError({

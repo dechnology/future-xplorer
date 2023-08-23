@@ -1,19 +1,13 @@
 <template>
   <form
-    @submit="handleSubmit"
+    @submit.prevent="handleSubmit"
     class="relative flex flex-col gap-10 rounded-md bg-white p-8 shadow-2xl"
   >
-    <div class="flex items-end gap-4">
-      <h3 class="text-2xl font-medium text-blue-950">{{ state.formTitle }}</h3>
-      <div class="text-sm text-gray-500">
-        <span>建立者：</span>
-        <span v-if="state.name === CardStates.New.name"> You </span>
-        <span v-else-if="'creator' in currentCase && currentCase.creator">
-          {{ currentCase.creator.name }}
-        </span>
-        <span v-else>Unknown</span>
-      </div>
-    </div>
+    <CardHeader
+      :title="`議題${state.formTitle}`"
+      :creator="'creator' in currentCase ? currentCase.creator : undefined"
+      :user="user"
+    />
     <InputText
       title="標題"
       placeholder="案例標題"
@@ -68,18 +62,20 @@
       :disabled="disabled"
       v-model="currentCase.reference"
     />
-    <div class="flex min-h-[296px] overflow-hidden rounded-lg">
-      <NuxtImg
-        v-if="currentCase.image"
-        class="w-full"
-        :src="currentCase.image"
-        alt=""
-      />
-      <IconCard
+    <div class="flex flex-col overflow-hidden rounded-lg">
+      <NuxtImg v-if="imageUrlBuffer" :src="imageUrlBuffer" alt="" />
+      <NuxtImg v-else-if="currentCase.image" :src="currentCase.image" alt="" />
+      <InputFileDropzone
         v-else
-        class="flex-1"
-        :icon="{ name: 'material-symbols:add-photo-alternate', size: '5rem' }"
-        :is-activated="false"
+        @blob-url-created="handleBlobUrlChange"
+        class="h-72 shrink-0 grow"
+        v-model:file="imageFileBuffer"
+        :disabled="disabled"
+        :active-icon="{
+          name: 'material-symbols:add-photo-alternate',
+          size: '5rem',
+        }"
+        :disabled-icon="{ name: 'mdi:image', size: '5rem' }"
       />
     </div>
     <div
@@ -113,11 +109,16 @@ import type { User } from '@/types';
 const cardStore = useCaseCardStore();
 const issueStore = useIssueStore();
 const modalStore = useModalStore();
-const { currentCase, activeId, state } = storeToRefs(cardStore);
-const { workshop, issue } = storeToRefs(issueStore);
+const { currentCase, imageFileBuffer, imageUrlBuffer, activeId, state } =
+  storeToRefs(cardStore);
+const { issue } = storeToRefs(issueStore);
 const { user, getTokenSilently } = await useAuth();
 
 const disabled = computed(() => state.value.name === CardStates.Detail.name);
+
+const handleBlobUrlChange = (url: string) => {
+  cardStore.setImageUrl(url);
+};
 
 const handleSubmit = async (e: Event) => {
   try {
@@ -131,37 +132,41 @@ const handleSubmit = async (e: Event) => {
 
         const createdCase = await cardStore.submit(token, issue.value._id);
 
-        createdCase.creator = user.value as User;
-        console.log('created persona: ', createdCase);
+        if (!user.value) {
+          throw new Error('user does not exist');
+        }
+
+        createdCase.creator = user.value;
+        console.log('created case: ', createdCase);
         issueStore.upsertCase(createdCase);
 
-        cardStore.setActiveId(createdCase._id);
+        cardStore.setActiveCase(createdCase);
         cardStore.setCurrentCase(createdCase);
         state.value = CardStates.Detail;
         break;
 
       case CardStates.Detail.name:
         if (!activeId.value) {
-          throw new Error('No active persona to remove');
+          throw new Error('No active case to remove');
         }
 
         await cardStore.remove(token, activeId.value);
         issueStore.removeCase(activeId.value);
         state.value = CardStates.New;
-        console.log('persona removed');
+        console.log('case removed');
         break;
 
       case CardStates.Editing.name:
         if (!activeId.value) {
-          throw new Error('No active persona to edit');
+          throw new Error('No active case to edit');
         }
 
         const editedCase = await cardStore.edit(token, activeId.value);
         editedCase.creator = user.value as User;
-        console.log('edited persona: ', editedCase);
+        console.log('edited case: ', editedCase);
         issueStore.upsertCase(editedCase);
 
-        cardStore.setActiveId(editedCase._id);
+        cardStore.setActiveCase(editedCase);
         cardStore.setCurrentCase(editedCase);
         state.value = CardStates.Detail;
         break;

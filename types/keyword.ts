@@ -1,16 +1,18 @@
-import { Base } from '@/types/base';
+import { Base, Case } from '@/types';
+import { z } from 'zod';
 
 export interface Vote {
-  userId: string;
-  keywordId: string;
+  user: string;
+  keyword: string;
 }
 
-export interface NewKeyword {
-  body: string;
-}
+export const NewKeywordSchema = z.object({
+  body: z.string().trim().nonempty(),
+});
+
+export type NewKeyword = z.infer<typeof NewKeywordSchema>;
 
 export interface Keyword extends Base, NewKeyword {
-  issueId: string;
-  caseId: string;
+  case: string | Case;
   category?: string;
 }

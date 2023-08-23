@@ -1,3 +1,5 @@
+import { UncaughtError } from '@/types';
+
 export default defineNuxtRouteMiddleware(async (to, from) => {
   // skip middleware on server
   if (process.server) {
@@ -21,16 +23,13 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     return navigateTo('/login');
   }
 
-  const { user, error } = await useAuth();
+  const { user, error, authenticate } = await useAuth();
+
+  await authenticate();
 
   console.log('current user: ', user.value);
 
   if (error.value) {
     console.error(error.value);
-
-    if (to.fullPath !== '/login') {
-      console.log('back to login page');
-      return navigateTo('/login');
-    }
   }
 });

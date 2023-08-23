@@ -3,21 +3,13 @@
     @submit.prevent="handleSubmit"
     class="relative flex flex-col gap-10 rounded-md bg-white p-8 shadow-2xl"
   >
-    <div class="flex items-end gap-4">
-      <h3 class="text-2xl font-medium text-blue-950">
-        角色{{ state.formTitle }}
-      </h3>
-      <div class="text-sm text-gray-500">
-        <span>建立者：</span>
-        <span v-if="'creator' in currentPersona">
-          {{ currentPersona.creator.name }}
-        </span>
-        <span v-else-if="state.name === CardStates.New.name && user">
-          {{ user.name }}
-        </span>
-        <span v-else> Unknown </span>
-      </div>
-    </div>
+    <CardHeader
+      :title="`人物${state.formTitle}`"
+      :creator="
+        'creator' in currentPersona ? currentPersona.creator : undefined
+      "
+      :user="user"
+    />
     <div class="grid grid-cols-2 gap-x-5 gap-y-7 rounded-lg">
       <InputText
         title="角色"
@@ -51,6 +43,7 @@
     <InputTextarea
       title="特徵"
       placeholder="特徵"
+      input-classes="h-32"
       :disabled="disabled"
       :select-options="[...personaPresets.trait]"
       v-model="currentPersona.trait"
@@ -58,22 +51,23 @@
     <InputTextarea
       title="其他"
       placeholder="其他"
+      input-classes="h-32"
       :disabled="disabled"
       v-model="currentPersona.other"
     />
     <div class="flex flex-col overflow-hidden rounded-lg">
       <NuxtImg v-if="imageUrlBuffer" :src="imageUrlBuffer" alt="" />
-      <NuxtImg
-        v-else-if="currentPersona.image"
-        :src="currentPersona.image"
-        alt=""
-      />
       <InputFileDropzone
         v-else
         @blob-url-created="handleBlobUrlChange"
-        class="h-72 flex-1"
+        class="h-72 shrink-0 grow"
         v-model:file="imageFileBuffer"
-        :icon="{ name: 'material-symbols:add-photo-alternate', size: '5rem' }"
+        :disabled="disabled"
+        :active-icon="{
+          name: 'material-symbols:add-photo-alternate',
+          size: '5rem',
+        }"
+        :disabled-icon="{ name: 'mdi:image', size: '5rem' }"
       />
     </div>
     <CardButton
@@ -169,7 +163,7 @@ const handleSubmit = async (e: Event) => {
         console.log('created persona: ', createdPersona);
         issueStore.upsertPersona(createdPersona);
 
-        cardStore.setActiveId(createdPersona._id);
+        cardStore.setActivePersona(createdPersona);
         cardStore.setCurrentPersona(createdPersona);
         state.value = CardStates.Detail;
         break;
@@ -195,7 +189,7 @@ const handleSubmit = async (e: Event) => {
         console.log('edited persona: ', editedPersona);
         issueStore.upsertPersona(editedPersona);
 
-        cardStore.setActiveId(editedPersona._id);
+        cardStore.setActivePersona(editedPersona);
         cardStore.setCurrentPersona(editedPersona);
         state.value = CardStates.Detail;
         break;

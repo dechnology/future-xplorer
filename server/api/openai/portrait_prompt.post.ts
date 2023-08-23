@@ -23,9 +23,10 @@ const getSystemMessage = (ctx: PersonaContext): string => {
     '1. The descriptions may be given in other languages (ex. Traditional Chinese),',
     'but however, you must give responses in English.',
     '2. Descriptions other than "name" from other languages must all be translated accrodingly to English.',
-    '3. The response you give must be such that the portrait contains the face of the persona.',
-    '4. The responses must not be in list format. Write a short paragraphs as responses',
-    '5. The portrait can only contain ONE PERSON.',
+    '3. The response should be not exceed 400 words.',
+    '4. The response you give must be such that the portrait contains the face of the persona.',
+    '5. The responses must not be in list format. Write a short paragraphs as responses',
+    '6. The portrait can only contain ONE PERSON.',
     "'''",
   ].join('\n');
 };

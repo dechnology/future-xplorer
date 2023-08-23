@@ -10,9 +10,12 @@ export type NewIssue = z.infer<typeof NewIssueSchema>;
 
 export type BaseIssue = NewIssue & Base;
 
-export interface Issue extends BaseIssue {
-  workshop?: Workshop;
-  users?: User[];
+export interface IssueResources {
   personas: Persona[];
   cases: Case[];
+}
+
+export interface Issue extends BaseIssue, IssueResources {
+  workshop?: Workshop;
+  users?: User[];
 }

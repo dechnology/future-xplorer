@@ -23,9 +23,13 @@ const getNewWorkshop = (): NewWorkshop => {
 
 export const useWorkshopCardStore = definePiniaStore('workshop card', () => {
   const currentWorkshop = ref<NewWorkshop | Workshop>(getNewWorkshop());
-  const activeId = ref<string | null>(null);
+  const activeWorkshop = ref<Workshop | null>(null);
   const state = ref<CardState>(CardStates.New);
   const loading = ref(false);
+
+  const activeId = computed(
+    (): string | null => activeWorkshop.value && activeWorkshop.value._id
+  );
 
   function clearCurrentWorkshop() {
     currentWorkshop.value = getNewWorkshop();
@@ -35,12 +39,12 @@ export const useWorkshopCardStore = definePiniaStore('workshop card', () => {
     currentWorkshop.value = { ...w };
   }
 
-  function clearActiveId() {
-    activeId.value = null;
+  function clearActiveWorkshop() {
+    activeWorkshop.value = null;
   }
 
-  function setActiveId(id: string) {
-    activeId.value = id;
+  function setActiveWorkshop(w: Workshop) {
+    activeWorkshop.value = w;
   }
 
   async function submit(token: string): Promise<Workshop> {
@@ -89,7 +93,7 @@ export const useWorkshopCardStore = definePiniaStore('workshop card', () => {
 
   watch(state, (newState) => {
     if (newState.name === CardStates.New.name) {
-      clearActiveId();
+      clearActiveWorkshop();
       clearCurrentWorkshop();
     }
   });
@@ -102,8 +106,8 @@ export const useWorkshopCardStore = definePiniaStore('workshop card', () => {
 
     clearCurrentWorkshop,
     setCurrentWorkshop,
-    clearActiveId,
-    setActiveId,
+    clearActiveWorkshop,
+    setActiveWorkshop,
 
     submit,
     edit,

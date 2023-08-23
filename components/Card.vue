@@ -5,7 +5,7 @@
   >
     <!-- Image -->
     <div v-if="image || image === null" class="h-52 w-full shrink-0">
-      <img
+      <NuxtImg
         v-if="image"
         class="h-full w-full object-cover"
         :src="image"

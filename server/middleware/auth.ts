@@ -2,6 +2,12 @@ import { errors } from 'jose';
 import { NoTokenError, UncaughtError } from '@/types/errors';
 
 export default defineEventHandler(async (event) => {
+  if (!event.path.startsWith('/api')) {
+    return;
+  }
+
+  console.log(event.path);
+
   try {
     const authHeader = getHeader(event, 'Authorization');
     const accessToken = authHeader?.split(' ')[1] || null;

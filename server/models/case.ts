@@ -11,11 +11,18 @@ const schema = new Schema<Case>(
     result: { type: String, required: true },
     reference: { type: String, required: true },
     other: { type: String },
-    image: { type: String },
+    image: { type: String, default: null },
     creator: { type: Schema.Types.ObjectId, ref: 'User' },
     issue: { type: Schema.Types.ObjectId, ref: 'Issue' },
   },
   { timestamps: true, strictQuery: true }
 );
+
+schema.virtual('keywords', {
+  ref: 'Keyword',
+  localField: '_id',
+  foreignField: 'case',
+  justOne: false,
+});
 
 export default mongoose.model<Case>('Case', schema, 'case');

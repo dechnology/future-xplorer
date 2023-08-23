@@ -8,27 +8,32 @@ const getNewIssue = (): NewIssue => ({
 
 export const useIssueCardStore = definePiniaStore('issue card', () => {
   const currentIssue = ref<BaseIssue | NewIssue>(getNewIssue());
-  const activeId = ref<string | null>(null);
+  const activeIssue = ref<BaseIssue | null>(null);
   const state = ref<CardState>(CardStates.New);
   const loading = ref(false);
+
+  const activeId = computed(
+    (): string | null => activeIssue.value && activeIssue.value._id
+  );
 
   function clearCurrentIssue() {
     currentIssue.value = getNewIssue();
   }
 
-  function clearActiveId() {
-    activeId.value = null;
+  function clearActiveIssue() {
+    activeIssue.value = null;
   }
 
   function setCurrentIssue(i: BaseIssue) {
     currentIssue.value = { ...i };
   }
 
-  function setActiveId(id: string) {
-    activeId.value = id;
+  function setActiveIssue(i: BaseIssue) {
+    activeIssue.value = i;
   }
 
   async function submit(token: string, workshopId: string): Promise<BaseIssue> {
+    loading.value = true;
     const i = NewIssueSchema.parse(currentIssue.value);
 
     console.log('Creating: ', i);
@@ -42,6 +47,7 @@ export const useIssueCardStore = definePiniaStore('issue card', () => {
     );
     console.log('Created:', data);
 
+    loading.value = false;
     return data;
   }
 
@@ -81,20 +87,21 @@ export const useIssueCardStore = definePiniaStore('issue card', () => {
 
   watch(state, (newState) => {
     if (newState.name === CardStates.New.name) {
-      clearActiveId();
+      clearActiveIssue();
       clearCurrentIssue();
     }
   });
 
   return {
-    activeId,
     currentIssue,
+    activeIssue,
+    activeId,
     state,
 
     clearCurrentIssue,
     setCurrentIssue,
-    clearActiveId,
-    setActiveId,
+    clearActiveIssue,
+    setActiveIssue,
 
     submit,
     edit,

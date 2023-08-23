@@ -3,13 +3,19 @@
     class="flex w-full flex-col rounded-2xl border border-solid border-gray-400 bg-slate-200"
   >
     <label
-      class="flex h-full w-full flex-1 cursor-pointer flex-col items-center justify-center transition-all hover:bg-slate-300 hover:shadow-2xl"
+      class="flex h-full w-full flex-1 flex-col items-center justify-center"
+      :class="
+        !disabled &&
+        ' cursor-pointer transition-all hover:bg-slate-300 hover:shadow-2xl'
+      "
     >
-      <Icon v-if="icon" v-bind="icon" />
+      <Icon v-if="!disabled && activeIcon" v-bind="activeIcon" />
+      <Icon v-if="disabled && disabledIcon" v-bind="disabledIcon" />
       <p v-if="text">{{ text }}</p>
       <input
         type="file"
         class="hidden"
+        :disabled="disabled"
         @change="handleFileChange"
         :accept="accept"
       />
@@ -20,9 +26,11 @@
 <script lang="ts" setup>
 interface Props {
   accept?: string;
-  icon?: { name: string; size: string };
+  activeIcon?: { name: string; size: string };
+  disabledIcon?: { name: string; size: string };
   text?: string;
   file: File | null;
+  disabled: boolean;
 }
 
 const props = defineProps<Props>();

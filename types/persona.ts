@@ -24,7 +24,7 @@ export const NewPersonaSchema = z.object({
   gender: z.enum(personaPresets.gender),
   trait: z.string().trim().nonempty(),
   other: z.string().trim(),
-  image: z.string().url().optional(),
+  image: z.string().url().nullable(),
 });
 
 export type NewPersona = z.infer<typeof NewPersonaSchema>;

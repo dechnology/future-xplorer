@@ -17,7 +17,7 @@ const schema = new Schema<Persona>(
     gender: { type: String, enum: ['male', 'female'], required: true },
     trait: { type: String, required: true },
     other: { type: String },
-    image: { type: String },
+    image: { type: String, default: null },
     creator: { type: Schema.Types.ObjectId, ref: 'User' },
     issue: { type: Schema.Types.ObjectId, ref: 'Issue' },
   },

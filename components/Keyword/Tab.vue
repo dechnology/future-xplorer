@@ -1,16 +1,18 @@
 <template>
   <div class="flex h-24 shrink-0 items-start justify-between rounded-lg">
     <div class="flex h-full flex-1 overflow-x-scroll">
-      <div
-        v-for="el in elements"
-        @click="$emit('update:modelValue', el.name)"
-        :key="el.name"
-        class="h-full cursor-pointer whitespace-nowrap rounded-lg border border-solid border-gray-300 px-6 py-3 text-xl font-medium"
-        :class="modelValue === el.name && 'bg-blue-400 text-white'"
-      >
-        <span> {{ el.name }}</span>
-        <span> / </span>
-        <span>{{ el.category.charAt(0).toUpperCase() }}</span>
+      <div v-for="(element, key) in elements">
+        <div
+          v-for="el in element"
+          @click="$emit('update:modelValue', el)"
+          :key="`${element}_${el}`"
+          class="h-full cursor-pointer whitespace-nowrap rounded-lg border border-solid border-gray-300 px-6 py-3 text-xl font-medium"
+          :class="modelValue === el && 'bg-blue-400 text-white'"
+        >
+          <span> {{ el }}</span>
+          <span> / </span>
+          <span>{{ key.charAt(0).toUpperCase() }}</span>
+        </div>
       </div>
     </div>
     <div
@@ -35,6 +37,4 @@ const props = defineProps<Props>();
 
 const issueStore = useIssueStore();
 const { elements } = storeToRefs(issueStore);
-
-const tabs = elements.value.map((el) => el.name);
 </script>

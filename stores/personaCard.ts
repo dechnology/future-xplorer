@@ -1,14 +1,12 @@
+import { uploadImageFile } from './../utils/db';
 import { fakerZH_TW } from '@faker-js/faker';
-import { v4 as uuidv4 } from 'uuid';
 import { CardStates, NewPersonaSchema, personaPresets } from '@/types';
 import type {
   Persona,
   NewPersona,
   CardState,
   PortraitRequestBody,
-  ResourceObject,
 } from '@/types';
-import { AsyncData } from 'nuxt/app';
 
 const baseFilepath = 'tdri/imgs/personas/originals';
 
@@ -19,6 +17,7 @@ const getNewPersona = (): NewPersona => ({
   trait: '',
   gender: 'male',
   other: '',
+  image: null,
 });
 
 const getRandomNewPersona = (): NewPersona => ({
@@ -28,36 +27,47 @@ const getRandomNewPersona = (): NewPersona => ({
   trait: fakerZH_TW.helpers.arrayElement(personaPresets.trait),
   gender: fakerZH_TW.helpers.arrayElement(personaPresets.gender),
   other: '',
+  image: null,
 });
 
 export const usePersonaCardStore = definePiniaStore('persona card', () => {
   const currentPersona = ref<Persona | NewPersona>(getNewPersona());
+  const activePersona = ref<Persona | null>(null);
   const imageUrlBuffer = ref<string | null>(null);
   const imageFileBuffer = ref<File | null>(null);
-  const activeId = ref<string | null>(null);
   const state = ref<CardState>(CardStates.New);
   const loading = ref(false);
 
+  const activeId = computed(
+    (): string | null => activePersona.value && activePersona.value._id
+  );
+
   function clearCurrentPersona() {
-    imageUrlBuffer.value = null;
+    clearImage();
     imageFileBuffer.value = null;
     currentPersona.value = getNewPersona();
   }
 
-  function clearActiveId() {
-    activeId.value = null;
+  function clearActivePersona() {
+    activePersona.value = null;
   }
 
-  function clearImageUrl() {
+  function clearImage() {
     imageUrlBuffer.value = null;
+    imageFileBuffer.value = null;
   }
 
   function setCurrentPersona(p: Persona) {
     currentPersona.value = { ...p };
+    if (p.image) {
+      setImageUrl(p.image);
+    } else {
+      clearImage();
+    }
   }
 
-  function setActiveId(id: string) {
-    activeId.value = id;
+  function setActivePersona(p: Persona) {
+    activePersona.value = p;
   }
 
   function setImageUrl(url: string) {
@@ -88,39 +98,20 @@ export const usePersonaCardStore = definePiniaStore('persona card', () => {
   }
 
   async function submit(token: string, issueId: string): Promise<Persona> {
-    const config = useRuntimeConfig();
     const p = NewPersonaSchema.parse(currentPersona.value);
 
-    let filepath: string | null = null;
+    if (imageUrlBuffer.value) {
+      let s3Url: string;
 
-    if (imageFileBuffer.value) {
-      filepath = `${baseFilepath}/${uuidv4()}.${imageFileBuffer.value.type}`;
+      if (imageFileBuffer.value) {
+        s3Url = (await uploadImageFile(token, imageFileBuffer.value)).data;
+      } else {
+        s3Url = (await uploadImageUrl(token, imageUrlBuffer.value)).data;
+      }
+      clearImage();
 
-      const { message } = await uploadImageFile(
-        token,
-        imageFileBuffer.value,
-        filepath
-      );
-
-      console.log(message);
-    } else if (imageUrlBuffer.value) {
-      const ext = imageUrlBuffer.value.split('?')[0].split('.').pop();
-      filepath = `${baseFilepath}/${uuidv4()}.${ext}`;
-
-      const { message } = await uploadImageUrl(
-        token,
-        imageUrlBuffer.value,
-        filepath
-      );
-
-      console.log(message);
-    }
-
-    imageUrlBuffer.value = null;
-
-    if (filepath) {
-      p.image = `https://${config.public.s3Domain}/${filepath}`;
-      console.log(`image url: ${p.image}`);
+      console.log(`image url: ${s3Url}`);
+      p.image = s3Url;
     }
 
     console.log('Creating: ', p);
@@ -139,15 +130,29 @@ export const usePersonaCardStore = definePiniaStore('persona card', () => {
 
   async function edit(token: string, id: string): Promise<Persona> {
     loading.value = true;
-    const i = NewPersonaSchema.parse(currentPersona.value);
+    const p = NewPersonaSchema.parse(currentPersona.value);
 
-    console.log('Patch: ', i);
+    if (imageUrlBuffer.value) {
+      let s3Url: string;
+
+      if (imageFileBuffer.value) {
+        s3Url = (await uploadImageFile(token, imageFileBuffer.value)).data;
+      } else {
+        s3Url = (await uploadImageUrl(token, imageUrlBuffer.value)).data;
+      }
+      clearImage();
+
+      console.log(`image url: ${s3Url}`);
+      p.image = s3Url;
+    }
+
+    console.log('Patch: ', p);
     const { data } = await fetchResource<Persona>(
       token,
       `/api/personas/${id}`,
       {
         method: 'put',
-        body: i,
+        body: p,
       }
     );
 
@@ -173,23 +178,24 @@ export const usePersonaCardStore = definePiniaStore('persona card', () => {
 
   watch(state, (newState) => {
     if (newState.name === CardStates.New.name) {
-      clearActiveId();
+      clearActivePersona();
       clearCurrentPersona();
     }
   });
 
   return {
     currentPersona,
+    activePersona,
     imageUrlBuffer,
     imageFileBuffer,
     activeId,
     state,
     loading,
 
-    clearActiveId,
+    clearActivePersona,
     clearCurrentPersona,
-    clearImageUrl,
-    setActiveId,
+    clearImage,
+    setActivePersona,
     setCurrentPersona,
     setImageUrl,
     randomizeCurrentPersona,

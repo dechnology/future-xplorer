@@ -3,21 +3,11 @@
     @submit.prevent="handleSubmit"
     class="relative flex flex-col gap-10 rounded-md bg-white p-8 shadow-2xl"
   >
-    <div class="flex items-end gap-4">
-      <h3 class="text-2xl font-medium text-blue-950">
-        議題{{ state.formTitle }}
-      </h3>
-      <div class="text-sm text-gray-500">
-        <span>建立者：</span>
-        <span v-if="'creator' in currentIssue">
-          {{ currentIssue.creator.name }}
-        </span>
-        <span v-else-if="state.name === CardStates.New.name && user">
-          {{ user.name }}
-        </span>
-        <span v-else> Unknown </span>
-      </div>
-    </div>
+    <CardHeader
+      :title="`議題${state.formTitle}`"
+      :creator="'creator' in currentIssue ? currentIssue.creator : undefined"
+      :user="user"
+    />
     <div class="flex flex-col gap-7 rounded-lg">
       <InputText
         title="議題名稱"
@@ -81,7 +71,7 @@ const handleSubmit = async (e: Event) => {
         console.log('created issue: ', createdIssue);
         issuesStore.upsert(createdIssue);
 
-        cardStore.setActiveId(createdIssue._id);
+        cardStore.setActiveIssue(createdIssue);
         cardStore.setCurrentIssue(createdIssue);
         state.value = CardStates.Detail;
         break;
@@ -107,7 +97,7 @@ const handleSubmit = async (e: Event) => {
         console.log('edited issue: ', editedIssue);
         issuesStore.upsert(editedIssue);
 
-        cardStore.setActiveId(editedIssue._id);
+        cardStore.setActiveIssue(editedIssue);
         cardStore.setCurrentIssue(editedIssue);
         state.value = CardStates.Detail;
         break;
@@ -136,7 +126,7 @@ const handleSubmit = async (e: Event) => {
   //     issuesStore.push(createdIssue);
   //     console.log('created issue: ', createdIssue);
 
-  //     cardStore.setActiveId(createdIssue._id);
+  //     cardStore.setActiveIssue(createdIssue);
   //     cardStore.setCurrentIssue(createdIssue);
   //     state.value = CardStates.Detail;
   //   } else {

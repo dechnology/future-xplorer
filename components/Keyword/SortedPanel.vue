@@ -10,17 +10,16 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
-
-const route = useRoute();
-
 const issueStore = useIssueStore();
-await issueStore.init(
-  route.params.workshopId as string,
-  route.params.issueId as string
-);
 const { elements } = storeToRefs(issueStore);
+const tab = ref<string | null>(null);
 
-const tabs = elements.value.map((el) => el.name);
-const tab = ref(tabs[0]);
+onMounted(() => {
+  if (!elements.value) {
+    return;
+  }
+
+  const { objects, environments, messages, services } = elements.value;
+  tab.value = [...objects, ...environments, ...messages, ...services][0];
+});
 </script>

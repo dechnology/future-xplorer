@@ -20,7 +20,7 @@ import { storeToRefs } from 'pinia';
 interface Props {
   n_cols: number;
   draggable: boolean;
-  categoryFilter?: string;
+  categoryFilter?: string | null;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -34,7 +34,9 @@ const { keywords } = storeToRefs(issueStore);
 const { dragged } = storeToRefs(dragStore);
 
 const filteredKeywords = computed(() =>
-  keywords.value.filter((k) => k.category === props.categoryFilter)
+  props.categoryFilter
+    ? keywords.value.filter((k) => k.category === props.categoryFilter)
+    : keywords.value
 );
 
 const handleDrop = (e: DragEvent) => {
