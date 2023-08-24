@@ -2,6 +2,7 @@ import { NewPersona, PersonaContext, PortraitRequestBody } from '@/types';
 
 const getSystemMessage = (ctx: PersonaContext): string => {
   return [
+    'In the workshop called ',
     'You are a portrait master and your job is to generate perfect description for generating portrait in English.',
     'The description will be used as the input prompt for DALLE (an image generation model).',
     'Therefore, you must describe the scene as detailed as possible.',
@@ -15,7 +16,7 @@ const getSystemMessage = (ctx: PersonaContext): string => {
     `In this workshop, we are discussing an issue called "${ctx.issue.title}".`,
     'Here is the description for the issue:',
     "'''",
-    `{ctx.issue.description}`,
+    `${ctx.issue.description}`,
     "'''",
     '',
     'Rules: ',

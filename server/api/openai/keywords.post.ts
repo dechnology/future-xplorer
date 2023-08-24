@@ -1,13 +1,14 @@
-import { NewPersona, PersonaContext, PortraitRequestBody } from '@/types';
+import {
+  NewPersona,
+  PersonaContext,
+  PortraitRequestBody,
+  Workshop,
+} from '@/types';
 
 const getSystemMessage = (ctx: PersonaContext): string => {
   return [
-    'You are a portrait master and your job is to generate perfect description for generating portrait in English.',
-    'The description will be used as the input prompt for DALLE (an image generation model).',
-    'Therefore, you must describe the scene as detailed as possible.',
-    '',
-    `Portraits generated will be used in a workshop named "${ctx.workshop.name}".`,
-    'Here is the description for the workshop:',
+    'Generate keywords from the case provided.',
+    `Workshop: ${ctx.workshop.name}:`,
     "'''",
     `${ctx.workshop.description}`,
     "'''",
@@ -15,7 +16,7 @@ const getSystemMessage = (ctx: PersonaContext): string => {
     `In this workshop, we are discussing an issue called "${ctx.issue.title}".`,
     'Here is the description for the issue:',
     "'''",
-    `{ctx.issue.description}`,
+    `${ctx.issue.description}`,
     "'''",
     '',
     'Rules: ',
@@ -58,18 +59,33 @@ export default defineEventHandler(
       ],
       functions: [
         {
-          name: '',
+          name: 'extract_OEMS_keywords',
           description: '',
           parameters: {
             type: 'object',
             properties: {
-              location: {
-                type: 'string',
-                description:
-                  'The location, e.g. Beijing, China. But it should be written in a timezone name like Asia/Shanghai',
+              objects: {
+                type: 'array',
+                description: '',
+                items: { type: 'string' },
+              },
+              environments: {
+                type: 'array',
+                description: '',
+                items: { type: 'string' },
+              },
+              messages: {
+                type: 'array',
+                description: '',
+                items: { type: 'string' },
+              },
+              services: {
+                type: 'array',
+                description: '',
+                items: { type: 'string' },
               },
             },
-            required: ['location'],
+            required: ['objects', 'environments', 'messages', 'services'],
           },
         },
       ],
