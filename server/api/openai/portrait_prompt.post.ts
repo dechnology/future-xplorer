@@ -29,15 +29,16 @@ const getSystemMessage = (ctx: PersonaContext): string => {
 };
 
 const getUserMessage = (p: NewPersona): string => {
+  // Determine if the age is a number or a string descriptor
+  const ageDescription =
+    typeof p.age === 'number' ? `${p.age}-year-old` : p.age;
+
   return [
-    'The persona description:',
+    'Introducing the persona:',
     "'''",
-    `name: ${p.name}`,
-    `age: ${p.age}`,
-    `gender: ${p.gender}`,
-    `role: ${p.role}`,
-    `trait: ${p.trait}`,
-    `other: ${p.other}`,
+    `Meet ${p.name}, a ${ageDescription} ${p.gender} who occupies the role of ${p.role}.`,
+    `A distinguishing trait is ${p.trait}.`,
+    `Additional details: ${p.other ? p.other : 'None'}`,
     "'''",
   ].join('\n');
 };

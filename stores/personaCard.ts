@@ -88,9 +88,7 @@ export const usePersonaCardStore = definePiniaStore('persona card', () => {
     const { prompt } = await generatePrompt(token, { ...body, persona });
     console.log('prompt: ', prompt);
 
-    const { image } = await generateImage(token, {
-      prompt: `Generate a calm and neutral upper body photo style based on the description: ${prompt}`,
-    });
+    const { image } = await generateImage(token, { prompt });
     console.log('image: ', image);
 
     imageFileBuffer.value = null;
