@@ -26,28 +26,22 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
-import { CardStates } from '@/types/cardState';
-import { BaseIssue } from '@/types/issue';
+import { CardStates } from '@/types';
+import type { BaseIssue } from '@/types';
 
 const route = useRoute();
 const router = useRouter();
-
 const store = useIssuesStore();
 const cardStore = useIssueCardStore();
-const modalStore = useModalStore();
-
 const { issues } = storeToRefs(store);
 const { activeId, state } = storeToRefs(cardStore);
 
 const handleClick = (issue?: BaseIssue) => {
   if (issue) {
-    modalStore.setContent(issue);
     cardStore.setActiveIssue(issue);
     cardStore.setCurrentIssue(issue);
     state.value = CardStates.Detail;
   } else {
-    modalStore.setContent({});
     state.value = CardStates.New;
   }
 };
