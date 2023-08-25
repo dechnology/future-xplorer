@@ -24,9 +24,9 @@
       :style="buttonDivStyle"
     >
       <CardButton
-        @click="handleClick"
+        @click.prevent="handleClick"
         class="h-12 rounded-lg bg-blue-400 text-white hover:bg-blue-500"
-        body="Test"
+        body="新增關鍵字"
       />
     </div>
   </div>
@@ -45,17 +45,16 @@ interface CaseContent {
   參考資料: string;
 }
 
-const { user, getTokenSilently } = await useAuth();
-
 const cardStore = useCaseCardStore();
-const issueStore = useIssueStore();
+const modalStore = useModalStore();
+const keywordStore = useKeywordStore();
 const { activeCase, activeId, activeCaseKeywords } = storeToRefs(cardStore);
+const { ignoreNextClose } = storeToRefs(modalStore);
 
 const contentDiv = ref<HTMLDivElement | null>(null);
 const buttonDiv = ref<HTMLDivElement | null>(null);
 const selectedText = ref<string | null>(null);
 const ignoreClick = ref(false);
-// const  = ref(activeCaseKeywords);
 
 const buttonDivPosition = ref({ top: 0, left: 0 });
 const buttonDivStyle = computed(() => ({
@@ -125,20 +124,14 @@ const handleMouseup = (e: Event) => {
 };
 
 const handleClick = async (e: Event) => {
-  const token = await getTokenSilently();
-  const k = NewKeywordSchema.parse({ body: selectedText.value });
+  try {
+    const k = NewKeywordSchema.parse({ body: selectedText.value });
+    keywordStore.append(k);
+  } catch (e) {
+    console.error(e);
+  }
 
-  console.log('Creating: ', k);
-  const { data } = await fetchResource<Keyword>(
-    token,
-    `/api/cases/${activeId.value}/keywords`,
-    {
-      method: 'post',
-      body: k,
-    }
-  );
-  console.log('Created: ', data);
-
+  ignoreNextClose.value = true;
   selectedText.value = null;
 };
 

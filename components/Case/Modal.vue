@@ -31,12 +31,23 @@ const handleBackdropClick = (e: MouseEvent) => {
     e.target as HTMLDialogElement
   ).getBoundingClientRect();
 
+  console.log('e.target: ', e.target);
+  console.log(`(x, y) = (${x}, ${y})`);
+  console.log(
+    `(left, right, top, bottom) = (${left}, ${right}, ${top}, ${bottom})`
+  );
+  console.log(x < left, x > right, y < top, y > bottom);
+
   if (x < left || x > right || y < top || y > bottom) {
+    console.log('backdrop clicked');
+
     modalStore.close();
   }
 };
 
 watch(shown, (newShown) => {
+  console.log('shown: ', shown.value);
+
   if (newShown) {
     modal.value?.showModal();
     return;

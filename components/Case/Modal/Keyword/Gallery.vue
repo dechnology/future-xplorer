@@ -10,13 +10,7 @@
       class="h-28"
       :icon="{ name: 'mdi:plus', size: '7.5rem' }"
     />
-    <KeywordNewCard
-      v-for="k in newKeywords"
-      class="h-28"
-      :keyword="k"
-      :key="k.body"
-    />
-    <KeywordCard
+    <CaseModalKeywordCard
       v-for="k in filteredKeywords"
       class="h-28"
       :keyword="k"
@@ -32,7 +26,6 @@ interface Props {
   n_cols?: number;
   draggable?: boolean;
   includeAddCard?: boolean;
-  includeNewKeywords?: boolean;
   showCategory?: boolean;
   categoryFilter?: string | null;
 }
@@ -46,15 +39,15 @@ const props = withDefaults(defineProps<Props>(), {
 
 const keywordStore = useKeywordStore();
 const dragStore = useDragStore();
-const { keywords, newKeywords } = storeToRefs(keywordStore);
+const { allKeywords } = storeToRefs(keywordStore);
 const { dragged } = storeToRefs(dragStore);
 
 const filteredKeywords = computed(() =>
   props.categoryFilter
-    ? keywords.value.filter(
+    ? allKeywords.value.filter(
         (k) => 'category' in k && k.category === props.categoryFilter
       )
-    : keywords.value
+    : allKeywords.value
 );
 
 const handleDrop = (e: DragEvent) => {

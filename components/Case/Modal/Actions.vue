@@ -6,6 +6,7 @@
       body="AI生成關鍵字"
     />
     <CardButton
+      @click="handleSaveClick"
       class="h-12 rounded-lg bg-blue-400 text-white hover:bg-blue-500"
       :icon="{ name: 'mdi-forum-plus', size: '3rem' }"
       body="儲存關鍵字"
@@ -25,7 +26,24 @@
 </template>
 
 <script setup lang="ts">
-const cardStore = useCaseCardStore();
+const { user, getTokenSilently } = await useAuth();
 const modalStore = useModalStore();
+const cardStore = useCaseCardStore();
+const keywordStore = useKeywordStore();
+const { activeId } = storeToRefs(cardStore);
+
 const handleCloseClick = (e: Event) => modalStore.close();
+
+const handleSaveClick = async (e: Event) => {
+  try {
+    if (!activeId.value) {
+      throw new Error('no active case');
+    }
+
+    const token = await getTokenSilently();
+    await keywordStore.save(token, activeId.value);
+  } catch (e) {
+    console.error(e);
+  }
+};
 </script>
