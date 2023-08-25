@@ -46,7 +46,6 @@ const handleClick = (p?: Persona) => {
     cardStore.setCurrentPersona(p);
     state.value = CardStates.Detail;
   } else {
-    modalStore.setContent({});
     state.value = CardStates.New;
   }
 };

@@ -19,7 +19,7 @@ const getSystemMessage = (ctx: PersonaContext): string => {
     'Guidelines for your response:',
     "'''",
     '1. While descriptions can be presented in various languages, your crafted portrait instructions must be in English.',
-    '2. Translate non-English terms (except names) to English in your descriptions.',
+    '2. Translate non-English terms to English in your descriptions.',
     '3. Keep your response under 1000 CHARACTERS.',
     '4. Ensure the portrait focuses on the face of the persona.',
     '5. Avoid listing. Craft a cohesive paragraph.',
@@ -29,18 +29,23 @@ const getSystemMessage = (ctx: PersonaContext): string => {
 };
 
 const getUserMessage = (p: NewPersona): string => {
-  // Determine if the age is a number or a string descriptor
   const ageDescription =
     typeof p.age === 'number' ? `${p.age}-year-old` : p.age;
 
-  return [
-    'Introducing the persona:',
+  const baseMessage = [
+    'Persona details:',
     "'''",
-    `Meet ${p.name}, a ${ageDescription} ${p.gender} who occupies the role of ${p.role}.`,
-    `A distinguishing trait is ${p.trait}.`,
-    `Additional details: ${p.other ? p.other : 'None'}`,
-    "'''",
-  ].join('\n');
+    `This individual is a ${ageDescription} ${p.gender} with the role of ${p.role}.`,
+    `They are characterized by the trait: ${p.trait}.`,
+  ];
+
+  if (p.other && p.other.trim() !== '') {
+    baseMessage.push(`Additional information: ${p.other}`);
+  }
+
+  baseMessage.push("'''");
+
+  return baseMessage.join('\n');
 };
 
 export default defineEventHandler(
