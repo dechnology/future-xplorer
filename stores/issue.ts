@@ -33,16 +33,21 @@ export const useIssueStore = definePiniaStore('issue', () => {
   const cases = computed((): Case[] | null => issue.value && issue.value.cases);
 
   const keywords = computed(() => {
-    if (!issue.value) {
+    if (!issue.value || !cases.value) {
       return null;
     }
-
     const allKeywords: Keyword[] = [];
-    for (const c of issue.value.cases) {
+    for (const c of cases.value) {
       allKeywords.push(...c.keywords);
     }
     return allKeywords;
   });
+
+  function getCaseKeywords(caseId: string) {
+    return issue.value && keywords.value
+      ? keywords.value.filter((k) => k.case === caseId)
+      : [];
+  }
 
   async function init(token: string, workshopId: string, issueId: string) {
     const [workshopResponse, issuesResponse] = await Promise.all([
@@ -54,8 +59,6 @@ export const useIssueStore = definePiniaStore('issue', () => {
 
     workshop.value = workshopResponse.data;
     issue.value = issuesResponse.data;
-
-    console.log(issue.value.cases);
   }
 
   function upsertPersona(p: Persona) {
@@ -123,6 +126,8 @@ export const useIssueStore = definePiniaStore('issue', () => {
     personas,
     cases,
     keywords,
+
+    getCaseKeywords,
 
     init,
     upsertPersona,

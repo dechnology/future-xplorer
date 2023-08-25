@@ -10,10 +10,9 @@
 
 <script setup lang="ts">
 interface Props {
-  isActivated: boolean;
-
   icon: { name: string; size: string };
+  isActivated?: boolean;
   text?: string;
 }
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), { isActivated: false });
 </script>

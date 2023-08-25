@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 const route = useRoute();
-const store = useIssuesStore();
+const store = useWorkshopStore();
 const breadcrumbStore = useBreadcrumbStore();
 const { workshop } = storeToRefs(store);
 

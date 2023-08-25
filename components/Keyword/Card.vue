@@ -4,34 +4,38 @@
     @dragstart="() => (dragged = keyword)"
     :draggable="allowDrag && draggable"
     :class="draggable && 'cursor-move'"
-    class="flex h-40 flex-col gap-2 rounded-lg bg-white px-4 py-5"
+    class="flex flex-col items-start justify-start gap-2 rounded-lg bg-white px-4 py-5 shadow-2xl"
   >
-    <div class="w-fit rounded-2xl bg-slate-400 px-3 py-1 text-sm text-white">
+    <div
+      v-if="showCategory"
+      class="w-fit rounded-2xl bg-slate-400 px-3 py-1 text-sm text-white"
+    >
       {{ keyword.category || '未分類' }}
     </div>
     <input
       @dblclick="handleDblclick"
-      @keypress.enter="(e) => handleEnterPress(e, keyword)"
+      @keypress.enter="(e) => updateKeyword(keyword)"
       ref="inputRef"
       :readonly="!editing"
       :value="keyword.body"
       :class="!editing && 'focus:outline-none'"
-      class="w-full p-2 text-2xl font-bold text-primary-500"
+      class="w-full border-none p-2 text-2xl font-bold text-lime-500"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
-import { Keyword } from '@/types/keyword';
+import { Keyword } from '@/types';
 
 interface Props {
   keyword: Keyword;
   draggable: boolean;
+  showCategory?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   draggable: false,
+  showCategory: true,
 });
 
 const emit = defineEmits<{
@@ -41,7 +45,7 @@ const emit = defineEmits<{
 const inputRef = ref<HTMLInputElement | null>(null);
 const editing = ref(false);
 
-const issueStore = useIssueStore();
+const keywordStore = useKeywordStore();
 const dragStore = useDragStore();
 const allowDrag = ref(true);
 const { dragged } = storeToRefs(dragStore);
@@ -66,12 +70,12 @@ const handleDblclick = (e: MouseEvent) => {
   window.addEventListener('click', handleOutsideClick);
 };
 
-const handleEnterPress = (e: KeyboardEvent, k: Keyword) => {
+const updateKeyword = (k: Keyword) => {
   if (!inputRef.value) {
     return;
   }
 
   editing.value = false;
-  issueStore.updateKeywordById(k.id, { ...k, body: inputRef.value.value });
+  keywordStore.upsert({ ...k, body: inputRef.value.value });
 };
 </script>

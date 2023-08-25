@@ -91,13 +91,14 @@
     <PersonaActionsNew v-if="state.name === CardStates.New.name" />
     <PersonaActionsDetail v-if="state.name === CardStates.Detail.name" />
     <PersonaActionsEditing v-if="state.name === CardStates.Editing.name" />
-    <Icon
+    <!-- TODO -->
+    <!-- <Icon
       v-if="state.name === CardStates.Detail.name"
       @click="() => modalStore.show()"
       class="absolute right-6 top-6 cursor-pointer text-blue-950"
       name="material-symbols:pan-zoom-rounded"
       size="3rem"
-    />
+    /> -->
     <Icon
       v-if="state.name === CardStates.New.name"
       @click="handleDiceClick"

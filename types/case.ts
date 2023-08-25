@@ -1,8 +1,7 @@
 import { z } from 'zod';
 import { Base, Issue, Keyword } from '@/types';
 
-export const NewCaseSchema = z.object({
-  title: z.string().trim().nonempty(),
+export const NewCaseContentSchema = z.object({
   background: z.string().trim().nonempty(),
   method: z.string().trim().nonempty(),
   goal: z.string().trim().nonempty(),
@@ -10,6 +9,12 @@ export const NewCaseSchema = z.object({
   result: z.string().trim().nonempty(),
   reference: z.string().trim().nonempty(),
   other: z.string().trim(),
+});
+
+export type NewCaseContent = z.infer<typeof NewCaseContentSchema>;
+
+export const NewCaseSchema = NewCaseContentSchema.extend({
+  title: z.string().trim().nonempty(),
   image: z.string().trim().nullable(),
 });
 

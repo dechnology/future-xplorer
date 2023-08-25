@@ -3,7 +3,7 @@ export const useModalStore = definePiniaStore('modal', () => {
 
   function show() {
     // this line forces a reopen since the open is triggered by a state change
-    if (!shown.value) shown.value = false;
+    if (shown.value) shown.value = false;
     shown.value = true;
   }
 

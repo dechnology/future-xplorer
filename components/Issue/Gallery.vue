@@ -31,7 +31,7 @@ import type { BaseIssue } from '@/types';
 
 const route = useRoute();
 const router = useRouter();
-const store = useIssuesStore();
+const store = useWorkshopStore();
 const cardStore = useIssueCardStore();
 const { issues } = storeToRefs(store);
 const { activeId, state } = storeToRefs(cardStore);

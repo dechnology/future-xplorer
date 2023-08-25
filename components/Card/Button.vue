@@ -21,8 +21,10 @@ interface Props {
     size: string;
     color?: string;
   };
-  body: string;
+  body?: string;
   type?: 'button' | 'submit' | 'reset';
 }
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  type: 'button',
+});
 </script>

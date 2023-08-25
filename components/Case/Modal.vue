@@ -8,22 +8,22 @@
     <div class="flex h-full">
       <div class="flex h-full basis-1/2 flex-col gap-7">
         <CardHeader :title="activeCase.title" :creator="activeCase.creator" />
-        <CaseModalContent
-          class="flex shrink grow basis-auto flex-col gap-6 overflow-y-auto"
-        />
+        <CaseModalContent />
         <CaseModalActions />
       </div>
-      <div class="basis-1/2"></div>
+      <div class="basis-1/2">
+        <KeywordModalPanel />
+      </div>
     </div>
   </dialog>
 </template>
 
 <script setup lang="ts">
-const modal = ref<HTMLDialogElement | null>(null);
 const modalStore = useModalStore();
 const cardStore = useCaseCardStore();
 const { shown } = storeToRefs(modalStore);
 const { activeCase } = storeToRefs(cardStore);
+const modal = ref<HTMLDialogElement | null>(null);
 
 const handleBackdropClick = (e: MouseEvent) => {
   const { x, y } = e;
@@ -35,8 +35,6 @@ const handleBackdropClick = (e: MouseEvent) => {
     modalStore.close();
   }
 };
-
-const handleCloseClick = (e: Event) => modalStore.close();
 
 watch(shown, (newShown) => {
   if (newShown) {

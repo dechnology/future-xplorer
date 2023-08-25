@@ -49,15 +49,17 @@ import type { Case } from '@/types';
 import { CardStates } from '@/types';
 
 const issueStore = useIssueStore();
+const keywordStore = useKeywordStore();
 const modalStore = useModalStore();
 const cardStore = useCaseCardStore();
 const { cases } = storeToRefs(issueStore);
-const { activeId, state } = storeToRefs(cardStore);
+const { activeId, activeCaseKeywords, state } = storeToRefs(cardStore);
 
 const handleClick = (c?: Case) => {
   if (c) {
     cardStore.setActiveCase(c);
     cardStore.setCurrentCase(c);
+    keywordStore.setKeywords(activeCaseKeywords.value);
     state.value = CardStates.Detail;
   } else {
     state.value = CardStates.New;

@@ -12,6 +12,7 @@
         :disabled="disabled"
         :class="classes"
         :value="modelValue"
+        :readonly="selectOnly || readOnly"
         @input="
           $emit('update:modelValue', ($event.target as HTMLInputElement).value)
         "
@@ -58,6 +59,8 @@ interface Props {
   placeholder: string;
   disabled?: boolean;
   modelValue: string;
+  selectOnly?: boolean;
+  readOnly?: boolean;
 
   selectOptions?: string[];
 
@@ -65,10 +68,15 @@ interface Props {
   inputClasses?: string;
 }
 
-const props = withDefaults(defineProps<Props>(), { disabled: false });
+const props = withDefaults(defineProps<Props>(), {
+  disabled: false,
+  selectOnly: false,
+  readOnly: false,
+});
 
 const emit = defineEmits<{
   (e: 'update:modelValue'): void;
+  (e: 'inputSelection', text: string): void;
 }>();
 
 const dropdownShown = ref(false);
@@ -99,5 +107,3 @@ const classes = computed(() => {
   return twMerge(resultClasses, ['border-gray-500', 'bg-transparent']);
 });
 </script>
-
-<style scoped></style>

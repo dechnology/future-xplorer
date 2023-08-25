@@ -1,16 +1,18 @@
 import { Issue, ResourceObject } from '@/types';
-import { IssueModel } from '@/server/models';
+import { CaseModel, IssueModel } from '@/server/models';
 
 export default defineEventHandler(
   async (event): Promise<ResourceObject<Issue>> => {
     authenticate(event.context);
     const _id = getRouterParam(event, 'issue');
-    const issue = await IssueModel.findById(_id)
-      .populate({ path: 'personas', populate: 'creator' })
-      .populate({
+    const issue = await IssueModel.findById(_id).populate([
+      { path: 'personas', populate: 'creator' },
+      {
         path: 'cases',
+        model: 'Case',
         populate: ['creator', { path: 'keywords', populate: 'creator' }],
-      });
+      },
+    ]);
 
     if (!issue) {
       throw createError({

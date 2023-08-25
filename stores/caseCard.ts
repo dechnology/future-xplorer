@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { CardStates, NewCaseSchema } from '@/types';
-import type { Case, NewCase, CardState } from '@/types';
+import type { Case, NewCase, CardState, Keyword } from '@/types';
 
 const baseFilepath = 'tdri/imgs/cases/originals';
 
@@ -27,6 +27,7 @@ const getNewCase = (): NewCase => ({
 export const useCaseCardStore = definePiniaStore('case card', () => {
   const currentCase = ref<Case | NewCase>(getNewCase());
   const activeCase = ref<Case | null>(null);
+  const keywords = ref<Keyword[]>([]);
   const imageFileBuffer = ref<File | null>(null);
   const imageUrlBuffer = ref<string | null>(null);
   const state = ref<CardState>(CardStates.New);
@@ -35,6 +36,14 @@ export const useCaseCardStore = definePiniaStore('case card', () => {
   const activeId = computed(
     (): string | null => activeCase.value && activeCase.value._id
   );
+
+  const activeCaseKeywords = computed(() =>
+    keywords.value.filter((k) => k.case === activeId.value)
+  );
+
+  function setKeywords(new_keywords: Keyword[]) {
+    keywords.value = new_keywords;
+  }
 
   function clearCurrentCase() {
     currentCase.value = getNewCase();
@@ -144,10 +153,15 @@ export const useCaseCardStore = definePiniaStore('case card', () => {
   return {
     currentCase,
     activeCase,
+    keywords,
     imageFileBuffer,
     imageUrlBuffer,
-    activeId,
     state,
+
+    activeId,
+    activeCaseKeywords,
+
+    setKeywords,
 
     clearCurrentCase,
     clearActiveCase,

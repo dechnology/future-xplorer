@@ -1,7 +1,6 @@
-import { Workshop } from '@/types/workshop';
-import { BaseIssue } from '@/types/issue';
+import { Workshop, BaseIssue } from '@/types';
 
-export const useIssuesStore = definePiniaStore('issues', () => {
+export const useWorkshopStore = definePiniaStore('workshop', () => {
   const workshop = ref<Workshop | null>(null);
   const issues = ref<BaseIssue[]>([]);
 

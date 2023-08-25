@@ -33,13 +33,14 @@
     <IssueActionsNew v-if="state.name === CardStates.New.name" />
     <IssueActionsDetail v-if="state.name === CardStates.Detail.name" />
     <IssueActionsEditing v-if="state.name === CardStates.Editing.name" />
-    <Icon
+    <!-- TODO -->
+    <!-- <Icon
       v-if="state.name === CardStates.Detail.name"
       @click="() => modalStore.show()"
       class="absolute right-6 top-6 cursor-pointer text-blue-950"
       name="material-symbols:pan-zoom-rounded"
       size="3rem"
-    />
+    /> -->
   </form>
 </template>
 
@@ -53,7 +54,7 @@ const route = useRoute();
 const router = useRouter();
 const workshopId = route.params.workshopId as string;
 
-const issuesStore = useIssuesStore();
+const workshopStore = useWorkshopStore();
 const cardStore = useIssueCardStore();
 const modalStore = useModalStore();
 const { user, getTokenSilently } = await useAuth();
@@ -69,7 +70,7 @@ const handleSubmit = async (e: Event) => {
 
         createdIssue.creator = user.value as User;
         console.log('created issue: ', createdIssue);
-        issuesStore.upsert(createdIssue);
+        workshopStore.upsert(createdIssue);
 
         cardStore.setActiveIssue(createdIssue);
         cardStore.setCurrentIssue(createdIssue);
@@ -82,7 +83,7 @@ const handleSubmit = async (e: Event) => {
         }
 
         await cardStore.remove(token, activeId.value);
-        issuesStore.remove(activeId.value);
+        workshopStore.remove(activeId.value);
         state.value = CardStates.New;
         console.log('issue removed');
         break;
@@ -95,7 +96,7 @@ const handleSubmit = async (e: Event) => {
         const editedIssue = await cardStore.edit(token, activeId.value);
         editedIssue.creator = user.value as User;
         console.log('edited issue: ', editedIssue);
-        issuesStore.upsert(editedIssue);
+        workshopStore.upsert(editedIssue);
 
         cardStore.setActiveIssue(editedIssue);
         cardStore.setCurrentIssue(editedIssue);
@@ -123,7 +124,7 @@ const handleSubmit = async (e: Event) => {
   //     const createdIssue = await cardStore.submit(token, workshopId);
 
   //     createdIssue.creator = user.value as User;
-  //     issuesStore.push(createdIssue);
+  //     workshopStore.push(createdIssue);
   //     console.log('created issue: ', createdIssue);
 
   //     cardStore.setActiveIssue(createdIssue);

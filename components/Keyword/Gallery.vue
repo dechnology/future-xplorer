@@ -5,11 +5,18 @@
     class="grid content-start gap-2"
     :class="`grid-cols-${n_cols}`"
   >
+    <KeywordIconCard
+      v-if="includeAddCard"
+      class="h-28"
+      :icon="{ name: 'mdi:plus', size: '7.5rem' }"
+    />
     <KeywordCard
       v-for="k in filteredKeywords"
+      class="h-28"
       :keyword="k"
-      :key="k.id"
+      :key="k._id"
       :draggable="draggable"
+      :show-category="showCategory"
     />
   </div>
 </template>
@@ -18,19 +25,23 @@
 import { storeToRefs } from 'pinia';
 
 interface Props {
-  n_cols: number;
-  draggable: boolean;
+  n_cols?: number;
+  draggable?: boolean;
+  includeAddCard?: boolean;
+  showCategory?: boolean;
   categoryFilter?: string | null;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   n_cols: 1,
   draggable: false,
+  includeAddCard: false,
+  showCategory: true,
 });
 
-const issueStore = useIssueStore();
+const keywordStore = useKeywordStore();
 const dragStore = useDragStore();
-const { keywords } = storeToRefs(issueStore);
+const { keywords } = storeToRefs(keywordStore);
 const { dragged } = storeToRefs(dragStore);
 
 const filteredKeywords = computed(() =>
@@ -40,6 +51,10 @@ const filteredKeywords = computed(() =>
 );
 
 const handleDrop = (e: DragEvent) => {
+  if (!props.categoryFilter) {
+    return;
+  }
+
   if (!dragged.value) {
     console.log('no dragging keywords');
     return;

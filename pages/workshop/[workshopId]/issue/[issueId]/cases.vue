@@ -13,9 +13,10 @@
 
 <script setup lang="ts">
 const route = useRoute();
+const cardStore = useCaseCardStore();
 const issueStore = useIssueStore();
 const breadcrumbStore = useBreadcrumbStore();
-const { workshop, issue } = storeToRefs(issueStore);
+const { workshop, issue, keywords } = storeToRefs(issueStore);
 
 onMounted(async () => {
   const { getTokenSilently } = await useAuth();
@@ -23,6 +24,10 @@ onMounted(async () => {
   const workshopId = route.params.workshopId as string;
   const issueId = route.params.issueId as string;
   await issueStore.init(token, workshopId, issueId);
+
+  if (keywords.value) {
+    await cardStore.setKeywords(keywords.value);
+  }
 
   breadcrumbStore.setWorkshop(
     workshop.value ? workshop.value.name : 'error',

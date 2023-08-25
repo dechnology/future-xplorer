@@ -16,6 +16,7 @@
       body="使用說明"
     />
     <CardButton
+      @click="handleCloseClick"
       class="h-12 rounded-lg bg-gray-400 text-white hover:bg-gray-500"
       :icon="{ name: 'mdi-forum-plus', size: '3rem' }"
       body="關閉"
@@ -24,5 +25,7 @@
 </template>
 
 <script setup lang="ts">
-const store = useCaseCardStore();
+const cardStore = useCaseCardStore();
+const modalStore = useModalStore();
+const handleCloseClick = (e: Event) => modalStore.close();
 </script>
