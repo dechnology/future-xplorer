@@ -23,10 +23,16 @@ const needRefresh = (accessToken: string | null): boolean => {
   return false;
 };
 
-export const useAuth = async () => {
+export const useAuth = () => {
   const store = useAuthStore();
   const { user, accessToken } = storeToRefs(store);
   const error = ref<Error | null>(null);
+
+  const username = computed(() => {
+    if (user.value) {
+      return user.value.name;
+    }
+  });
 
   const getTokenSilently = async (): Promise<string> => {
     if (needRefresh(accessToken.value)) {
@@ -55,5 +61,14 @@ export const useAuth = async () => {
     }
   };
 
-  return { user, error, getTokenSilently, authenticate };
+  const logout = async () => {
+    store.clearAccessToken();
+    const { error } = await useFetch('/api/logout', { method: 'DELETE' });
+
+    if (error.value) {
+      console.error(error.value);
+    }
+  };
+
+  return { user, username, error, getTokenSilently, authenticate, logout };
 };

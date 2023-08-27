@@ -13,7 +13,7 @@
 <script setup lang="ts">
 const route = useRoute();
 const issueStore = useIssueStore();
-const breadcrumbStore = useBreadcrumbStore();
+const breadcrumbStore = useBreadcrumbsStore();
 const { workshop, issue } = storeToRefs(issueStore);
 
 onMounted(async () => {

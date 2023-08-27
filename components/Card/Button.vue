@@ -1,14 +1,9 @@
 <template>
   <button :type="type">
     <div
-      class="flex h-full w-full cursor-pointer items-center gap-4 px-4 transition-all hover:shadow-2xl"
+      class="flex h-full w-full cursor-pointer items-center gap-2 transition-all hover:shadow-2xl"
     >
-      <Icon
-        v-if="icon"
-        :class="`text-${icon.color}`"
-        :name="icon.name"
-        :size="icon.size"
-      />
+      <Icon v-if="icon" v-bind="icon" />
       <div class="w-full text-center">{{ body }}</div>
     </div>
   </button>
@@ -19,7 +14,6 @@ interface Props {
   icon?: {
     name: string;
     size: string;
-    color?: string;
   };
   body?: string;
   type?: 'button' | 'submit' | 'reset';

@@ -1,5 +1,3 @@
-import { UncaughtError } from '@/types';
-
 export default defineNuxtRouteMiddleware(async (to, from) => {
   // skip middleware on server
   if (process.server) {
@@ -23,7 +21,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     return navigateTo('/login');
   }
 
-  const { user, error, authenticate } = await useAuth();
+  const { user, error, authenticate } = useAuth();
 
   await authenticate();
 

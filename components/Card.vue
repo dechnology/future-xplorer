@@ -1,10 +1,10 @@
 <template>
-  <div
-    class="flex w-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-solid border-gray-400 transition-all hover:shadow-2xl"
-    :class="isActivated ? 'bg-gray-200' : 'bg-white hover:bg-gray-100'"
-  >
-    <!-- Image -->
-    <div v-if="image || image === null" class="h-52 w-full shrink-0">
+  <div :class="cardClasses">
+    <slot name="image" />
+    <div class="flex shrink grow basis-auto flex-col items-center p-5">
+      <slot />
+    </div>
+    <!-- <div v-if="image || image === null" class="h-52 w-full shrink-0">
       <NuxtImg
         v-if="image"
         class="h-full w-full object-cover"
@@ -14,41 +14,28 @@
       <div v-else class="flex h-full items-center justify-center bg-gray-300">
         <Icon name="mdi:image" size="5rem" />
       </div>
-    </div>
-
-    <div class="relative flex shrink grow basis-auto flex-col px-5 py-6">
-      <!--  Title -->
-      <h3 v-if="title" class="text-2xl font-bold">{{ title }}</h3>
-      <!-- Description (use this as the main content of the card) -->
-      <p v-if="description" class="flex-grow overflow-hidden">
-        {{ description }}
-      </p>
-      <!-- Lines -->
-      <div v-if="lines" class="flex flex-col text-sm">
-        <div v-for="line in lines" class="truncate">{{ line }}</div>
-      </div>
-      <!-- Footnotes -->
-      <div
-        v-if="footnotes"
-        class="absolute bottom-6 right-5 flex flex-col items-end justify-self-end text-[10px] text-gray-300"
-      >
-        <div v-for="note in footnotes" class="truncate">{{ note }}</div>
-      </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script setup lang="ts">
-interface Props {
-  title?: string;
-  description?: string;
-  lines?: string[];
-  footnotes?: string[];
-  image?: string | null;
-  classes?: string;
-  isActivated: boolean;
+const props = withDefaults(defineProps<{ active?: boolean }>(), {
+  active: false,
+});
 
-  icon?: { name: string; size: string };
-}
-const props = defineProps<Props>();
+const cardClasses = computed(() =>
+  twMerge(
+    [
+      'rounded-2xl',
+      'border',
+      'border-black',
+      'border-opacity-50',
+      'cursor-pointer',
+      'transition-all',
+      'flex',
+      'flex-col',
+    ],
+    props.active ? 'bg-gray-200' : ['hover:bg-gray-100']
+  )
+);
 </script>

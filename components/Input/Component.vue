@@ -3,21 +3,16 @@
     <InputLabel v-if="title">{{ title }}</InputLabel>
     <div class="relative">
       <input
+        v-if="type === 'text'"
         type="text"
-        class="h-16"
-        :class="classes"
-        :placeholder="placeholder"
-        :disabled="disabled"
-        :value="modelValue"
-        :readonly="selectOnly || readOnly"
-        @input="
-          !selectOnly &&
-            $emit(
-              'update:modelValue',
-              ($event.target as HTMLInputElement).value
-            )
-        "
+        v-bind="inputProps"
+        @input="handleInputChange"
       />
+      <textarea
+        v-else
+        v-bind="inputProps"
+        @input="handleInputChange"
+      ></textarea>
       <div
         v-if="selectOptions"
         class="absolute inset-y-0 right-2 flex items-center justify-center"
@@ -53,22 +48,24 @@
 </template>
 
 <script setup lang="ts">
-import { ClassNameValue, twMerge } from 'tailwind-merge';
-
 interface Props {
+  // Required
+  type: 'text' | 'textarea';
   modelValue: string | number;
-  placeholder?: string;
 
-  type?: 'text' | 'textarea';
+  // Optional
   title?: string;
+  inputClasses?: string;
+  selectOptions?: string[];
+
+  // Optional with defaults
+  placeholder?: string;
   disabled?: boolean;
   selectOnly?: boolean;
   readOnly?: boolean;
-  selectOptions?: string[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  type: 'text',
   placeholder: '',
   disabled: false,
   selectOnly: false,
@@ -76,35 +73,39 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'update:modelValue'): void;
-  (e: 'inputSelection', text: string): void;
+  (e: 'update:modelValue', value: string): void;
 }>();
 
 const dropdownShown = ref(false);
 
-const defaultClasses: ClassNameValue = [
-  'w-full',
-  'rounded',
-  'pl-4',
-  'pr-4',
-  'py-4',
-  'border',
-  'border-solid',
-  'border-gray-200',
-];
-
-const textareaClasses: ClassNameValue = ['resize-none', 'text-start'];
-
-const classes = computed(() => {
-  let resultClasses = twMerge(defaultClasses);
-  if (props.disabled) {
-    return twMerge(resultClasses, 'bg-slate-50');
-  }
-
-  if (props.selectOptions) {
-    resultClasses = twMerge(resultClasses, 'pr-12');
-  }
-
-  return twMerge(resultClasses, ['border-gray-500', 'bg-transparent']);
+const inputProps = computed(() => {
+  return {
+    class: twMerge(
+      [
+        'w-full',
+        'rounded',
+        'pl-4',
+        'pr-4',
+        'py-4',
+        'border',
+        'border-solid',
+        'border-black',
+      ],
+      props.type === 'textarea' && 'resize-none',
+      props.inputClasses,
+      props.selectOptions && 'pr-12',
+      props.disabled ? ['bg-slate-50'] : ['border-opacity-40']
+    ),
+    placeholder: props.placeholder,
+    disabled: props.disabled,
+    value: props.modelValue,
+    readonly: props.selectOnly || props.readOnly,
+  };
 });
+
+const handleInputChange = (e: Event) => {
+  if (!props.selectOnly) {
+    emit('update:modelValue', (e.target as HTMLInputElement).value);
+  }
+};
 </script>

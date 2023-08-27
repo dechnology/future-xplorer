@@ -1,5 +1,6 @@
 {
   "name": "nuxt-app",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "build": "nuxt build",
@@ -12,7 +13,7 @@
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.391.0",
     "@faker-js/faker": "^8.0.2",
-    "@nuxt/devtools": "latest",
+    "@nuxt/devtools": "^0.8.0",
     "@nuxt/image": "^1.0.0-rc.1",
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
     "@nuxtjs/tailwindcss": "^6.8.0",

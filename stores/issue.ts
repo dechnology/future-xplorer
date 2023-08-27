@@ -3,7 +3,6 @@ import {
   Workshop,
   Issue,
   Case,
-  IssueResources,
   WorkshopElements,
   Keyword,
 } from '@/types';
@@ -12,18 +11,19 @@ export const useIssueStore = definePiniaStore('issue', () => {
   const workshop = ref<Workshop | null>(null);
   const issue = ref<Issue | null>(null);
 
-  const elements = computed((): WorkshopElements | null => {
-    if (!workshop.value) {
-      return null;
-    }
+  const tabTitles = ref<string[]>([]);
+  const currentTab = ref<string>('');
 
-    const { objects, environments, messages, services } = workshop.value;
-    return {
-      objects,
-      environments,
-      messages,
-      services,
-    };
+  const elements = computed(() => {
+    if (workshop.value) {
+      const { objects, environments, messages, services } = workshop.value;
+      return {
+        objects,
+        environments,
+        messages,
+        services,
+      };
+    }
   });
 
   const personas = computed(
@@ -122,6 +122,9 @@ export const useIssueStore = definePiniaStore('issue', () => {
   return {
     workshop,
     issue,
+    tabTitles,
+    currentTab,
+
     elements,
     personas,
     cases,

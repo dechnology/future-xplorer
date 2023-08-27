@@ -1,38 +1,30 @@
 <template>
-  <tr>
-    <td class="py-6">
-      <div class="flex items-center justify-center">
-        {{ workshop.name }}
-      </div>
-    </td>
-    <td class="py-6">
-      <div class="flex items-center justify-center">
-        {{ workshop.dateValue.start }} -
-        {{ workshop.dateValue.end }}
-      </div>
-    </td>
-    <td class="py-6">
-      <div class="flex items-center justify-center">
-        {{ workshop.creator.name }}
-      </div>
-    </td>
-    <td class="py-6">
-      <div class="flex items-center justify-center">
-        {{ formatDate(workshop.createdAt) }}
-      </div>
-    </td>
-    <td class="py-6">
-      <div class="flex items-center justify-center">
-        {{ formatDate(workshop.updatedAt) }}
-      </div>
-    </td>
+  <tr :class="trClasses">
+    <slot />
   </tr>
 </template>
 
 <script setup lang="ts">
-import { Workshop } from '@/types/workshop';
 interface Props {
-  workshop: Workshop;
+  active?: boolean;
+  classes?: string;
 }
-defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  active: false,
+});
+const trClasses = computed(() =>
+  twMerge(
+    [
+      'h-[77.5px]',
+      'ease-in-out',
+      'cursor-pointer',
+      'border-b',
+      'border-solid',
+      'border-gray-300',
+      'transition-all',
+    ],
+    props.classes,
+    props.active ? 'bg-gray-200' : ['hover:bg-gray-100']
+  )
+);
 </script>

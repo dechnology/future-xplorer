@@ -3,7 +3,7 @@ interface Breadcrumb {
   path: string;
 }
 
-export const useBreadcrumbStore = definePiniaStore('breadcrumb', () => {
+export const useBreadcrumbsStore = definePiniaStore('breadcrumbs', () => {
   const workshop = ref<Breadcrumb | null>(null);
   const issue = ref<Breadcrumb | null>(null);
 
@@ -27,6 +27,11 @@ export const useBreadcrumbStore = definePiniaStore('breadcrumb', () => {
     issue.value = null;
   }
 
+  function clearAll() {
+    workshop.value = null;
+    issue.value = null;
+  }
+
   function setWorkshop(name: string, path: string) {
     workshop.value = { name, path };
   }
@@ -41,6 +46,7 @@ export const useBreadcrumbStore = definePiniaStore('breadcrumb', () => {
     backPath,
     clearWorkshop,
     clearIssue,
+    clearAll,
     setWorkshop,
     setIssue,
   };
