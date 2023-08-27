@@ -65,12 +65,17 @@ interface Props {
   readOnly?: boolean;
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  placeholder: '',
-  disabled: false,
-  selectOnly: false,
-  readOnly: false,
-});
+const {
+  type,
+  modelValue,
+  title,
+  inputClasses,
+  selectOptions,
+  placeholder = '',
+  disabled = false,
+  selectOnly = false,
+  readOnly = false,
+} = defineProps<Props>();
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void;
@@ -91,20 +96,20 @@ const inputProps = computed(() => {
         'border-solid',
         'border-black',
       ],
-      props.type === 'textarea' && 'resize-none',
-      props.inputClasses,
-      props.selectOptions && 'pr-12',
-      props.disabled ? ['bg-slate-50'] : ['border-opacity-40']
+      type === 'textarea' && 'resize-none',
+      inputClasses,
+      selectOptions && 'pr-12',
+      disabled ? ['bg-slate-50'] : ['border-opacity-40']
     ),
-    placeholder: props.placeholder,
-    disabled: props.disabled,
-    value: props.modelValue,
-    readonly: props.selectOnly || props.readOnly,
+    placeholder: placeholder,
+    disabled: disabled,
+    value: modelValue,
+    readonly: selectOnly || readOnly,
   };
 });
 
 const handleInputChange = (e: Event) => {
-  if (!props.selectOnly) {
+  if (!selectOnly) {
     emit('update:modelValue', (e.target as HTMLInputElement).value);
   }
 };

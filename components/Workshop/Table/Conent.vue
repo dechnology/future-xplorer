@@ -25,10 +25,6 @@ await stores.workshops.init(token);
 
 const { workshops, activeId } = storeToRefs(stores.workshops);
 
-await new Promise((res) => {
-  setTimeout(() => res('loaded'), 2000);
-});
-
 const getWorkshopData = (w: Workshop) => [
   w.name,
   `${w.dateValue.start} - ${w.dateValue.end}`,

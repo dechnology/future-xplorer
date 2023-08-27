@@ -18,7 +18,5 @@ interface Props {
   body?: string;
   type?: 'button' | 'submit' | 'reset';
 }
-const props = withDefaults(defineProps<Props>(), {
-  type: 'button',
-});
+const { type = 'button' } = defineProps<Props>();
 </script>

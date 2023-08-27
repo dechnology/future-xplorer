@@ -28,8 +28,9 @@ interface Props {
   buttonText: string;
   modelValue: string;
 }
-const props = withDefaults(defineProps<Props>(), {
-  placeholder: '',
-  buttonText: '搜尋',
-});
+const {
+  modelValue,
+  placeholder = '',
+  buttonText = '搜尋',
+} = defineProps<Props>();
 </script>

@@ -66,22 +66,9 @@
             </WorkshopTableData>
           </WorkshopTableRow>
           <Suspense>
-            <WorkshopTableBodyConent />
+            <WorkshopTableConent />
             <template #fallback> loading... </template>
           </Suspense>
-          <!-- Should be async component -->
-          <!-- <WorkshopTableRow
-            v-for="w in workshops"
-            :key="w._id"
-            :active="w._id === activeId"
-            @dblclick="() => handleDblclick(w._id)"
-            @click="() => stores.workshops.changeActiveWorkshop(w)"
-          >
-            <WorkshopTableData v-for="datum in getWorkshopData(w)">
-              {{ datum }}
-            </WorkshopTableData>
-          </WorkshopTableRow> -->
-          <!-- Should be async component (end) -->
         </tbody>
       </WorkshopTable>
     </WorkshopTablePanel>
@@ -89,8 +76,6 @@
 </template>
 
 <script setup lang="ts">
-import { Workshop } from '@/types';
-
 const ActionComponents = {
   NEW: resolveComponent('WorkshopNewAction'),
   DETAILS: resolveComponent('WorkshopDetailsAction'),
@@ -103,37 +88,14 @@ const formPanelProps = {
   panelDescription: '工作坊的管理頁面：管理工作坊的活動場次',
 };
 
-const { username, getTokenSilently } = useAuth();
-const router = useRouter();
+const { username } = useAuth();
 
 const stores = {
   workshops: useWorkshopsStore(),
   breadcrumbs: useBreadcrumbsStore(),
 };
-const {
-  workshops,
-  currentWorkshop,
-  activeId,
-  state,
-  formDisabled,
-  currentFormCardProps,
-} = storeToRefs(stores.workshops);
+const { currentWorkshop, activeId, state, formDisabled, currentFormCardProps } =
+  storeToRefs(stores.workshops);
 
-// const getWorkshopData = (w: Workshop) => [
-//   w.name,
-//   `${w.dateValue.start} - ${w.dateValue.end}`,
-//   w.creator.name,
-//   formatDate(w.createdAt),
-//   formatDate(w.updatedAt),
-// ];
-
-// const handleDblclick = (id: string) => {
-//   router.push(`/workshop/${id}`);
-// };
-
-onMounted(async () => {
-  // const token = await getTokenSilently();
-  // await stores.workshops.init(token);
-  stores.breadcrumbs.clearAll();
-});
+stores.breadcrumbs.clearAll();
 </script>
