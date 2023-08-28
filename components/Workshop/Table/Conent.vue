@@ -16,13 +16,9 @@
 import { Workshop } from '@/types';
 
 const { getTokenSilently } = useAuth();
-const token = await getTokenSilently();
-
 const stores = {
   workshops: useWorkshopsStore(),
 };
-await stores.workshops.init(token);
-
 const { workshops, activeId } = storeToRefs(stores.workshops);
 
 const getWorkshopData = (w: Workshop) => [
@@ -37,4 +33,9 @@ const handleDblclick = (id: string) => {
   const router = useRouter();
   router.push(`/workshop/${id}`);
 };
+
+onMounted(async () => {
+  const token = await getTokenSilently();
+  await stores.workshops.init(token);
+});
 </script>

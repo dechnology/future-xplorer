@@ -17,8 +17,8 @@
 <script setup lang="ts">
 withDefaults(
   defineProps<{
-    leftBasis: string;
-    rightBasis: string;
+    leftBasis?: string;
+    rightBasis?: string;
   }>(),
   { leftBasis: `${100 / 3}%`, rightBasis: `${200 / 3}%` }
 );

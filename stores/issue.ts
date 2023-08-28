@@ -38,6 +38,7 @@ export const useIssueStore = definePiniaStore('issue', () => {
   });
 
   const issue = ref<Issue | null>(null);
+  const issueId = computed(() => issue.value?._id);
   const currentTab = ref<IssueTab>(IssueTabs.persona);
   const currentResources = ref<CurrentIssueResources>({
     persona: getNewPersona(),
@@ -188,6 +189,7 @@ export const useIssueStore = definePiniaStore('issue', () => {
     elements,
 
     issue,
+    issueId,
     currentTab,
     currentResources,
     activeIds,

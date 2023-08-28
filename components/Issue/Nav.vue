@@ -3,8 +3,8 @@
     <IssueNavItem
       v-for="t in IssueTabs"
       :key="`${t.name}_${t.title}`"
-      @click="() => handleClick(t.name)"
-      :active="t.name === currentTabName"
+      @click="() => (currentTab = t)"
+      :active="t.name === currentTab.name"
     >
       {{ t.title }}
     </IssueNavItem>
@@ -12,16 +12,10 @@
 </template>
 
 <script setup lang="ts">
-import { IssueTabKeys, IssueTabs } from '~/types';
+import { IssueTabs } from '~/types';
 
 const stores = {
   issue: useIssueStore(),
 };
-
-const { currentTabName } = storeToRefs(stores.issue);
-
-const handleClick = (name: IssueTabKeys) => {
-  currentTabName.value = name;
-  console.log(currentTabName.value);
-};
+const { currentTab } = storeToRefs(stores.issue);
 </script>

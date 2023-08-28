@@ -13,13 +13,13 @@ const Tabs: Record<IssueTabKeys, ConcreteComponent | string> = {
 
 const { getTokenSilently } = useAuth();
 const route = useRoute();
+const workshopId = route.params.workshopId as string;
+const issueId = route.params.issueId as string;
+
 const stores = {
   issue: useIssueStore(),
   breadcrumbs: useBreadcrumbsStore(),
 };
-
-const workshopId = route.params.workshopId as string;
-const issueId = route.params.issueId as string;
 const { workshop, issue, currentTab } = storeToRefs(stores.issue);
 
 onMounted(async () => {

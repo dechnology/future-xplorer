@@ -106,8 +106,8 @@
 </template>
 
 <script setup lang="ts">
-import { ConcreteComponent } from 'nuxt/dist/app/compat/capi';
-import { FormStateKeys, IssueTabKeys } from '~/types';
+import type { ConcreteComponent } from 'nuxt/dist/app/compat/capi';
+import type { FormStateKeys } from '~/types';
 
 const Actions: Record<FormStateKeys, ConcreteComponent | string> = {
   NEW: resolveComponent('PersonaNewAction'),
@@ -115,19 +115,13 @@ const Actions: Record<FormStateKeys, ConcreteComponent | string> = {
   EDITING: resolveComponent('PersonaEditingAction'),
 } as const;
 
-const { username, getTokenSilently } = useAuth();
-const route = useRoute();
+const { username } = useAuth();
 const stores = {
   issue: useIssueStore(),
   breadcrumbs: useBreadcrumbsStore(),
 };
 
-const workshopId = route.params.workshopId as string;
-const issueId = route.params.issueId as string;
 const {
-  workshop,
-  issue,
-  currentTab,
   currentResources,
   activeIds,
   state,
