@@ -1,5 +1,7 @@
 <template>
+  <!-- The only page where <NavBar /> is not needed is the login page -->
   <div class="flex h-screen flex-col overflow-hidden">
+    <NavBar v-if="!$route.path.startsWith('/login')" />
     <NuxtPage />
   </div>
 </template>

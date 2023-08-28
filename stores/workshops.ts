@@ -1,36 +1,6 @@
-import { format } from 'date-fns';
-import type { NewWorkshop, User, Workshop } from '@/types';
-
-const FormStates = {
-  NEW: {
-    formTitle: '新增工作坊',
-  },
-  DETAILS: {
-    formTitle: '工作坊資訊',
-  },
-  EDITING: {
-    formTitle: '工作坊編輯',
-  },
-} as const;
-
-const getNewWorkshop = (): NewWorkshop => {
-  const now = format(new Date(), 'yyyy/MM/dd');
-
-  return {
-    name: '',
-    description: '',
-
-    dateValue: {
-      start: now,
-      end: now,
-    },
-
-    objects: ['技術'],
-    environments: ['場景體驗'],
-    messages: ['洞見與價值'],
-    services: ['使用者體驗'],
-  };
-};
+import { FormStateKeys } from '@/types';
+import type { NewWorkshop, Workshop } from '@/types';
+import { getCurrentFormCardProps, getNewWorkshop } from '~/utils/form';
 
 export const useWorkshopsStore = definePiniaStore('workshops', () => {
   const workshops = ref<Workshop[]>([]);
@@ -42,32 +12,18 @@ export const useWorkshopsStore = definePiniaStore('workshops', () => {
     (w) => w._id === activeId.value
   );
 
-  const state = ref<keyof typeof FormStates>('NEW');
+  const state = ref<FormStateKeys>('NEW');
   const loading = ref(false);
   const formDisabled = computed(
     () => state.value === 'DETAILS' || loading.value
   );
-  const currentFormCardProps = computed(() => {
-    let creator: User | undefined;
-    if ('creator' in currentWorkshop.value) {
-      creator = currentWorkshop.value.creator;
-    }
-
-    let timestamps: { createdAt: Date; updatedAt: Date } | undefined;
-    if (
-      'createdAt' in currentWorkshop.value &&
-      'updatedAt' in currentWorkshop.value
-    ) {
-      const { createdAt, updatedAt } = currentWorkshop.value;
-      timestamps = { createdAt, updatedAt };
-    }
-
-    return {
-      formTitle: FormStates[state.value].formTitle,
-      creator,
-      timestamps,
-    };
-  });
+  const currentFormCardProps = computed(() =>
+    getCurrentFormCardProps(
+      '工作坊',
+      currentWorkshop.value as Workshop,
+      state.value
+    )
+  );
 
   async function init(token: string) {
     const { data } = await fetchResources<Workshop>(token, '/api/workshops');
@@ -100,6 +56,8 @@ export const useWorkshopsStore = definePiniaStore('workshops', () => {
   }
 
   function changeActiveWorkshop(w?: Workshop) {
+    console.log(w);
+
     if (w) {
       activeId.value = w._id;
       currentWorkshop.value = { ...w };

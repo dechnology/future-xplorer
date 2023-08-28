@@ -1,33 +1,30 @@
 <template>
-  <NuxtLayout>
-    <template #form>
-      <IssueFormTabsWrapper>
-        <IssueFormTab :tab="{ name: 'personas', title: '人物清單' }">
-          <PersonaFormTab />
-        </IssueFormTab>
-      </IssueFormTabsWrapper>
-    </template>
-    gallery
-  </NuxtLayout>
+  <component :is="Tabs[currentTab.name]" />
 </template>
 
 <script setup lang="ts">
+import { ConcreteComponent } from 'nuxt/dist/app/compat/capi';
+import { IssueTabKeys } from '~/types';
+
+const Tabs: Record<IssueTabKeys, ConcreteComponent | string> = {
+  persona: resolveComponent('PersonaTab'),
+  case: resolveComponent('CaseTab'),
+};
+
+const { getTokenSilently } = useAuth();
+const route = useRoute();
+const stores = {
+  issue: useIssueStore(),
+  breadcrumbs: useBreadcrumbsStore(),
+};
+
+const workshopId = route.params.workshopId as string;
+const issueId = route.params.issueId as string;
+const { workshop, issue, currentTab } = storeToRefs(stores.issue);
+
 onMounted(async () => {
-  const { getTokenSilently } = await useAuth();
-  const route = useRoute();
-
-  const stores = {
-    issue: useIssueStore(),
-    breadcrumbs: useBreadcrumbsStore(),
-  };
-
-  const { workshop, issue } = storeToRefs(stores.issue);
-
   const token = await getTokenSilently();
-  const workshopId = route.params.workshopId as string;
-  const issueId = route.params.issueId as string;
   await stores.issue.init(token, workshopId, issueId);
-
   stores.breadcrumbs.setWorkshop(
     workshop.value ? workshop.value.name : 'error',
     `/workshop/${workshopId}`

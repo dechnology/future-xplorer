@@ -8,5 +8,5 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{ url?: string }>();
+defineProps<{ url?: string | null }>();
 </script>

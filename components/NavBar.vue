@@ -5,7 +5,7 @@
     >
       <HomeLink>未來情境探索輔助工具</HomeLink>
       <div class="flex items-center gap-2">
-        <IssueNav />
+        <IssueNav v-if="$route.params.issueId" />
         <Logout></Logout>
       </div>
     </div>

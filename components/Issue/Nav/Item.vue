@@ -21,12 +21,13 @@ const classes = computed(() =>
       'font-medium transition-all',
     ],
     props.active
-      ? ['border-b-2', 'border-solid', 'border-white']
+      ? ['border-b-2', 'border-solid', 'border-white', 'text-white']
       : [
           'text-gray-600',
           'hover:border-b-2',
           'hover:border-solid',
           'hover:border-gray-300',
+          'hover:text-gray-100',
         ]
   )
 );

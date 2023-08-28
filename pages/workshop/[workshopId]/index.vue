@@ -21,7 +21,7 @@
             />
           </template>
           <template #action>
-            <component :is="ActionComponents[state]" />
+            <component :is="Actions[state]" />
           </template>
         </FormCard>
       </FormPanel>
@@ -31,6 +31,7 @@
         <Card
           :active="!activeId"
           @click="() => stores.workshop.changeActiveIssue()"
+          class="h-[300px]"
         >
           <CardIcon :icon="{ name: 'mdi:plus', size: '5rem' }">
             新增議題
@@ -42,6 +43,7 @@
           :active="activeId === i._id"
           @dblclick="() => handleDblclick(i._id)"
           @click="() => stores.workshop.changeActiveIssue(i)"
+          class="h-[300px]"
         >
           <CardTitle>{{ i.title }} </CardTitle>
           <CardDescription>{{ i.description }} </CardDescription>
@@ -62,15 +64,17 @@
 </template>
 
 <script setup lang="ts">
-const ActionComponents = {
+import { FormPanelProps } from '~/types';
+
+const Actions = {
   NEW: resolveComponent('IssueNewAction'),
   DETAILS: resolveComponent('IssueDetailsAction'),
   EDITING: resolveComponent('IssueEditingAction'),
 } as const;
 
-const formPanelProps = {
-  panelTitle: '議題列表',
-  panelDescription:
+const formPanelProps: FormPanelProps = {
+  title: '議題列表',
+  description:
     '第一步需先決定整體研究的核心主題為何，後續的所有情境都會需在這個主題架構下。',
 };
 

@@ -1,22 +1,27 @@
 <template>
-  <ol class="flex items-center">
-    <IssueNavItem v-for="t in tabs" @click="() => handleClick(t)">
+  <ul class="flex items-center">
+    <IssueNavItem
+      v-for="t in IssueTabs"
+      :key="`${t.name}_${t.title}`"
+      @click="() => handleClick(t.name)"
+      :active="t.name === currentTabName"
+    >
       {{ t.title }}
     </IssueNavItem>
-  </ol>
+  </ul>
 </template>
 
 <script setup lang="ts">
+import { IssueTabKeys, IssueTabs } from '~/types';
+
 const stores = {
   issue: useIssueStore(),
 };
-const { issue } = storeToRefs(stores.issue);
 
-const tabs = [
-  { name: 'test1', title: 'testTitle1' },
-  { name: 'test2', title: 'testTitle2' },
-  { name: 'test3', title: 'testTitle3' },
-];
+const { currentTabName } = storeToRefs(stores.issue);
 
-const handleClick = (t) => {};
+const handleClick = (name: IssueTabKeys) => {
+  currentTabName.value = name;
+  console.log(currentTabName.value);
+};
 </script>

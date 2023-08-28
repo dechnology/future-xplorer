@@ -1,6 +1,4 @@
 <template>
-  <!-- The only page where <NavBar /> is not needed is the login page -->
-  <NavBar v-if="!$route.path.startsWith('/login')" />
   <div class="flex min-h-0 shrink grow basis-auto flex-col bg-gray-50">
     <div
       class="flex min-h-0 max-w-[1920px] shrink grow basis-auto items-stretch justify-center gap-8 p-10"

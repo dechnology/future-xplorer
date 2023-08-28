@@ -1,21 +1,4 @@
-import { Workshop, BaseIssue, NewIssue, User } from '@/types';
-
-const FormStates = {
-  NEW: {
-    formTitle: '新增議題',
-  },
-  DETAILS: {
-    formTitle: '議題資訊',
-  },
-  EDITING: {
-    formTitle: '議題編輯',
-  },
-} as const;
-
-const getNewIssue = (): NewIssue => ({
-  title: '',
-  description: '',
-});
+import { Workshop, BaseIssue, NewIssue, FormStateKeys } from '@/types';
 
 export const useWorkshopStore = definePiniaStore('workshop', () => {
   const workshop = ref<Workshop | null>(null);
@@ -27,32 +10,18 @@ export const useWorkshopStore = definePiniaStore('workshop', () => {
   const activeId = ref<string | null>(null);
   const activeIssue = useArrayFind(issues, (i) => i._id === activeId.value);
 
-  const state = ref<keyof typeof FormStates>('NEW');
+  const state = ref<FormStateKeys>('NEW');
   const loading = ref(false);
   const formDisabled = computed(
     () => state.value === 'DETAILS' || loading.value
   );
-  const currentFormCardProps = computed(() => {
-    let creator: User | undefined;
-    if ('creator' in currentIssue.value) {
-      creator = currentIssue.value.creator;
-    }
-
-    let timestamps: { createdAt: Date; updatedAt: Date } | undefined;
-    if (
-      'createdAt' in currentIssue.value &&
-      'updatedAt' in currentIssue.value
-    ) {
-      const { createdAt, updatedAt } = currentIssue.value;
-      timestamps = { createdAt, updatedAt };
-    }
-
-    return {
-      formTitle: FormStates[state.value].formTitle,
-      creator,
-      timestamps,
-    };
-  });
+  const currentFormCardProps = computed(() =>
+    getCurrentFormCardProps(
+      '工作坊',
+      currentIssue.value as BaseIssue,
+      state.value
+    )
+  );
 
   async function init(token: string, workshopId: string) {
     const [workshopResponse, issuesResponse] = await Promise.all([

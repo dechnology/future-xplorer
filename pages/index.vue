@@ -42,7 +42,7 @@
             />
           </template>
           <template #action>
-            <component :is="ActionComponents[state]" />
+            <component :is="Actions[state]" />
           </template>
         </FormCard>
       </FormPanel>
@@ -76,16 +76,18 @@
 </template>
 
 <script setup lang="ts">
-const ActionComponents = {
+import { FormPanelProps } from '~/types';
+
+const Actions = {
   NEW: resolveComponent('WorkshopNewAction'),
   DETAILS: resolveComponent('WorkshopDetailsAction'),
   EDITING: resolveComponent('WorkshopEditingAction'),
 } as const;
 
 const tableHeaders = ['名稱', '工作坊時間', '建立者', '建立日期', '更新日期'];
-const formPanelProps = {
-  panelTitle: '場次列表',
-  panelDescription: '工作坊的管理頁面：管理工作坊的活動場次',
+const formPanelProps: FormPanelProps = {
+  title: '場次列表',
+  description: '工作坊的管理頁面：管理工作坊的活動場次',
 };
 
 const { username } = useAuth();

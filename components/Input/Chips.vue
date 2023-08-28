@@ -52,7 +52,7 @@ interface Props {
   disabled?: boolean;
 }
 
-const { chips, title, disabled = false } = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), { disabled: false });
 
 const emit = defineEmits<{
   (e: 'update:chips', chips: string[]): void;
@@ -67,7 +67,7 @@ const handleClick = (e: MouseEvent) => {
     return;
   }
 
-  focusIndex.value = chips.length;
+  focusIndex.value = props.chips.length;
   lastListItem.value?.focus();
 };
 
@@ -76,7 +76,7 @@ const editChipsByIndex = (idx: number, chip: string) => {
     return;
   }
 
-  const editedChips = [...chips];
+  const editedChips = [...props.chips];
   editedChips[idx] = chip;
   emit('update:chips', editedChips);
   focusIndex.value = null;
@@ -87,7 +87,7 @@ const deleteChipsByIndex = (idx: number) => {
     return;
   }
 
-  const deletedChips = [...chips];
+  const deletedChips = [...props.chips];
   deletedChips.splice(idx, 1);
   emit('update:chips', deletedChips);
 };
@@ -97,19 +97,19 @@ const appendChip = (chip: string) => {
     return;
   }
 
-  emit('update:chips', [...chips, chip]);
+  emit('update:chips', [...props.chips, chip]);
   lastListItem.value.innerText = ' ';
   nextTick().then(() => {
-    console.log(chips);
+    console.log(props.chips);
     console.log(lastListItem.value);
 
-    focusIndex.value = chips.length;
+    focusIndex.value = props.chips.length;
     lastListItem.value?.focus();
   });
 };
 
 const handleDblClick = (e: Event, idx: number) => {
-  if (disabled) {
+  if (props.disabled) {
     return;
   }
   focusIndex.value = idx;

@@ -1,19 +1,30 @@
 import {
+  IssueTabsFormPanelProps,
+  getNewCase,
+  getNewKeyword,
+  getNewPersona,
+} from '~/utils';
+import {
+  FormStateKeys,
   Persona,
   Workshop,
   Issue,
   Case,
-  WorkshopElements,
   Keyword,
+  NewPersona,
+  NewCase,
+  NewKeyword,
+  CurrentIssueResources,
+  ActiveIssueResources,
+  IssueResourceKeys,
+  IssueTabs,
+  User,
+  IssueTab,
+  IssueTabKeys,
 } from '@/types';
 
 export const useIssueStore = definePiniaStore('issue', () => {
   const workshop = ref<Workshop | null>(null);
-  const issue = ref<Issue | null>(null);
-
-  const tabTitles = ref<string[]>([]);
-  const currentTab = ref<string>('');
-
   const elements = computed(() => {
     if (workshop.value) {
       const { objects, environments, messages, services } = workshop.value;
@@ -26,28 +37,81 @@ export const useIssueStore = definePiniaStore('issue', () => {
     }
   });
 
-  const personas = computed(
-    (): Persona[] | null => issue.value && issue.value.personas
+  const issue = ref<Issue | null>(null);
+  const currentTab = ref<IssueTab>(IssueTabs.persona);
+  const currentResources = ref<CurrentIssueResources>({
+    persona: getNewPersona(),
+    case: getNewCase(),
+  });
+  const currentResource = computed(
+    () => currentResources.value[currentTab.value.name]
+  );
+  const activeIds = ref<Record<IssueResourceKeys, string | null>>({
+    persona: null,
+    case: null,
+  });
+  const imageUrlBuffer = ref<string | null>(null);
+  const imageFileBuffer = ref<File>();
+
+  const state = ref<FormStateKeys>('NEW');
+  const loading = ref(false);
+  const formDisabled = computed(
+    () => state.value === 'DETAILS' || loading.value
+  );
+  const formPanelProps = computed(
+    () => IssueTabsFormPanelProps[currentTab.value.name]
+  );
+  const formCardProps = computed(() =>
+    getCurrentFormCardProps(
+      currentTab.value.resourceName,
+      currentResource as { creator?: User; createdAt?: Date; updatedAt?: Date },
+      state.value
+    )
   );
 
-  const cases = computed((): Case[] | null => issue.value && issue.value.cases);
+  const personas = computed((): Persona[] =>
+    issue.value ? issue.value.personas : []
+  );
+  const currentPersona = computed(() => currentResources.value.persona);
+  const activePersona = computed(() => {
+    const index = personas.value.findIndex(
+      (el) => el._id === activeIds.value.persona
+    );
 
-  const keywords = computed(() => {
-    if (!issue.value || !cases.value) {
+    if (index == -1) {
       return null;
     }
-    const allKeywords: Keyword[] = [];
-    for (const c of cases.value) {
-      allKeywords.push(...c.keywords);
-    }
-    return allKeywords;
+    return personas.value[index];
   });
 
-  function getCaseKeywords(caseId: string) {
-    return issue.value && keywords.value
-      ? keywords.value.filter((k) => k.case === caseId)
-      : [];
-  }
+  // const cases = computed((): Case[] | null => issue.value && issue.value.cases);
+  // const currentCase = ref<Case | NewCase>(getNewCase());
+  // const activeCase = useArrayFind(
+  //   cases && ([] as Case[]),
+  //   (el) => el._id === activeId.value
+  // );
+
+  // const keywords = computed(() => {
+  //   if (!issue.value || !cases.value) {
+  //     return null;
+  //   }
+  //   const allKeywords: Keyword[] = [];
+  //   for (const c of cases.value) {
+  //     allKeywords.push(...c.keywords);
+  //   }
+  //   return allKeywords;
+  // });
+  // const currentKeyword = ref<Keyword | NewKeyword>(getNewKeyword());
+  // const activeKeyword = useArrayFind(
+  //   keywords && ([] as Keyword[]),
+  //   (el) => el._id === activeId.value
+  // );
+
+  // function getCaseKeywords(caseId: string) {
+  //   return issue.value && keywords.value
+  //     ? keywords.value.filter((k) => k.case === caseId)
+  //     : [];
+  // }
 
   async function init(token: string, workshopId: string, issueId: string) {
     const [workshopResponse, issuesResponse] = await Promise.all([
@@ -121,16 +185,34 @@ export const useIssueStore = definePiniaStore('issue', () => {
 
   return {
     workshop,
-    issue,
-    tabTitles,
-    currentTab,
-
     elements,
-    personas,
-    cases,
-    keywords,
 
-    getCaseKeywords,
+    issue,
+    currentTab,
+    currentResources,
+    activeIds,
+    imageUrlBuffer,
+    imageFileBuffer,
+
+    state,
+    loading,
+    formDisabled,
+    formPanelProps,
+    formCardProps,
+
+    personas,
+    currentPersona,
+    activePersona,
+
+    // cases,
+    // currentCase,
+    // activeCase,
+
+    // keywords,
+    // currentKeyword,
+    // activeKeyword,
+
+    // getCaseKeywords,
 
     init,
     upsertPersona,
