@@ -16,7 +16,7 @@
 <script setup lang="ts">
 import { NewWorkshopSchema, User, Workshop } from '@/types';
 
-const { user, getTokenSilently } = await useAuth();
+const { user, getTokenSilently } = useAuth();
 const store = useWorkshopsStore();
 const { currentWorkshop, loading } = storeToRefs(store);
 

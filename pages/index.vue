@@ -41,8 +41,8 @@
               v-model:chips="currentWorkshop.services"
             />
           </template>
-          <template #action>
-            <component :is="Actions[state]" />
+          <template #actions>
+            <component :is="ActionsComponents[state]" />
           </template>
         </FormCard>
       </FormPanel>
@@ -78,10 +78,10 @@
 <script setup lang="ts">
 import { FormPanelProps } from '~/types';
 
-const Actions = {
-  NEW: resolveComponent('WorkshopNewAction'),
-  DETAILS: resolveComponent('WorkshopDetailsAction'),
-  EDITING: resolveComponent('WorkshopEditingAction'),
+const ActionsComponents = {
+  NEW: resolveComponent('WorkshopNewActions'),
+  DETAILS: resolveComponent('WorkshopDetailsActions'),
+  EDITING: resolveComponent('WorkshopEditingActions'),
 } as const;
 
 const tableHeaders = ['名稱', '工作坊時間', '建立者', '建立日期', '更新日期'];
@@ -99,5 +99,7 @@ const stores = {
 const { currentWorkshop, activeId, state, formDisabled, currentFormCardProps } =
   storeToRefs(stores.workshops);
 
-stores.breadcrumbs.clearAll();
+onMounted(() => {
+  stores.breadcrumbs.clearAll();
+});
 </script>

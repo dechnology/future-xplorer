@@ -1,12 +1,12 @@
 <template>
   <div class="flex items-center justify-around">
     <CardButton
-      @click="handleCancel"
+      @click.prevent="handleCancel"
       class="rounded-lg bg-red-400 px-8 py-3 text-white hover:bg-red-500"
       body="取消"
     />
     <CardButton
-      @click="handleSaveEdit"
+      @click.prevent="handleSaveEdit"
       class="rounded-lg bg-indigo-500 px-8 py-3 text-white hover:bg-indigo-600"
       body="儲存"
     />
@@ -16,9 +16,9 @@
 <script setup lang="ts">
 import { NewWorkshopSchema, User, Workshop } from '@/types';
 
-const { user, getTokenSilently } = await useAuth();
+const { user, getTokenSilently } = useAuth();
 const store = useWorkshopsStore();
-const { currentWorkshop, activeId, activeWorkshop, loading } =
+const { currentWorkshop, activeId, activeWorkshop, state, loading } =
   storeToRefs(store);
 
 const handleCancel = () => {
@@ -28,6 +28,12 @@ const handleCancel = () => {
 const handleSaveEdit = async () => {
   try {
     loading.value = true;
+
+    if (_.isEqual(currentWorkshop.value, activeWorkshop.value)) {
+      state.value = 'DETAILS';
+      return;
+    }
+
     const token = await getTokenSilently();
     const w = NewWorkshopSchema.parse(currentWorkshop.value);
 

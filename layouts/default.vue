@@ -1,11 +1,13 @@
 <template>
-  <div class="flex min-h-0 shrink grow basis-auto flex-col bg-gray-50">
+  <div
+    class="flex min-h-0 shrink grow basis-auto flex-col items-center bg-gray-50"
+  >
     <div
-      class="flex min-h-0 max-w-[1920px] shrink grow basis-auto items-stretch justify-center gap-8 p-10"
+      class="flex min-h-0 w-[1920px] items-stretch justify-center gap-8 p-10"
     >
       <div class="flex flex-col gap-5" :style="{ flexBasis: leftBasis }">
         <Breadcrumbs />
-        <slot name="form" class="grow" />
+        <slot name="form" />
       </div>
       <div class="overflow-hidden" :style="{ flexBasis: rightBasis }">
         <slot />

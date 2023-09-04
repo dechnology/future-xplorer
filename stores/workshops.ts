@@ -6,11 +6,8 @@ export const useWorkshopsStore = definePiniaStore('workshops', () => {
   const workshops = ref<Workshop[]>([]);
   const currentWorkshop = ref<NewWorkshop | Workshop>(getNewWorkshop());
 
-  const activeId = ref<string | null>(null);
-  const activeWorkshop = useArrayFind(
-    workshops,
-    (w) => w._id === activeId.value
-  );
+  const activeWorkshop = ref<Workshop | null>(null);
+  const activeId = computed(() => activeWorkshop.value?._id);
 
   const state = ref<FormStateKeys>('NEW');
   const loading = ref(false);
@@ -55,15 +52,13 @@ export const useWorkshopsStore = definePiniaStore('workshops', () => {
     currentWorkshop.value = getNewWorkshop();
   }
 
-  function changeActiveWorkshop(w?: Workshop) {
-    console.log(w);
-
+  function changeActiveWorkshop(w?: Workshop | null) {
     if (w) {
-      activeId.value = w._id;
+      activeWorkshop.value = { ...w };
       currentWorkshop.value = { ...w };
       state.value = 'DETAILS';
     } else {
-      activeId.value = null;
+      activeWorkshop.value = null;
       clearCurrentWorkshop();
       state.value = 'NEW';
     }
@@ -72,9 +67,8 @@ export const useWorkshopsStore = definePiniaStore('workshops', () => {
   return {
     workshops,
     currentWorkshop,
-
-    activeId,
     activeWorkshop,
+    activeId,
 
     state,
     loading,

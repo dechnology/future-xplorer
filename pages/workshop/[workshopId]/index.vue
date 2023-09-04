@@ -20,8 +20,8 @@
               :disabled="formDisabled"
             />
           </template>
-          <template #action>
-            <component :is="Actions[state]" />
+          <template #actions>
+            <component :is="ActionsComponents[state]" />
           </template>
         </FormCard>
       </FormPanel>
@@ -66,10 +66,10 @@
 <script setup lang="ts">
 import { FormPanelProps } from '~/types';
 
-const Actions = {
-  NEW: resolveComponent('IssueNewAction'),
-  DETAILS: resolveComponent('IssueDetailsAction'),
-  EDITING: resolveComponent('IssueEditingAction'),
+const ActionsComponents = {
+  NEW: resolveComponent('IssueNewActions'),
+  DETAILS: resolveComponent('IssueDetailsActions'),
+  EDITING: resolveComponent('IssueEditingActions'),
 } as const;
 
 const formPanelProps: FormPanelProps = {

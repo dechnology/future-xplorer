@@ -1,6 +1,7 @@
 export default defineEventHandler(async (event): Promise<{ image: string }> => {
-  const openai = useNitroApp().openai;
   const { prompt }: { prompt: string } = await readBody(event);
+
+  console.log(prompt);
 
   const response = await openai.createImage({
     prompt,

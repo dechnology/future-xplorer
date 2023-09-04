@@ -1,12 +1,12 @@
 <template>
   <div class="flex items-center justify-around">
     <CardButton
-      @click="handleClear"
+      @click.prevent="handleClear"
       class="rounded-lg bg-red-400 px-8 py-3 text-white hover:bg-red-500"
       body="清除"
     />
     <CardButton
-      @click="handleCreate"
+      @click.prevent="handleCreate"
       class="rounded-lg bg-indigo-500 px-8 py-3 text-white hover:bg-indigo-600"
       body="新增"
     />

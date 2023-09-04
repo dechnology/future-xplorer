@@ -1,12 +1,12 @@
 <template>
   <div class="flex items-center justify-around">
     <CardButton
-      @click="handleCancel"
+      @click.prevent="handleCancel"
       class="rounded-lg bg-red-400 px-8 py-3 text-white hover:bg-red-500"
       body="取消"
     />
     <CardButton
-      @click="handleSaveEdit"
+      @click.prevent="handleSaveEdit"
       class="rounded-lg bg-indigo-500 px-8 py-3 text-white hover:bg-indigo-600"
       body="儲存"
     />
@@ -18,7 +18,8 @@ import { NewIssueSchema, User, Issue } from '@/types';
 
 const { user, getTokenSilently } = await useAuth();
 const store = useWorkshopStore();
-const { currentIssue, activeId, activeIssue, loading } = storeToRefs(store);
+const { currentIssue, activeId, activeIssue, state, loading } =
+  storeToRefs(store);
 
 const handleCancel = () => {
   store.changeActiveIssue(activeIssue.value);
@@ -27,6 +28,12 @@ const handleCancel = () => {
 const handleSaveEdit = async () => {
   try {
     loading.value = true;
+
+    if (_.isEqual(currentIssue.value, activeIssue.value)) {
+      state.value = 'DETAILS';
+      return;
+    }
+
     const token = await getTokenSilently();
     const i = NewIssueSchema.parse(currentIssue.value);
 

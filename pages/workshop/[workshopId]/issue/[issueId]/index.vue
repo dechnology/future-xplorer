@@ -9,7 +9,7 @@ import { IssueTabKeys } from '~/types';
 const Tabs: Record<IssueTabKeys, ConcreteComponent | string> = {
   persona: resolveComponent('PersonaTab'),
   case: resolveComponent('CaseTab'),
-};
+} as const;
 
 const { getTokenSilently } = useAuth();
 const route = useRoute();

@@ -18,7 +18,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       return;
     }
     console.log('back to login page');
-    return navigateTo('/login');
+    return navigateTo('/login', { replace: true });
   }
 
   const { user, error, authenticate } = useAuth();

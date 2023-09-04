@@ -55,9 +55,42 @@
               :disabled="formDisabled"
               v-model="currentPersona.other"
             />
+            <div class="flex flex-col overflow-hidden rounded-lg">
+              <NuxtImg
+                v-if="currentPersona.image"
+                :src="currentPersona.image"
+                alt=""
+              />
+              <NuxtImg
+                v-else-if="imageUrlBuffer"
+                :src="imageUrlBuffer"
+                alt=""
+              />
+              <InputFileDropzone
+                v-else
+                @blob-url-created="() => {}"
+                class="h-72 shrink-0 grow"
+                v-model:file="imageFileBuffer"
+                :disabled="formDisabled"
+                :active-icon="{
+                  name: 'material-symbols:add-photo-alternate',
+                  size: '5rem',
+                }"
+                :disabled-icon="{ name: 'mdi:image', size: '5rem' }"
+              />
+            </div>
           </template>
-          <template #action>
-            <component :is="Actions[state]" />
+          <template #actions>
+            <component :is="ActionsComponents[state]" />
+          </template>
+          <template #icon-actions>
+            <Icon
+              v-if="state !== 'DETAILS'"
+              @click="() => (currentPersona = getRandomNewPersona())"
+              class="cursor-pointer text-blue-950"
+              name="game-icons:rolling-dices"
+              size="1.75rem"
+            />
           </template>
         </FormCard>
       </FormPanel>
@@ -66,19 +99,19 @@
       <CardGallery>
         <Card
           :active="!activePersona"
-          @click="handleNewCardClick"
+          @click="() => stores.persona.changeActivePersona()"
           class="h-[350px]"
         >
           <CardIcon :icon="{ name: 'mdi:plus', size: '5rem' }">
-            新增議題
+            新增人物
           </CardIcon>
         </Card>
         <!-- Should be async component -->
         <Card
           v-for="p in personas"
-          :active="activePersona?._id === p._id"
+          :active="activeId === p._id"
           @dblclick="() => handleDblclick()"
-          @click="() => handleCardClick(p._id)"
+          @click="() => stores.persona.changeActivePersona(p)"
           class="h-[350px]"
         >
           <template #image>
@@ -109,45 +142,36 @@
 import type { ConcreteComponent } from 'nuxt/dist/app/compat/capi';
 import type { FormStateKeys } from '~/types';
 
-const Actions: Record<FormStateKeys, ConcreteComponent | string> = {
-  NEW: resolveComponent('PersonaNewAction'),
-  DETAILS: resolveComponent('PersonaDetailsAction'),
-  EDITING: resolveComponent('PersonaEditingAction'),
+const formPanelProps = {
+  title: '人物清單',
+  description: '第二步需決定此情境可能的使用人物會有哪些。',
+};
+
+const ActionsComponents: Record<FormStateKeys, ConcreteComponent | string> = {
+  NEW: resolveComponent('PersonaNewActions'),
+  DETAILS: resolveComponent('PersonaDetailsActions'),
+  EDITING: resolveComponent('PersonaEditingActions'),
 } as const;
 
 const { username } = useAuth();
 const stores = {
   issue: useIssueStore(),
-  breadcrumbs: useBreadcrumbsStore(),
+  persona: usePersonaStore(),
 };
 
+const { personas } = storeToRefs(stores.issue);
 const {
-  currentResources,
-  activeIds,
-  state,
-  formDisabled,
-  formPanelProps,
-  formCardProps,
-  personas,
   currentPersona,
   activePersona,
-} = storeToRefs(stores.issue);
+  activeId,
+  imageUrlBuffer,
+  imageFileBuffer,
+  state,
+  formDisabled,
+  formCardProps,
+} = storeToRefs(stores.persona);
 
-const handleNewCardClick = () => {
-  currentResources.value.persona = getNewPersona();
-  state.value = 'NEW';
+const handleDblclick = () => {
+  // TODO open modal
 };
-
-const handleCardClick = (id: string) => {
-  activeIds.value.persona = id;
-  if (!activePersona.value) {
-    console.error('no active persona');
-    return;
-  }
-
-  currentResources.value.persona = { ...activePersona.value };
-  state.value = 'DETAILS';
-};
-
-const handleDblclick = () => {};
 </script>

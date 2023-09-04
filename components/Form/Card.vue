@@ -1,17 +1,10 @@
 <template>
   <form
-    class="relative flex flex-col justify-start gap-5 rounded-lg bg-white p-8 shadow"
+    class="flex flex-col justify-start gap-5 rounded-lg bg-white p-8 shadow"
   >
-    <div class="flex items-end gap-3">
-      <h3 class="text-2xl font-medium leading-tight text-sky-950">
-        {{ formTitle }}
-      </h3>
-      <div
-        v-if="creatorName"
-        class="text-sm font-medium leading-snug text-black text-opacity-60"
-      >
-        建立者：{{ creatorName }}
-      </div>
+    <div class="flex items-start justify-between">
+      <CardHeader :title="formTitle" :creator-name="creatorName" />
+      <slot name="icon-actions" />
     </div>
     <slot name="body" />
     <div v-if="timestamps" class="flex justify-center gap-2">
@@ -26,7 +19,7 @@
         更新時間：{{ format(timestamps.updatedAt, 'yyyy-MM-dd') }}
       </div>
     </div>
-    <slot name="action" />
+    <slot name="actions" />
   </form>
 </template>
 

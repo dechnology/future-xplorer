@@ -1,13 +1,8 @@
 <template>
-  <div
-    class="flex w-full flex-col rounded-2xl border border-solid border-gray-400 bg-slate-200"
-  >
+  <div class="flex w-full flex-col">
     <label
-      class="flex h-full w-full flex-1 flex-col items-center justify-center"
-      :class="
-        !disabled &&
-        ' cursor-pointer transition-all hover:bg-slate-300 hover:shadow-2xl'
-      "
+      class="flex h-full w-full flex-1 flex-col items-center justify-center bg-black bg-opacity-20"
+      :class="!disabled && ' cursor-pointer transition-all hover:bg-opacity-30'"
     >
       <Icon v-if="!disabled && activeIcon" v-bind="activeIcon" />
       <Icon v-if="disabled && disabledIcon" v-bind="disabledIcon" />
@@ -29,14 +24,14 @@ interface Props {
   activeIcon?: { name: string; size: string };
   disabledIcon?: { name: string; size: string };
   text?: string;
-  file: File | null;
+  file?: File | null;
   disabled: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), { file: null });
 
 const emit = defineEmits<{
-  (e: 'update:file', file: File | null): void;
+  (e: 'update:file', file?: File): void;
   (e: 'blobUrlCreated', url: string): void;
 }>();
 

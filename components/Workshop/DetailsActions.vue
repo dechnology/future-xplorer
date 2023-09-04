@@ -21,7 +21,7 @@
 <script setup lang="ts">
 import { Workshop } from '@/types';
 
-const { getTokenSilently } = await useAuth();
+const { getTokenSilently } = useAuth();
 const router = useRouter();
 const store = useWorkshopsStore();
 const { activeId, state, loading } = storeToRefs(store);

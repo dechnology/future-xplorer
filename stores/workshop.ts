@@ -6,9 +6,8 @@ export const useWorkshopStore = definePiniaStore('workshop', () => {
 
   const issues = ref<BaseIssue[]>([]);
   const currentIssue = ref<NewIssue | BaseIssue>(getNewIssue());
-
-  const activeId = ref<string | null>(null);
-  const activeIssue = useArrayFind(issues, (i) => i._id === activeId.value);
+  const activeIssue = ref<BaseIssue | null>(null);
+  const activeId = computed(() => activeIssue.value?._id);
 
   const state = ref<FormStateKeys>('NEW');
   const loading = ref(false);
@@ -17,7 +16,7 @@ export const useWorkshopStore = definePiniaStore('workshop', () => {
   );
   const currentFormCardProps = computed(() =>
     getCurrentFormCardProps(
-      '工作坊',
+      '議題',
       currentIssue.value as BaseIssue,
       state.value
     )
@@ -33,12 +32,12 @@ export const useWorkshopStore = definePiniaStore('workshop', () => {
     issues.value = issuesResponse.data;
   }
 
-  function upsert(w: BaseIssue) {
-    const index = issues.value.findIndex((issue) => issue._id === w._id);
+  function upsert(i: BaseIssue) {
+    const index = issues.value.findIndex((issue) => issue._id === i._id);
     if (index === -1) {
-      issues.value.push(w);
+      issues.value.push(i);
     } else {
-      issues.value[index] = w;
+      issues.value[index] = i;
     }
   }
 
@@ -56,13 +55,13 @@ export const useWorkshopStore = definePiniaStore('workshop', () => {
     currentIssue.value = getNewIssue();
   }
 
-  function changeActiveIssue(i?: BaseIssue) {
+  function changeActiveIssue(i?: BaseIssue | null) {
     if (i) {
-      activeId.value = i._id;
+      activeIssue.value = { ...i };
       currentIssue.value = { ...i };
       state.value = 'DETAILS';
     } else {
-      activeId.value = null;
+      activeIssue.value = null;
       clearCurrentIssue();
       state.value = 'NEW';
     }
@@ -71,11 +70,11 @@ export const useWorkshopStore = definePiniaStore('workshop', () => {
   return {
     workshop,
     workshopId,
+
     issues,
     currentIssue,
-
-    activeId,
     activeIssue,
+    activeId,
 
     state,
     loading,
