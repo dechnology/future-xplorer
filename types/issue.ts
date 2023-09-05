@@ -28,19 +28,7 @@ export interface Issue extends BaseIssue, IssueResources {
   users?: User[];
 }
 
-// Make sure CurrentIssueResources and ActiveIssueResources are synced
-export interface CurrentIssueResources {
-  persona: Persona | NewPersona;
-  case: Case | NewCase;
-}
-
-export interface ActiveIssueResources {
-  persona: Persona | null;
-  case: Case | null;
-}
-
-export type IssueResourceKeys = keyof CurrentIssueResources;
-export type IssueTabKeys = IssueResourceKeys;
+export type IssueTabKeys = 'persona' | 'case' | 'keyword';
 
 export interface IssueTab {
   name: IssueTabKeys;
@@ -55,4 +43,5 @@ export const IssueTabs: Record<IssueTabKeys, IssueTab> = {
     title: '人物清單',
   },
   case: { name: 'case', resourceName: '案例', title: '案例清單' },
+  keyword: { name: 'keyword', resourceName: '關鍵字', title: '案例整理' },
 } as const;

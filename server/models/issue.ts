@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { Issue } from '@/types/issue';
+import { Issue } from '@/types';
 
 const schema = new Schema<Issue>(
   {

@@ -38,6 +38,5 @@
 </template>
 
 <script setup lang="ts">
-const breadcrumbStore = useBreadcrumbsStore();
-const { workshop, issue, backPath } = storeToRefs(breadcrumbStore);
+const { workshop, issue, backPath } = storeToRefs(useBreadcrumbsStore());
 </script>
