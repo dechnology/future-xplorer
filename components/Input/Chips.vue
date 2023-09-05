@@ -1,17 +1,12 @@
 <template>
   <div class="flex flex-col gap-2">
-    <label
-      v-if="title"
-      class="bg-transparent px-1 text-lg font-semibold text-gray-700"
-    >
-      {{ title }}
-    </label>
+    <InputLabel v-if="title">{{ title }}</InputLabel>
     <ul
       ref="ulRef"
+      @click="handleClick"
       :class="disabled ? 'border-gray-200 bg-gray-50' : 'border-gray-500'"
-      class="flex h-20 items-center gap-2 rounded border border-solid p-4"
+      class="flex min-h-[56px] items-center gap-2 rounded border border-solid p-3"
     >
-      <!-- @click="() => !disabled && deleteChipsByIndex(idx)" -->
       <li
         v-for="(chip, idx) in chips"
         :key="`${idx}_${chip}`"
@@ -35,28 +30,29 @@
           />
         </div>
       </li>
-      <div @click="handleClick" class="flex h-full w-full items-center">
-        <li
-          ref="lastListItem"
-          :contenteditable="!disabled && chips.length === focusIndex"
-          @keypress.enter.prevent="
-            (e) => appendChip((e.target as HTMLLIElement).innerText)
-          "
-          tabindex="0"
-          class="flex-1 align-middle focus:outline-none"
-        ></li>
-      </div>
+      <!-- <div @click="handleClick" class="flex h-full w-full items-center"> -->
+      <li
+        ref="lastListItem"
+        :contenteditable="!disabled && chips.length === focusIndex"
+        @keypress.enter.prevent="
+          (e) => appendChip((e.target as HTMLLIElement).innerText)
+        "
+        tabindex="0"
+        class="shrink grow basis-auto align-middle focus:outline-none"
+      ></li>
+      <!-- </div> -->
     </ul>
   </div>
 </template>
 
 <script setup lang="ts">
 interface Props {
-  title?: string;
   chips: string[];
-  disabled: boolean;
+  title?: string;
+  disabled?: boolean;
 }
-const props = defineProps<Props>();
+
+const props = withDefaults(defineProps<Props>(), { disabled: false });
 
 const emit = defineEmits<{
   (e: 'update:chips', chips: string[]): void;

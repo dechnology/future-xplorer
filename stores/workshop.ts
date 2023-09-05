@@ -1,8 +1,26 @@
-import { Workshop, BaseIssue } from '@/types';
+import { Workshop, BaseIssue, NewIssue, FormStateKeys } from '@/types';
 
 export const useWorkshopStore = definePiniaStore('workshop', () => {
   const workshop = ref<Workshop | null>(null);
+  const workshopId = computed(() => workshop.value?._id);
+
   const issues = ref<BaseIssue[]>([]);
+  const currentIssue = ref<NewIssue | BaseIssue>(getNewIssue());
+  const activeIssue = ref<BaseIssue | null>(null);
+  const activeId = computed(() => activeIssue.value?._id);
+
+  const state = ref<FormStateKeys>('NEW');
+  const loading = ref(false);
+  const formDisabled = computed(
+    () => state.value === 'DETAILS' || loading.value
+  );
+  const currentFormCardProps = computed(() =>
+    getCurrentFormCardProps(
+      '議題',
+      currentIssue.value as BaseIssue,
+      state.value
+    )
+  );
 
   async function init(token: string, workshopId: string) {
     const [workshopResponse, issuesResponse] = await Promise.all([
@@ -14,18 +32,12 @@ export const useWorkshopStore = definePiniaStore('workshop', () => {
     issues.value = issuesResponse.data;
   }
 
-  function findById(id: string): BaseIssue | null {
-    const index = issues.value.findIndex((issue) => issue._id === id);
-
-    return index === -1 ? null : issues.value[index];
-  }
-
-  function upsert(w: BaseIssue) {
-    const index = issues.value.findIndex((issue) => issue._id === w._id);
+  function upsert(i: BaseIssue) {
+    const index = issues.value.findIndex((issue) => issue._id === i._id);
     if (index === -1) {
-      issues.value.push(w);
+      issues.value.push(i);
     } else {
-      issues.value[index] = w;
+      issues.value[index] = i;
     }
   }
 
@@ -39,5 +51,41 @@ export const useWorkshopStore = definePiniaStore('workshop', () => {
     }
   }
 
-  return { workshop, issues, init, findById, upsert, remove };
+  function clearCurrentIssue() {
+    currentIssue.value = getNewIssue();
+  }
+
+  function changeActiveIssue(i?: BaseIssue | null) {
+    if (i) {
+      activeIssue.value = { ...i };
+      currentIssue.value = { ...i };
+      state.value = 'DETAILS';
+    } else {
+      activeIssue.value = null;
+      clearCurrentIssue();
+      state.value = 'NEW';
+    }
+  }
+
+  return {
+    workshop,
+    workshopId,
+
+    issues,
+    currentIssue,
+    activeIssue,
+    activeId,
+
+    state,
+    loading,
+    formDisabled,
+    currentFormCardProps,
+
+    init,
+    upsert,
+    remove,
+
+    clearCurrentIssue,
+    changeActiveIssue,
+  };
 });

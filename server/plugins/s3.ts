@@ -1,21 +1,17 @@
 import {
-  S3Client,
   GetObjectCommand,
   ListBucketsCommand,
   ListObjectsV2Command,
 } from '@aws-sdk/client-s3';
 
-const { s3AccessKeyId: accessKeyId, s3SecretAccessKey: secretAccessKey } =
-  useRuntimeConfig();
-
-const getImage = async (client: S3Client, bucket: string, key: string) => {
+const getImage = async (bucket: string, key: string) => {
   const command = new GetObjectCommand({
     Bucket: bucket,
     Key: key,
   });
 
   try {
-    const { Body } = await client.send(command);
+    const { Body } = await s3.send(command);
 
     if (!Body) {
       throw new Error('Body undefined');
@@ -27,9 +23,9 @@ const getImage = async (client: S3Client, bucket: string, key: string) => {
   }
 };
 
-const listBuckets = async (client: S3Client) => {
+const listBuckets = async () => {
   const command = new ListBucketsCommand({});
-  const { Owner, Buckets } = await client.send(command);
+  const { Owner, Buckets } = await s3.send(command);
 
   if (!(Owner && Buckets)) {
     throw new Error('Owner or Buckets undefined');
@@ -43,7 +39,7 @@ const listBuckets = async (client: S3Client) => {
   console.log(`${Buckets.map((b) => ` • ${b.Name}`).join('\n')}`);
 };
 
-export const listObjects = async (client: S3Client, bucket: string) => {
+export const listObjects = async (bucket: string) => {
   const command = new ListObjectsV2Command({
     Bucket: 'dechnology',
   });
@@ -55,7 +51,7 @@ export const listObjects = async (client: S3Client, bucket: string) => {
     let contents = '';
     while (isTruncated) {
       const { Contents, IsTruncated, NextContinuationToken } =
-        await client.send(command);
+        await s3.send(command);
 
       if (Contents === undefined) {
         throw new Error('Contents undefined');
@@ -74,14 +70,7 @@ export const listObjects = async (client: S3Client, bucket: string) => {
 
 export default defineNitroPlugin(async (nitroApp) => {
   try {
-    nitroApp.s3 = new S3Client({
-      region: 'us-west-2',
-      credentials: { accessKeyId, secretAccessKey },
-    });
-    console.log('s3 client connected');
-    await listBuckets(nitroApp.s3);
-    await listObjects(nitroApp.s3, 'dechnology');
-    // await getImage(nitroApp.s3, 'dechnology', 'tdri/test.png');
+    listBuckets();
   } catch (e) {
     console.error(e);
   }

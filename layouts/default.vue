@@ -1,15 +1,27 @@
 <template>
-  <!-- The only page where <NavBar /> is not needed is the login page -->
-  <NavBar v-if="!$route.path.startsWith('/login')" />
   <div
-    class="flex items-stretch justify-center gap-8 overflow-hidden bg-[#F7F8F9] px-14 pb-8 pt-16"
+    class="flex min-h-0 shrink grow basis-auto flex-col items-center bg-gray-50"
   >
-    <div class="flex basis-1/3 flex-col gap-5 overflow-hidden">
-      <Breadcrumbs />
-      <slot name="detail-pane" class="grow" />
-    </div>
-    <div class="basis-2/3 overflow-hidden">
-      <slot />
+    <div
+      class="flex min-h-0 w-[1920px] items-stretch justify-center gap-8 p-10"
+    >
+      <div class="flex flex-col gap-5" :style="{ flexBasis: leftBasis }">
+        <Breadcrumbs />
+        <slot name="form" />
+      </div>
+      <div class="overflow-hidden" :style="{ flexBasis: rightBasis }">
+        <slot />
+      </div>
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+withDefaults(
+  defineProps<{
+    leftBasis?: string;
+    rightBasis?: string;
+  }>(),
+  { leftBasis: `${100 / 3}%`, rightBasis: `${200 / 3}%` }
+);
+</script>

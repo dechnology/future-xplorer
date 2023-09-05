@@ -8,8 +8,6 @@ import type {
   PortraitRequestBody,
 } from '@/types';
 
-const baseFilepath = 'tdri/imgs/personas/originals';
-
 const getNewPersona = (): NewPersona => ({
   role: '',
   name: '',

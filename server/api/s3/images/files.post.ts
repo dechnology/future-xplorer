@@ -5,7 +5,6 @@ const { s3Domain } = useRuntimeConfig();
 
 export default defineEventHandler(
   async (event): Promise<ResourceObject<string>> => {
-    const s3 = useNitroApp().s3;
     const rawFormData = await readMultipartFormData(event);
     const formData: { key?: string; image?: Buffer; contentType?: string } = {};
 

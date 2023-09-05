@@ -1,5 +1,7 @@
 export * from './base';
 export * from './user';
+export * from './form';
+
 export * from './workshop';
 export * from './issue';
 export * from './cardState';

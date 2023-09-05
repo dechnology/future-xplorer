@@ -1,18 +1,13 @@
 <template>
   <div class="flex flex-col gap-2">
-    <label
-      v-if="title"
-      class="bg-transparent px-1 text-lg font-semibold text-gray-700"
-    >
-      {{ title }}
-    </label>
+    <InputLabel v-if="title">{{ title }}</InputLabel>
     <div class="relative">
       <input
         type="text"
         class="h-16"
+        :class="classes"
         :placeholder="placeholder"
         :disabled="disabled"
-        :class="classes"
         :value="modelValue"
         :readonly="selectOnly || readOnly"
         @input="
@@ -61,16 +56,19 @@
 import { ClassNameValue, twMerge } from 'tailwind-merge';
 
 interface Props {
-  title?: string;
-  placeholder: string;
-  disabled?: boolean;
   modelValue: string | number;
+  placeholder?: string;
+
+  type?: 'text' | 'textarea';
+  title?: string;
+  disabled?: boolean;
   selectOnly?: boolean;
   readOnly?: boolean;
-  readonly selectOptions?: string[];
+  selectOptions?: string[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  type: 'text',
   placeholder: '',
   disabled: false,
   selectOnly: false,
@@ -94,6 +92,8 @@ const defaultClasses: ClassNameValue = [
   'border-solid',
   'border-gray-200',
 ];
+
+const textareaClasses: ClassNameValue = ['resize-none', 'text-start'];
 
 const classes = computed(() => {
   let resultClasses = twMerge(defaultClasses);

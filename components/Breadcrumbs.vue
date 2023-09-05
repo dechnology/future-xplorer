@@ -38,8 +38,6 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
-
-const breadcrumbStore = useBreadcrumbStore();
+const breadcrumbStore = useBreadcrumbsStore();
 const { workshop, issue, backPath } = storeToRefs(breadcrumbStore);
 </script>

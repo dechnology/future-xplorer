@@ -48,7 +48,6 @@ const getUserMessage = (p: NewPersona): string => {
 
 export default defineEventHandler(
   async (event): Promise<{ prompt: string }> => {
-    const openai = useNitroApp().openai;
     const { persona, ...ctx }: PortraitRequestBody = await readBody(event);
 
     const response = await openai.createChatCompletion({

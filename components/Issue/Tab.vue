@@ -19,6 +19,5 @@
 
 <script setup lang="ts">
 import { issueTabs } from '@/utils/issueTabs';
-import { storeToRefs } from 'pinia';
 const { tab } = storeToRefs(useTabStore());
 </script>

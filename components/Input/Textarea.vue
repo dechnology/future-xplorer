@@ -1,11 +1,6 @@
 <template>
   <div class="flex flex-col gap-2">
-    <label
-      v-if="title"
-      class="bg-transparent px-1 text-lg font-semibold text-gray-700"
-    >
-      {{ title }}
-    </label>
+    <InputLabel v-if="title">{{ title }}</InputLabel>
     <div class="relative w-full">
       <textarea
         :placeholder="placeholder"

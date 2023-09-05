@@ -1,8 +1,8 @@
 import { UserModel } from '@/server/models';
 import { generateToken } from '@/server/utils/token';
-import { Role } from '@/types/user';
+import { LoginResponse, Role } from '@/types';
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<LoginResponse> => {
   const { uid, name } = (await readBody(event)) as {
     uid: string;
     name: string;
@@ -30,7 +30,6 @@ export default defineEventHandler(async (event) => {
 
   const refreshToken = await generateToken({ id: userData.id });
 
-  // setCookie(event, 'access_token', accessToken);
   setCookie(event, 'refresh_token', refreshToken);
 
   return { message: 'user created', user: userData, accessToken };

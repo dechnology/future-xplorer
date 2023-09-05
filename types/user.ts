@@ -17,3 +17,9 @@ export interface NewUser {
 }
 
 export type User = Omit<Base, 'creator'> & NewUser;
+
+export interface LoginResponse {
+  message: string;
+  user: User;
+  accessToken: string;
+}

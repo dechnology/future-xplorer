@@ -2,10 +2,11 @@
   <div
     @dragover.prevent
     @drop="handleDrop"
-    class="grid content-start gap-2"
-    :class="`grid-cols-${n_cols}`"
+    class="grid min-h-0 shrink grow basis-auto grid-cols-2 content-start gap-2 overflow-y-auto p-2"
+    :style="{ gridTemplateColumns: `repeat(${n_cols}, minmax(0, 1fr))` }"
   >
-    <KeywordIconCard
+    <slot />
+    <!-- <KeywordIconCard
       v-if="includeAddCard"
       class="h-28"
       :icon="{ name: 'mdi:plus', size: '7.5rem' }"
@@ -23,7 +24,7 @@
       :key="k._id"
       :draggable="draggable"
       :show-category="showCategory"
-    />
+    /> -->
   </div>
 </template>
 

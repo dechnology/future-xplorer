@@ -1,22 +1,16 @@
 <template>
-  <div
-    class="flex w-full flex-col rounded-2xl border border-solid border-gray-400 bg-slate-200"
-  >
+  <div class="flex w-full flex-col">
     <label
-      class="flex h-full w-full flex-1 flex-col items-center justify-center"
-      :class="
-        !disabled &&
-        ' cursor-pointer transition-all hover:bg-slate-300 hover:shadow-2xl'
-      "
+      class="flex h-full w-full flex-1 flex-col items-center justify-center bg-black bg-opacity-20"
+      :class="!disabled && ' cursor-pointer transition-all hover:bg-opacity-30'"
     >
-      <Icon v-if="!disabled && activeIcon" v-bind="activeIcon" />
-      <Icon v-if="disabled && disabledIcon" v-bind="disabledIcon" />
+      <Icon v-bind="disabled ? disabledIcon : activeIcon" />
       <p v-if="text">{{ text }}</p>
       <input
         type="file"
         class="hidden"
         :disabled="disabled"
-        @change="handleFileChange"
+        @change.prevent="handleFileChange"
         :accept="accept"
       />
     </label>
@@ -24,24 +18,37 @@
 </template>
 
 <script lang="ts" setup>
-interface Props {
-  accept?: string;
-  activeIcon?: { name: string; size: string };
-  disabledIcon?: { name: string; size: string };
-  text?: string;
-  file: File | null;
-  disabled: boolean;
+interface IconType {
+  name: string;
+  size: string;
 }
 
-const props = defineProps<Props>();
+interface Props {
+  file: File | null;
+  accept?: string;
+  activeIcon?: IconType;
+  disabledIcon?: IconType;
+  text?: string;
+  disabled?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  file: null,
+  activeIcon: () => ({
+    name: 'material-symbols:add-photo-alternate',
+    size: '5rem',
+  }),
+  disabledIcon: () => ({ name: 'mdi:image', size: '5rem' }),
+  disabled: false,
+});
 
 const emit = defineEmits<{
-  (e: 'update:file', file: File | null): void;
+  (e: 'update:file', file?: File): void;
   (e: 'blobUrlCreated', url: string): void;
 }>();
 
-const handleFileChange = (event: Event) => {
-  const inputEl = event.target as HTMLInputElement;
+const handleFileChange = (e: Event) => {
+  const inputEl = e.target as HTMLInputElement;
   const files = inputEl.files;
 
   if (!files) {

@@ -1,17 +1,13 @@
 <template>
   <div
     ref="contentDiv"
-    class="relative flex shrink grow basis-auto flex-col gap-6 overflow-y-auto"
+    class="relative flex min-h-0 shrink grow basis-auto flex-col gap-6 overflow-y-auto"
     v-if="activeCase"
   >
-    <div v-for="(content, title) in activeCaseContent">
-      <p>
-        <span class="text-base font-semibold text-gray-700">{{ title }}：</span>
-        <span @mouseup="handleMouseup">
-          {{ content }}
-        </span>
-      </p>
+    <div @mouseup.prevent="handleMouseup" class="flex flex-col gap-6">
+      <slot :content="activeCaseContent" />
     </div>
+
     <div>
       <div class="overflow-hidden rounded-lg">
         <NuxtImg v-if="activeCase.image" :src="activeCase.image" alt="" />
@@ -24,8 +20,8 @@
       :style="buttonDivStyle"
     >
       <CardButton
-        @click.prevent="handleClick"
-        class="h-12 rounded-lg bg-blue-400 text-white hover:bg-blue-500"
+        @click.prevent="handleButtonClick"
+        class="h-12 rounded-lg bg-blue-400 px-3 text-white hover:bg-blue-500"
         body="新增關鍵字"
       />
     </div>
@@ -45,11 +41,37 @@ interface CaseContent {
   參考資料: string;
 }
 
-const cardStore = useCaseCardStore();
-const modalStore = useModalStore();
-const keywordStore = useKeywordStore();
-const { activeCase, activeId, activeCaseKeywords } = storeToRefs(cardStore);
-const { ignoreNextClose } = storeToRefs(modalStore);
+const stores = {
+  case: useCaseStore(),
+  modal: useModalStore(),
+};
+const { activeCase, newKeywords } = storeToRefs(stores.case);
+const { ignoreNextClose } = storeToRefs(stores.modal);
+
+const textSelectionState = useTextSelection();
+
+const activeCaseContent = computed(
+  (): CaseContent =>
+    activeCase.value
+      ? {
+          背景介紹: activeCase.value.background,
+          作法: activeCase.value.method,
+          目標: activeCase.value.goal,
+          問題與挑戰: activeCase.value.challenge,
+          成果: activeCase.value.result,
+          其他: activeCase.value.other,
+          參考資料: activeCase.value.reference,
+        }
+      : {
+          背景介紹: '',
+          作法: '',
+          目標: '',
+          問題與挑戰: '',
+          成果: '',
+          其他: '',
+          參考資料: '',
+        }
+);
 
 const contentDiv = ref<HTMLDivElement | null>(null);
 const buttonDiv = ref<HTMLDivElement | null>(null);
@@ -62,41 +84,29 @@ const buttonDivStyle = computed(() => ({
   left: `${buttonDivPosition.value.left}px`,
 }));
 
-const activeCaseContent = computed((): CaseContent | null => {
-  if (!activeCase.value) {
-    return null;
+onClickOutside(buttonDiv, (e: PointerEvent) => {
+  if (ignoreClick.value) {
+    ignoreClick.value = false;
+    return;
   }
-  const { background, method, goal, challenge, result, other, reference } =
-    activeCase.value;
-  return {
-    背景介紹: background,
-    作法: method,
-    目標: goal,
-    問題與挑戰: challenge,
-    成果: result,
-    其他: other,
-    參考資料: reference,
-  };
+  if (
+    selectedText.value &&
+    buttonDiv.value &&
+    !buttonDiv.value.contains(e.target as Node)
+  ) {
+    console.log('setting selected text to null');
+    selectedText.value = null;
+  }
 });
 
 const handleMouseup = (e: Event) => {
-  const selection = window.getSelection();
-  if (!selection || selection.isCollapsed) {
-    return;
-  }
-
-  const range = selection.getRangeAt(0);
-  if (range.startContainer !== range.endContainer) {
-    return;
-  }
-
-  if (!contentDiv.value) {
+  if (!(textSelectionState.text.value && contentDiv.value)) {
     return;
   }
 
   const contentDivRect = contentDiv.value.getBoundingClientRect();
   const contentDivScrollY = contentDiv.value.scrollTop;
-  const rangeRect = range.getBoundingClientRect();
+  const rangeRect = textSelectionState.ranges.value[0].getBoundingClientRect();
 
   console.log('scrollY: ', contentDivScrollY);
 
@@ -119,44 +129,18 @@ const handleMouseup = (e: Event) => {
 
   console.log(buttonDivPosition.value);
 
-  selectedText.value = selection.toString();
+  selectedText.value = textSelectionState.text.value;
   ignoreClick.value = true;
 };
 
-const handleClick = async (e: Event) => {
+const handleButtonClick = async (e: Event) => {
   try {
     const k = NewKeywordSchema.parse({ body: selectedText.value });
-    keywordStore.append(k);
+    newKeywords.value.unshift(k);
   } catch (e) {
     console.error(e);
   }
-
   ignoreNextClose.value = true;
   selectedText.value = null;
 };
-
-const handleNonButtonClick = (e: Event) => {
-  if (ignoreClick.value) {
-    ignoreClick.value = false;
-    return;
-  }
-
-  if (
-    selectedText.value &&
-    buttonDiv.value &&
-    !buttonDiv.value.contains(e.target as Node)
-  ) {
-    console.log('setting selected text to null');
-
-    selectedText.value = null;
-  }
-};
-
-onMounted(() => {
-  window.addEventListener('click', handleNonButtonClick);
-});
-
-onUnmounted(() => {
-  window.removeEventListener('click', handleNonButtonClick);
-});
 </script>

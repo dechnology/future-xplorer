@@ -19,6 +19,8 @@ export default defineNuxtConfig({
         },
       ],
     },
+    // pageTransition: { name: 'page', mode: 'out-in' },
+    // layoutTransition: { name: 'layout', mode: 'out-in' },
   },
   runtimeConfig: {
     mongoUser: process.env.MONGO_USER,
@@ -32,9 +34,21 @@ export default defineNuxtConfig({
     s3AccessKeyId: process.env.S3_ACCESS_KEY_ID,
     s3SecretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
   },
-  imports: { dirs: ['stores'] },
+  imports: {
+    dirs: ['stores'],
+    presets: [
+      { from: 'tailwind-merge', imports: ['twMerge'] },
+      { from: 'lodash', imports: ['_'] },
+    ],
+  },
   devtools: { enabled: true },
-  modules: ['@nuxtjs/tailwindcss', 'nuxt-icon', '@pinia/nuxt', '@nuxt/image'],
+  modules: [
+    '@vueuse/nuxt',
+    '@nuxtjs/tailwindcss',
+    '@nuxt/image',
+    '@pinia/nuxt',
+    'nuxt-icon',
+  ],
   pinia: {
     autoImports: [
       // import { defineStore as definePiniaStore } from 'pinia'
