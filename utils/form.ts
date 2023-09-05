@@ -1,11 +1,8 @@
 import { fakerZH_TW } from '@faker-js/faker';
 import { format } from 'date-fns';
 import {
-  Base,
-  FormPanelProps,
   FormState,
   FormStateKeys,
-  IssueTabKeys,
   NewCase,
   NewIssue,
   NewKeyword,
@@ -13,18 +10,6 @@ import {
   NewWorkshop,
   User,
 } from '~/types';
-
-export const IssueTabsFormPanelProps: Record<IssueTabKeys, FormPanelProps> = {
-  persona: {
-    title: '人物清單',
-    description: '第二步需決定此情境可能的使用人物會有哪些。',
-  },
-  case: {
-    title: '案例清單',
-    description:
-      '第三步需自行在網路平台查詢收集可能的產品與服務案例資料，彙整成獨立的牌卡。',
-  },
-} as const;
 
 const formStatesCache: Record<string, FormState> = {};
 

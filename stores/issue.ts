@@ -115,6 +115,17 @@ export const useIssueStore = definePiniaStore('issue', () => {
     }
   }
 
+  function getUserKeywords() {
+    if (!issue.value || !cases.value) {
+      return null;
+    }
+    const allKeywords: Keyword[] = [];
+    for (const c of cases.value) {
+      allKeywords.push(...c.keywords);
+    }
+    return allKeywords;
+  }
+
   return {
     workshop,
     elements,
@@ -132,5 +143,6 @@ export const useIssueStore = definePiniaStore('issue', () => {
     removePersona,
     upsertCase,
     removeCase,
+    getUserKeywords,
   };
 });

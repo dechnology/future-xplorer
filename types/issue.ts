@@ -32,16 +32,11 @@ export type IssueTabKeys = 'persona' | 'case' | 'keyword';
 
 export interface IssueTab {
   name: IssueTabKeys;
-  resourceName: string;
   title: string;
 }
 
 export const IssueTabs: Record<IssueTabKeys, IssueTab> = {
-  persona: {
-    name: 'persona',
-    resourceName: '人物',
-    title: '人物清單',
-  },
-  case: { name: 'case', resourceName: '案例', title: '案例清單' },
-  keyword: { name: 'keyword', resourceName: '關鍵字', title: '案例整理' },
+  persona: { name: 'persona', title: '人物清單' },
+  case: { name: 'case', title: '案例清單' },
+  keyword: { name: 'keyword', title: '案例整理' },
 } as const;
