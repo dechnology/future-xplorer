@@ -5,9 +5,27 @@
     >
       <HomeLink>未來情境探索輔助工具</HomeLink>
       <div class="flex items-center gap-2">
-        <IssueNav v-if="$route.params.issueId" />
+        <ul v-if="$route.params.issueId" class="flex items-center">
+          <IssueNavItem
+            v-for="t in IssueTabs"
+            :key="`${t.name}_${t.title}`"
+            @click="() => (currentTab = t)"
+            :active="t.name === currentTab.name"
+          >
+            {{ t.title }}
+          </IssueNavItem>
+        </ul>
         <Logout></Logout>
       </div>
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { IssueTabs } from '~/types';
+
+const stores = {
+  issue: useIssueStore(),
+};
+const { currentTab } = storeToRefs(stores.issue);
+</script>
