@@ -45,8 +45,8 @@ const handleRemove = async () => {
     );
     console.log(message);
 
-    state.value = 'NEW';
     stores.issue.removeCase(activeId.value);
+    stores.case.changeActiveCase();
     console.log('case removed');
   } catch (e) {
     console.error(e);

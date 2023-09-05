@@ -28,9 +28,15 @@ const stores = {
   persona: usePersonaStore(),
 };
 const { workshop, issue } = storeToRefs(stores.issue);
-const { currentPersona, activePersona, activeId, state, loading } = storeToRefs(
-  stores.persona
-);
+const {
+  currentPersona,
+  activePersona,
+  activeId,
+  imageFileBuffer,
+  imageUrlBuffer,
+  state,
+  loading,
+} = storeToRefs(stores.persona);
 
 const handlePortraitGeneration = async () => {
   try {
@@ -38,11 +44,22 @@ const handlePortraitGeneration = async () => {
       throw new Error('no workshop or issue');
     }
 
+    const persona = NewPersonaSchema.parse(currentPersona.value);
     const token = await getTokenSilently();
-    await stores.persona.generatePortrait(token, {
+
+    console.log('generating portrait for persona: ', persona);
+    const { prompt } = await generatePrompt(token, {
       workshop: workshop.value,
       issue: issue.value,
+      persona,
     });
+    console.log('prompt: ', prompt);
+
+    const { image } = await generateImage(token, { prompt });
+    console.log('image: ', image);
+
+    imageFileBuffer.value = null;
+    imageUrlBuffer.value = image;
   } catch (e) {
     console.error(e);
   }
@@ -63,6 +80,13 @@ const handleSaveEdit = async () => {
 
     const token = await getTokenSilently();
     const p = NewPersonaSchema.parse(currentPersona.value);
+
+    if (imageUrlBuffer.value) {
+      p.image = imageFileBuffer.value
+        ? (await uploadImageFile(token, imageFileBuffer.value)).data
+        : (await uploadImageUrl(token, imageUrlBuffer.value)).data;
+      console.log(`image url: ${p.image}`);
+    }
 
     console.log('Patching: ', p);
     const { data: editedPersona } = await fetchResource<Persona>(

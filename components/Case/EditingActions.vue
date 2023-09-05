@@ -1,9 +1,4 @@
 <template>
-  <CardButton
-    @click.prevent="() => handlePortraitGeneration()"
-    class="mx-auto h-12 w-44 rounded-lg bg-lime-600 text-white hover:bg-lime-700"
-    body="AI生成圖片"
-  />
   <div class="flex items-center justify-around">
     <CardButton
       @click="handleCancel"
@@ -19,62 +14,57 @@
 </template>
 
 <script setup lang="ts">
-import type { User, Persona } from '@/types';
-import { NewPersonaSchema } from '@/types';
+import type { User, Case } from '@/types';
+import { NewCaseSchema } from '@/types';
 
 const { user, getTokenSilently } = useAuth();
 const stores = {
-  issue: useIssueStore(),
-  persona: usePersonaStore(),
+  case: useCaseStore(),
 };
-const { workshop, issue } = storeToRefs(stores.issue);
-const { currentPersona, activePersona, activeId, state, loading } = storeToRefs(
-  stores.persona
-);
-
-const handlePortraitGeneration = async () => {
-  try {
-    if (!(workshop.value && issue.value)) {
-      throw new Error('no workshop or issue');
-    }
-
-    const token = await getTokenSilently();
-    await stores.persona.generatePortrait(token, {
-      workshop: workshop.value,
-      issue: issue.value,
-    });
-  } catch (e) {
-    console.error(e);
-  }
-};
+const {
+  currentCase,
+  activeCase,
+  activeId,
+  imageFileBuffer,
+  imageUrlBuffer,
+  state,
+  loading,
+} = storeToRefs(stores.case);
 
 const handleCancel = () => {
-  stores.persona.changeActivePersona(activePersona.value);
+  stores.case.changeActiveCase(activeCase.value);
 };
 
 const handleSaveEdit = async () => {
   try {
     loading.value = true;
 
-    if (_.isEqual(currentPersona.value, activePersona.value)) {
+    if (_.isEqual(currentCase.value, activeCase.value)) {
       state.value = 'DETAILS';
       return;
     }
 
     const token = await getTokenSilently();
-    const p = NewPersonaSchema.parse(currentPersona.value);
+    const c = NewCaseSchema.parse(currentCase.value);
 
-    console.log('Patching: ', p);
-    const { data: editedPersona } = await fetchResource<Persona>(
+    if (imageUrlBuffer.value) {
+      c.image = imageFileBuffer.value
+        ? (await uploadImageFile(token, imageFileBuffer.value)).data
+        : (await uploadImageUrl(token, imageUrlBuffer.value)).data;
+      console.log(`image url: ${c.image}`);
+    }
+
+    console.log('Patching: ', c);
+    const { data: editedCase } = await fetchResource<Case>(
       token,
       `/api/issues/${activeId.value}`,
-      { method: 'put', body: p }
+      { method: 'put', body: c }
     );
 
-    editedPersona.creator = user.value as User;
-    console.log('Patched: ', editedPersona);
-    activePersona.value = editedPersona;
-    stores.persona.changeActivePersona(editedPersona);
+    editedCase.creator = user.value as User;
+    console.log('Patched: ', editedCase);
+    activeCase.value = editedCase;
+    stores.case.changeActiveCase(editedCase);
   } catch (e) {
     console.error(e);
   } finally {

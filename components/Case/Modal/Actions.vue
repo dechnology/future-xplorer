@@ -1,49 +1,128 @@
 <template>
   <div class="flex flex-wrap items-center justify-center gap-6">
     <CardButton
-      class="h-12 rounded-lg bg-green-400 text-white hover:bg-green-500"
-      :icon="{ name: 'mdi-forum-plus', size: '3rem' }"
+      class="h-12 rounded-lg bg-lime-500 px-8 py-3 text-white hover:bg-lime-600"
       body="AI生成關鍵字"
     />
     <CardButton
       @click="handleSaveClick"
-      class="h-12 rounded-lg bg-blue-400 text-white hover:bg-blue-500"
-      :icon="{ name: 'mdi-forum-plus', size: '3rem' }"
+      class="h-12 rounded-lg bg-indigo-500 px-8 py-3 text-white hover:bg-indigo-600"
       body="儲存關鍵字"
     />
     <CardButton
-      class="h-12 rounded-lg bg-gray-400 text-white hover:bg-gray-500"
-      :icon="{ name: 'mdi-forum-plus', size: '3rem' }"
+      class="h-12 rounded-lg bg-black bg-opacity-40 px-8 py-3 text-white hover:bg-opacity-50"
       body="使用說明"
     />
     <CardButton
-      @click="handleCloseClick"
-      class="h-12 rounded-lg bg-gray-400 text-white hover:bg-gray-500"
-      :icon="{ name: 'mdi-forum-plus', size: '3rem' }"
+      @click="() => stores.modal.close()"
+      class="h-12 rounded-lg bg-black bg-opacity-40 px-8 py-3 text-white hover:bg-opacity-50"
       body="關閉"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-const { user, getTokenSilently } = await useAuth();
-const modalStore = useModalStore();
-const cardStore = useCaseCardStore();
-const keywordStore = useKeywordStore();
-const { activeId } = storeToRefs(cardStore);
+import { z } from 'zod';
+import { Keyword, NewKeywordSchema } from '@/types';
 
-const handleCloseClick = (e: Event) => modalStore.close();
+const { getTokenSilently } = useAuth();
+const stores = {
+  case: useCaseStore(),
+  modal: useModalStore(),
+};
+const {
+  activeCase,
+  activeId,
+  newKeywords,
+  currentKeywords,
+  activeKeywords,
+  loading,
+} = storeToRefs(stores.case);
+
+const createNewKeywords = async () => {
+  if (newKeywords.value.length < 1) {
+    console.log('no new keywords');
+    return;
+  }
+
+  const kws = z.array(NewKeywordSchema).parse(newKeywords.value);
+  const token = await getTokenSilently();
+
+  console.log('Creating: ', kws);
+  const { data } = await fetchResources<Keyword>(
+    token,
+    `/api/cases/${activeId.value}/keywords`,
+    {
+      method: 'post',
+      body: { keywords: kws },
+    }
+  );
+
+  console.log('Created: ', data);
+  currentKeywords.value.unshift(...data);
+  activeCase.value?.keywords.unshift(...data);
+  newKeywords.value = [];
+  return data;
+};
+
+// TODO
+const editKeywords = async (editedKeywords: Keyword[]) => {
+  if (editedKeywords.length < 1) {
+    console.log('no edited keywords');
+    return;
+  }
+
+  // const kws = z.array(NewKeywordSchema.passthrough()).parse(editedKeywords);
+  // const token = await getTokenSilently();
+
+  // console.log('Patching: ', kws);
+  // const { data } = await fetchResources<Keyword>(token, `/api/keywords`, {
+  //   method: 'put',
+  //   body: { editedKeywords: kws.map((kw) => ({ id: kw._id, body: kw.body })) },
+  // });
+
+  // console.log('Patched: ', data);
+  // currentKeywords.value.unshift(...data);
+  // activeCase.value?.keywords.unshift(...data);
+  // newKeywords.value = [];
+  // return data;
+};
+
+// TODO
+const removeKeywords = async (ids: string[]) => {
+  const token = await getTokenSilently();
+
+  console.log('Removing: ', ids);
+};
 
 const handleSaveClick = async (e: Event) => {
   try {
-    if (!activeId.value) {
-      throw new Error('no active case');
+    loading.value = true;
+
+    const editedKeywords: Keyword[] = [];
+    const removedKeywordIds: string[] = [];
+
+    for (const activeKeyword of activeKeywords.value) {
+      const currentKeyword = currentKeywords.value.find(
+        (kw) => kw._id === activeKeyword._id
+      );
+
+      if (currentKeyword) {
+        editedKeywords.push({ ...currentKeyword });
+      } else {
+        removedKeywordIds.push(activeKeyword._id);
+      }
     }
 
-    const token = await getTokenSilently();
-    await keywordStore.save(token, activeId.value);
+    await Promise.all([
+      createNewKeywords(),
+      editKeywords(editedKeywords),
+      removeKeywords(removedKeywordIds),
+    ]);
   } catch (e) {
     console.error(e);
+  } finally {
+    loading.value = false;
   }
 };
 </script>

@@ -27,7 +27,7 @@
 import { format } from 'date-fns';
 import { User } from '@/types';
 
-const { formTitle, creator, username, timestamps } = defineProps<{
+const props = defineProps<{
   formTitle: string;
   creator?: User;
   username?: string;
@@ -35,12 +35,12 @@ const { formTitle, creator, username, timestamps } = defineProps<{
 }>();
 
 const creatorName = computed(() => {
-  if (creator) {
-    return creator.name;
+  if (props.creator) {
+    return props.creator.name;
   }
 
-  if (username) {
-    return username;
+  if (props.username) {
+    return props.username;
   }
 });
 </script>

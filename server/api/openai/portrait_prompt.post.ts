@@ -52,7 +52,7 @@ export default defineEventHandler(
   async (event): Promise<{ prompt: string }> => {
     const { persona, ...ctx }: PortraitRequestBody = await readBody(event);
 
-    const response = await openai.createChatCompletion({
+    const completions = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
         { role: 'system', content: getSystemMessage(ctx) },
@@ -60,14 +60,14 @@ export default defineEventHandler(
       ],
     });
 
-    if (!response.data.choices[0].message) {
-      throw new Error(`OpenAI error: ${response}`);
+    if (!completions.choices[0].message) {
+      throw new Error(`OpenAI error: ${completions}`);
     }
 
-    if (!response.data.choices[0].message.content) {
-      throw new Error(`OpenAI error: ${response}`);
+    if (!completions.choices[0].message.content) {
+      throw new Error(`OpenAI error: ${completions}`);
     }
 
-    return { prompt: response.data.choices[0].message.content };
+    return { prompt: completions.choices[0].message.content };
   }
 );

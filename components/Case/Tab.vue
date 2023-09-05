@@ -73,15 +73,10 @@
               />
               <InputFileDropzone
                 v-else
-                @blob-url-created="() => {}"
+                @blob-url-created="(url) => (imageUrlBuffer = url)"
                 class="h-72 shrink-0 grow"
                 v-model:file="imageFileBuffer"
                 :disabled="formDisabled"
-                :active-icon="{
-                  name: 'material-symbols:add-photo-alternate',
-                  size: '5rem',
-                }"
-                :disabled-icon="{ name: 'mdi:image', size: '5rem' }"
               />
             </div>
           </template>
@@ -138,14 +133,48 @@
       :title="activeCase.title"
       :creator-name="activeCase.creator.name"
     />
+    <CaseModalContent v-slot="slotProps">
+      <div v-for="(content, title) in slotProps.content">
+        <p>
+          <span class="text-base font-semibold text-gray-700"
+            >{{ title }}：</span
+          >
+          <span>
+            {{ content }}
+          </span>
+        </p>
+      </div>
+    </CaseModalContent>
     <CaseModalActions />
-    <template #keywords> kw </template>
+    <template #keywords>
+      <KeywordGalleryPanel>
+        <KeywordGallery :n_cols="2">
+          <KeywordCard
+            v-for="k in newKeywords"
+            @update:keyword="(body) => (k.body = body)"
+            class="h-28"
+          >
+            {{ k.body }}
+          </KeywordCard>
+          <KeywordCard
+            v-for="k in currentKeywords"
+            @update:keyword="(body) => (k.body = body)"
+            class="h-28"
+          >
+            <template #category v-if="k.category">
+              {{ k.category }}
+            </template>
+            {{ k.body }}
+          </KeywordCard>
+        </KeywordGallery>
+      </KeywordGalleryPanel>
+    </template>
   </CaseModal>
 </template>
 
 <script setup lang="ts">
 import type { ConcreteComponent } from 'nuxt/dist/app/compat/capi';
-import type { FormStateKeys } from '~/types';
+import type { FormStateKeys, Keyword, NewKeyword } from '~/types';
 
 const formPanelProps = {
   title: '案例列表',
@@ -163,6 +192,7 @@ const { username } = useAuth();
 const stores = {
   issue: useIssueStore(),
   case: useCaseStore(),
+  modal: useModalStore(),
 };
 
 const { cases } = storeToRefs(stores.issue);
@@ -172,12 +202,20 @@ const {
   activeId,
   imageUrlBuffer,
   imageFileBuffer,
+  newKeywords,
+  currentKeywords,
   state,
   formDisabled,
   formCardProps,
 } = storeToRefs(stores.case);
 
+const handleKeywordUpdate = (k: Keyword | NewKeyword) => {
+  if ('_id' in k) {
+  } else {
+  }
+};
+
 const handleDblclick = () => {
-  // TODO open modal
+  stores.modal.show();
 };
 </script>

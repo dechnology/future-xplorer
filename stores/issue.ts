@@ -1,4 +1,12 @@
-import { Persona, Workshop, Issue, Case, IssueTabs, IssueTab } from '@/types';
+import {
+  Persona,
+  Workshop,
+  Issue,
+  Case,
+  IssueTabs,
+  IssueTab,
+  Keyword,
+} from '@/types';
 
 export const useIssueStore = definePiniaStore('issue', () => {
   const workshop = ref<Workshop | null>(null);
@@ -24,16 +32,16 @@ export const useIssueStore = definePiniaStore('issue', () => {
 
   const cases = computed((): Case[] => (issue.value ? issue.value.cases : []));
 
-  // const keywords = computed(() => {
-  //   if (!issue.value || !cases.value) {
-  //     return null;
-  //   }
-  //   const allKeywords: Keyword[] = [];
-  //   for (const c of cases.value) {
-  //     allKeywords.push(...c.keywords);
-  //   }
-  //   return allKeywords;
-  // });
+  const keywords = computed(() => {
+    if (!issue.value || !cases.value) {
+      return null;
+    }
+    const allKeywords: Keyword[] = [];
+    for (const c of cases.value) {
+      allKeywords.push(...c.keywords);
+    }
+    return allKeywords;
+  });
 
   async function init(token: string, workshopId: string, issueId: string) {
     const [workshopResponse, issuesResponse] = await Promise.all([
@@ -117,6 +125,7 @@ export const useIssueStore = definePiniaStore('issue', () => {
 
     personas,
     cases,
+    keywords,
 
     init,
     upsertPersona,

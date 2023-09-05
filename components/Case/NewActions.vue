@@ -44,10 +44,10 @@ const handleCreate = async () => {
     const c = NewCaseSchema.parse(currentCase.value);
 
     if (imageUrlBuffer.value) {
-      currentCase.value.image = imageFileBuffer.value
+      c.image = imageFileBuffer.value
         ? (await uploadImageFile(token, imageFileBuffer.value)).data
         : (await uploadImageUrl(token, imageUrlBuffer.value)).data;
-      console.log(`image url: ${currentCase.value.image}`);
+      console.log(`image url: ${c.image}`);
     }
 
     console.log('Creating: ', c);
@@ -63,6 +63,7 @@ const handleCreate = async () => {
 
     console.log('Created: ', createdCase);
     issue.value.cases.push(createdCase);
+    stores.case.changeActiveCase(createdCase);
   } catch (e) {
     console.error(e);
   } finally {

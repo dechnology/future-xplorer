@@ -42,6 +42,8 @@ export const usePersonaStore = definePiniaStore('persona', () => {
       clearCurrentPersona();
       state.value = 'NEW';
     }
+    imageFileBuffer.value = null;
+    imageUrlBuffer.value = null;
   }
 
   return {

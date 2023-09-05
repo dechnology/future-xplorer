@@ -1,26 +1,12 @@
 <template>
   <div
     @mousedown="handleMouseDown"
-    class="flex flex-col items-start justify-start gap-2 rounded-lg bg-white px-4 py-5 shadow-lg"
+    @dragstart="() => (dragged = keyword)"
+    :draggable="allowDrag && draggable"
+    :class="draggable && 'cursor-move'"
+    class="flex flex-col items-start justify-start gap-2 rounded-lg bg-white px-4 py-5 shadow-2xl"
   >
     <div
-      v-if="$slots.category"
-      class="w-fit rounded-2xl bg-slate-400 px-3 py-1 text-sm text-white"
-    >
-      <slot name="category" />
-    </div>
-    <div
-      @dblclick="handleDblclick"
-      @keypress.enter.prevent="
-        (e: KeyboardEvent) =>
-          updateKeyword((e.target as HTMLDivElement).innerText)
-      "
-      :contenteditable="editing"
-      class="w-full border-none bg-green-100 p-2 text-2xl font-bold text-lime-500"
-    >
-      <slot />
-    </div>
-    <!-- <div
       v-if="showCategory"
       class="w-fit rounded-2xl bg-slate-400 px-3 py-1 text-sm text-white"
     >
@@ -34,29 +20,32 @@
       :value="keyword.body"
       :class="!editing && 'focus:outline-none'"
       class="w-full border-none p-2 text-2xl font-bold text-lime-500"
-    /> -->
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { Keyword } from '@/types';
 
-// interface Props {
-//   // showCategory: boolean;
-// }
+interface Props {
+  keyword: Keyword;
+  draggable: boolean;
+  showCategory?: boolean;
+}
 
-// const props = withDefaults(defineProps<Props>(), {
-//   // draggable: false,
-//   // showCategory: true,
-// });
+const props = withDefaults(defineProps<Props>(), {
+  draggable: false,
+  showCategory: true,
+});
 
 const emit = defineEmits<{
-  (e: 'update:keyword', body: string): void;
+  (e: 'update:keyword', k: Keyword): void;
 }>();
 
 const inputRef = ref<HTMLInputElement | null>(null);
 const editing = ref(false);
 
+const keywordStore = useKeywordStore();
 const dragStore = useDragStore();
 const allowDrag = ref(true);
 const { dragged } = storeToRefs(dragStore);
@@ -81,8 +70,12 @@ const handleDblclick = (e: MouseEvent) => {
   window.addEventListener('click', handleOutsideClick);
 };
 
-const updateKeyword = (body: string) => {
+const updateKeyword = (k: Keyword) => {
+  if (!inputRef.value) {
+    return;
+  }
+
   editing.value = false;
-  emit('update:keyword', body);
+  keywordStore.upsert({ ...k, body: inputRef.value.value });
 };
 </script>

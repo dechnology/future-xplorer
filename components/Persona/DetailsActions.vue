@@ -39,8 +39,8 @@ const handleRemove = async () => {
     );
     console.log(message);
 
-    state.value = 'NEW';
     stores.issue.removePersona(activeId.value);
+    stores.persona.changeActivePersona();
     console.log('persona removed');
   } catch (e) {
     console.error(e);

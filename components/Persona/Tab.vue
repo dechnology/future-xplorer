@@ -68,15 +68,10 @@
               />
               <InputFileDropzone
                 v-else
-                @blob-url-created="() => {}"
+                @blob-url-created="(url) => (imageUrlBuffer = url)"
                 class="h-72 shrink-0 grow"
                 v-model:file="imageFileBuffer"
                 :disabled="formDisabled"
-                :active-icon="{
-                  name: 'material-symbols:add-photo-alternate',
-                  size: '5rem',
-                }"
-                :disabled-icon="{ name: 'mdi:image', size: '5rem' }"
               />
             </div>
           </template>

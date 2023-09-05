@@ -70,10 +70,10 @@ const handleCreate = async () => {
     const p = NewPersonaSchema.parse(currentPersona.value);
 
     if (imageUrlBuffer.value) {
-      currentPersona.value.image = imageFileBuffer.value
+      p.image = imageFileBuffer.value
         ? (await uploadImageFile(token, imageFileBuffer.value)).data
         : (await uploadImageUrl(token, imageUrlBuffer.value)).data;
-      console.log(`image url: ${currentPersona.value.image}`);
+      console.log(`image url: ${p.image}`);
     }
 
     console.log('Creating: ', p);
@@ -89,6 +89,7 @@ const handleCreate = async () => {
 
     console.log('Created: ', createdPersona);
     issue.value.personas.push(createdPersona);
+    stores.persona.changeActivePersona(createdPersona);
   } catch (e) {
     console.error(e);
   } finally {

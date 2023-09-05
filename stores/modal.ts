@@ -3,9 +3,13 @@ export const useModalStore = definePiniaStore('modal', () => {
   const ignoreNextClose = ref(false);
 
   function show() {
-    // this line forces a reopen since the open is triggered by a state change
-    if (shown.value) shown.value = false;
-    shown.value = true;
+    if (shown.value) {
+      // this forces a reopen since the open is triggered by a state change
+      shown.value = false;
+      nextTick().then(() => (shown.value = true));
+    } else {
+      shown.value = true;
+    }
   }
 
   function close() {
