@@ -1,7 +1,13 @@
 <template>
   <NuxtLayout>
     <template #form>
-      <FormPanel v-bind="formPanelProps">
+      <FormPanel>
+        <template #header>
+          <PanelHeader>
+            <template #title>{{ formPanelProps.title }}</template>
+            <template #description>{{ formPanelProps.description }}</template>
+          </PanelHeader>
+        </template>
         <FormCard v-bind="formCardProps" :username="username">
           <template #body>
             <InputComponent
@@ -152,7 +158,7 @@
           <KeywordCard
             v-for="k in newKeywords"
             @update:keyword="(body) => (k.body = body)"
-            class="h-28"
+            class="h-24"
           >
             {{ k.body }}
           </KeywordCard>

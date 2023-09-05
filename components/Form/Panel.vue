@@ -1,6 +1,7 @@
 <template>
   <div class="flex min-h-0 shrink grow basis-auto flex-col gap-4">
-    <div class="flex gap-2">
+    <slot name="header" />
+    <!-- <div class="flex gap-2">
       <h2 class="pl-4 text-[32px] font-bold text-black">{{ title }}</h2>
       <Icon
         name="material-symbols:lightbulb-circle-outline-rounded"
@@ -11,16 +12,9 @@
     </div>
     <p class="pl-4 text-base font-normal leading-relaxed text-black">
       {{ description }}
-    </p>
+    </p> -->
     <div class="min-h-0 shrink grow basis-auto overflow-y-auto p-2">
       <slot />
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-defineProps<{
-  title: string;
-  description: string;
-}>();
-</script>

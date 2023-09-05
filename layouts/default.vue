@@ -9,7 +9,7 @@
         <Breadcrumbs />
         <slot name="form" />
       </div>
-      <div class="overflow-hidden" :style="{ flexBasis: rightBasis }">
+      <div :style="{ flexBasis: rightBasis }">
         <slot />
       </div>
     </div>

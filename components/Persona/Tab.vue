@@ -1,7 +1,13 @@
 <template>
   <NuxtLayout>
     <template #form>
-      <FormPanel v-bind="formPanelProps">
+      <FormPanel>
+        <template #header>
+          <PanelHeader>
+            <template #title>{{ formPanelProps.title }}</template>
+            <template #description>{{ formPanelProps.description }}</template>
+          </PanelHeader>
+        </template>
         <FormCard v-bind="formCardProps" :username="username">
           <template #body>
             <div class="grid grid-cols-2 gap-x-5 gap-y-7 rounded-lg">
