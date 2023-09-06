@@ -14,6 +14,7 @@
 </template>
 
 <script setup lang="ts">
+import { isEqual } from 'lodash';
 import { NewIssueSchema, User, Issue } from '@/types';
 
 const { user, getTokenSilently } = await useAuth();
@@ -29,10 +30,10 @@ const handleSaveEdit = async () => {
   try {
     loading.value = true;
 
-    // if (_.isEqual(currentIssue.value, activeIssue.value)) {
-    //   state.value = 'DETAILS';
-    //   return;
-    // }
+    if (isEqual(currentIssue.value, activeIssue.value)) {
+      state.value = 'DETAILS';
+      return;
+    }
 
     const token = await getTokenSilently();
     const i = NewIssueSchema.parse(currentIssue.value);
