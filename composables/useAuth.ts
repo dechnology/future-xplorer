@@ -28,6 +28,12 @@ export const useAuth = () => {
   const { user, accessToken } = storeToRefs(store);
   const error = ref<Error | null>(null);
 
+  const userId = computed(() => {
+    if (user.value) {
+      return user.value._id;
+    }
+  });
+
   const username = computed(() => {
     if (user.value) {
       return user.value.name;
@@ -70,5 +76,13 @@ export const useAuth = () => {
     }
   };
 
-  return { user, username, error, getTokenSilently, authenticate, logout };
+  return {
+    user,
+    userId,
+    username,
+    error,
+    getTokenSilently,
+    authenticate,
+    logout,
+  };
 };

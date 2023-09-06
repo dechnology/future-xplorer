@@ -5,7 +5,8 @@ import { Base, ResourceObject } from '@/types';
 
 interface FetchResourceOptions<T> {
   method: 'get' | 'post' | 'put' | 'delete';
-  deserializer: (data: Serialize<T>) => T;
+  query?: Record<string, any>;
+  deserializer: ((data: Serialize<T>) => T) | null;
   body?: Record<string, any>;
 }
 
@@ -18,11 +19,13 @@ export const fetchResource = async <T extends Base>(
 ): Promise<ResourceObject<T>> => {
   const {
     method = 'get',
+    query,
     deserializer = deserializerFactory<T>(),
     body,
   } = opts;
 
   const { data, error } = (await useFetch(path, {
+    query,
     method,
     headers: { Authorization: `Bearer ${token}` },
     body,
@@ -36,9 +39,10 @@ export const fetchResource = async <T extends Base>(
     throw new Error('data are null');
   }
 
-  console.log('serialized: ', data.value);
-
-  return { ...data.value, data: deserializer(data.value.data) };
+  return {
+    ...data.value,
+    data: deserializer ? deserializer(data.value.data) : (data.value.data as T),
+  };
 };
 
 export const fetchResources = async <T extends Base>(
@@ -48,12 +52,14 @@ export const fetchResources = async <T extends Base>(
 ): Promise<ResourceObject<T[]>> => {
   const {
     method = 'get',
+    query,
     deserializer = deserializerFactory<T>(),
     body,
   } = opts;
 
   const { data, error } = (await useFetch(path, {
     method,
+    query,
     headers: { Authorization: `Bearer ${token}` },
     body,
   })) as AsyncData<ResourceObject<Serialize<T>[]> | null, Error>;
@@ -66,7 +72,12 @@ export const fetchResources = async <T extends Base>(
     throw new Error('data are null');
   }
 
-  return { ...data.value, data: data.value.data.map((d) => deserializer(d)) };
+  return {
+    ...data.value,
+    data: deserializer
+      ? data.value.data.map((d) => deserializer(d))
+      : (data.value.data as T[]),
+  };
 };
 
 export const uploadImageUrl = async (

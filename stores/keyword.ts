@@ -1,64 +1,67 @@
-import { Keyword, NewKeyword, NewKeywordSchema } from '@/types';
-import { z } from 'zod';
+import { User } from '@/types';
 
 export const useKeywordStore = definePiniaStore('keywords', () => {
-  const keywords = ref<Keyword[]>([]);
-  const newKeywords = ref<NewKeyword[]>([]);
+  const { user } = useAuth();
+  const caseStore = useCaseStore();
 
-  const allKeywords = computed((): (Keyword | NewKeyword)[] => [
-    ...newKeywords.value,
-    ...keywords.value,
-  ]);
+  const loading = ref(false);
 
-  function setKeywords(new_keywords: Keyword[]) {
-    keywords.value = new_keywords;
-  }
+  const keywords = computed(() =>
+    caseStore.cases.flatMap((c) => [...c.keywords])
+  );
 
-  function append(k: Keyword | NewKeyword) {
-    if ('_id' in k) {
-      keywords.value.push(k);
-    } else {
-      newKeywords.value.push(k);
-    }
-  }
+  const keywordUsers = computed(() => {
+    const users: User[] = [];
+    const userIds: Set<string> = new Set(); // Assuming the ID is a string
 
-  function upsert(k: Keyword) {
-    const index = keywords.value.findIndex((keyword) =>
-      '_id' in keyword ? keyword._id === k._id : -1
-    );
-
-    if (index === -1) {
-      keywords.value.push(k);
-    } else {
-      keywords.value[index] = k;
-    }
-    return;
-  }
-
-  async function save(token: string, caseId: string) {
-    const result = z.array(NewKeywordSchema).parse(newKeywords.value);
-
-    console.log('Creating: ', result);
-    const { data } = await fetchResource<Keyword>(
-      token,
-      `/api/cases/${caseId}/keywords`,
-      {
-        method: 'post',
-        body: { keywords: result },
+    for (const kw of keywords.value) {
+      if (!userIds.has(kw.creator._id)) {
+        users.push({ ...kw.creator });
+        userIds.add(kw.creator._id);
       }
-    );
-    console.log('Created: ', data);
+    }
+    return users;
+  });
 
-    return data;
-  }
+  const selfKeywords = computed(() =>
+    keywords.value.filter((kw) => kw.creator._id === user.value?._id)
+  );
+
+  const selfVotes = computed(() =>
+    user.value
+      ? keywords.value.flatMap((kw) =>
+          kw.votes.filter(
+            (vote) => vote.creator._id === (user.value as User)._id
+          )
+        )
+      : []
+  );
+
+  const selfVotedIds = computed(() =>
+    selfVotes.value.map((vote) => vote.keyword._id)
+  );
+
+  const favoriteKeywords = computed(() =>
+    keywords.value.filter((kw) => selfVotedIds.value.includes(kw._id))
+  );
+
+  const nonFavoriteKeywords = computed(() =>
+    keywords.value.filter((kw) => !selfVotedIds.value.includes(kw._id))
+  );
+
+  const nonFavoriteSelfKeywords = computed(() =>
+    nonFavoriteKeywords.value.filter((kw) => kw.creator._id === user.value?._id)
+  );
 
   return {
     keywords,
-    newKeywords,
-    allKeywords,
-    setKeywords,
-    append,
-    upsert,
-    save,
+    loading,
+    selfKeywords,
+    selfVotes,
+    selfVotedIds,
+    favoriteKeywords,
+    nonFavoriteKeywords,
+    nonFavoriteSelfKeywords,
+    keywordUsers,
   };
 });

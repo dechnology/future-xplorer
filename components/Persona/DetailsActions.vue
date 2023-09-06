@@ -18,7 +18,6 @@ import { Persona } from '@/types';
 
 const { getTokenSilently } = useAuth();
 const stores = {
-  issue: useIssueStore(),
   persona: usePersonaStore(),
 };
 const { activeId, state, loading } = storeToRefs(stores.persona);
@@ -39,7 +38,7 @@ const handleRemove = async () => {
     );
     console.log(message);
 
-    stores.issue.removePersona(activeId.value);
+    stores.persona.removePersona(activeId.value);
     stores.persona.changeActivePersona();
     console.log('persona removed');
   } catch (e) {

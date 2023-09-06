@@ -1,15 +1,13 @@
 import { getNewCase } from '~/utils';
-import {
-  FormStateKeys,
-  Case,
-  NewCase,
-  Keyword,
-  NewKeyword,
-  NewKeywordSchema,
-} from '@/types';
-import { z } from 'zod';
+import { FormStateKeys, Case, NewCase, Keyword, NewKeyword } from '@/types';
 
 export const useCaseStore = definePiniaStore('case', () => {
+  const issueStore = useIssueStore();
+
+  const cases = computed((): Case[] =>
+    issueStore.issue ? issueStore.issue.cases : []
+  );
+
   const currentCase = ref<Case | NewCase>(getNewCase());
   const activeCase = ref<Case | null>(null);
   const activeKeywords = computed((): Keyword[] =>
@@ -31,6 +29,34 @@ export const useCaseStore = definePiniaStore('case', () => {
     getCurrentFormCardProps('案例', currentCase.value as Case, state.value)
   );
 
+  function upsertCase(el: Case) {
+    if (!issueStore.issue) {
+      return;
+    }
+
+    const index = cases.value.findIndex((c) => c._id === el._id);
+
+    if (index === -1) {
+      issueStore.issue.cases.push(el);
+    } else {
+      issueStore.issue.cases[index] = el;
+    }
+  }
+
+  function removeCase(id: string) {
+    if (!issueStore.issue) {
+      return;
+    }
+
+    const index = cases.value.findIndex((c) => c._id === id);
+
+    if (index === -1) {
+      throw new Error('no issue match given id');
+    } else {
+      issueStore.issue.cases.splice(index, 1);
+    }
+  }
+
   function clearCurrentCase() {
     currentCase.value = getNewCase();
   }
@@ -50,6 +76,7 @@ export const useCaseStore = definePiniaStore('case', () => {
   }
 
   return {
+    cases,
     currentCase,
     activeCase,
     activeKeywords,
@@ -66,6 +93,8 @@ export const useCaseStore = definePiniaStore('case', () => {
     formDisabled,
     formCardProps,
 
+    upsertCase,
+    removeCase,
     clearCurrentCase,
     changeActiveCase,
   };

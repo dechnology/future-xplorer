@@ -88,7 +88,7 @@ const handleCreate = async () => {
     createdPersona.creator = user.value as User;
 
     console.log('Created: ', createdPersona);
-    issue.value.personas.push(createdPersona);
+    stores.persona.upsertPersona(createdPersona);
     stores.persona.changeActivePersona(createdPersona);
   } catch (e) {
     console.error(e);

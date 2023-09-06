@@ -196,13 +196,12 @@ const ActionsComponents: Record<FormStateKeys, ConcreteComponent | string> = {
 
 const { username } = useAuth();
 const stores = {
-  issue: useIssueStore(),
   case: useCaseStore(),
   modal: useModalStore(),
 };
 
-const { cases } = storeToRefs(stores.issue);
 const {
+  cases,
   currentCase,
   activeCase,
   activeId,
@@ -214,12 +213,6 @@ const {
   formDisabled,
   formCardProps,
 } = storeToRefs(stores.case);
-
-const handleKeywordUpdate = (k: Keyword | NewKeyword) => {
-  if ('_id' in k) {
-  } else {
-  }
-};
 
 const handleDblclick = () => {
   stores.modal.show();
