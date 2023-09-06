@@ -1,5 +1,7 @@
 <template>
-  <component :is="Tabs[currentTab.name]" />
+  <transition name="fade" mode="out-in">
+    <component :is="Tabs[currentTab.name]" />
+  </transition>
 </template>
 
 <script setup lang="ts">
