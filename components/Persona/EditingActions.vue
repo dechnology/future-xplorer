@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { isEqual } from 'lodash';
+// import { isEqual } from 'lodash';
 import type { User, Persona } from '@/types';
 import { NewPersonaSchema } from '@/types';
 
@@ -74,10 +74,10 @@ const handleSaveEdit = async () => {
   try {
     loading.value = true;
 
-    if (isEqual(currentPersona.value, activePersona.value)) {
-      state.value = 'DETAILS';
-      return;
-    }
+    // if (isEqual(currentPersona.value, activePersona.value)) {
+    //   state.value = 'DETAILS';
+    //   return;
+    // }
 
     const token = await getTokenSilently();
     const p = NewPersonaSchema.parse(currentPersona.value);
