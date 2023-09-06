@@ -38,7 +38,7 @@ export default defineNuxtConfig({
     dirs: ['stores'],
     presets: [
       { from: 'tailwind-merge', imports: ['twMerge'] },
-      { from: 'lodash', imports: ['_'] },
+      // { from: 'lodash', imports: ['_'] },
     ],
   },
   devtools: { enabled: true },

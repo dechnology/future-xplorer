@@ -29,10 +29,10 @@ const handleSaveEdit = async () => {
   try {
     loading.value = true;
 
-    if (_.isEqual(currentIssue.value, activeIssue.value)) {
-      state.value = 'DETAILS';
-      return;
-    }
+    // if (_.isEqual(currentIssue.value, activeIssue.value)) {
+    //   state.value = 'DETAILS';
+    //   return;
+    // }
 
     const token = await getTokenSilently();
     const i = NewIssueSchema.parse(currentIssue.value);

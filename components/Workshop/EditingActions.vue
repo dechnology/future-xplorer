@@ -29,10 +29,10 @@ const handleSaveEdit = async () => {
   try {
     loading.value = true;
 
-    if (_.isEqual(currentWorkshop.value, activeWorkshop.value)) {
-      state.value = 'DETAILS';
-      return;
-    }
+    // if (_.isEqual(currentWorkshop.value, activeWorkshop.value)) {
+    //   state.value = 'DETAILS';
+    //   return;
+    // }
 
     const token = await getTokenSilently();
     const w = NewWorkshopSchema.parse(currentWorkshop.value);
