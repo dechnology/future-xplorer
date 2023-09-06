@@ -1,14 +1,13 @@
 import { getNewPersona } from '~/utils';
-import {
-  FormStateKeys,
-  Persona,
-  NewPersona,
-  PortraitRequestBody,
-  NewPersonaSchema,
-  PersonaContext,
-} from '@/types';
+import { FormStateKeys, Persona, NewPersona } from '@/types';
 
 export const usePersonaStore = definePiniaStore('persona', () => {
+  const issueStore = useIssueStore();
+
+  const personas = computed((): Persona[] =>
+    issueStore.issue ? issueStore.issue.personas : []
+  );
+
   const currentPersona = ref<Persona | NewPersona>(getNewPersona());
   const activePersona = ref<Persona | null>(null);
   const activeId = computed(() => activePersona.value?._id);
@@ -27,6 +26,38 @@ export const usePersonaStore = definePiniaStore('persona', () => {
       state.value
     )
   );
+
+  function upsertPersona(el: Persona) {
+    if (!issueStore.issue) {
+      return;
+    }
+
+    const index = issueStore.issue?.personas.findIndex(
+      (persona) => persona._id === el._id
+    );
+
+    if (index === -1) {
+      issueStore.issue.personas.push(el);
+    } else {
+      issueStore.issue.personas[index] = el;
+    }
+  }
+
+  function removePersona(id: string) {
+    if (!issueStore.issue) {
+      return;
+    }
+
+    const index = issueStore.issue?.personas.findIndex(
+      (persona) => persona._id === id
+    );
+
+    if (index === -1) {
+      throw new Error('no issue match given id');
+    } else {
+      issueStore.issue.personas.splice(index, 1);
+    }
+  }
 
   function clearCurrentPersona() {
     currentPersona.value = getNewPersona();
@@ -47,6 +78,7 @@ export const usePersonaStore = definePiniaStore('persona', () => {
   }
 
   return {
+    personas,
     currentPersona,
     activePersona,
     activeId,
@@ -59,6 +91,8 @@ export const usePersonaStore = definePiniaStore('persona', () => {
     formDisabled,
     formCardProps,
 
+    upsertPersona,
+    removePersona,
     clearCurrentPersona,
     changeActivePersona,
   };

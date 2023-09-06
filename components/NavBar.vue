@@ -7,10 +7,10 @@
       <div class="flex items-center gap-2">
         <ul v-if="$route.params.issueId" class="flex items-center">
           <IssueNavItem
-            v-for="t in IssueTabs"
-            :key="`${t.name}_${t.title}`"
+            v-for="(t, key) in IssueTabs"
+            :key="`${key}_${t.title}`"
             @click="() => (currentTab = t)"
-            :active="t.name === currentTab.name"
+            :active="key === currentTab.name"
           >
             {{ t.title }}
           </IssueNavItem>

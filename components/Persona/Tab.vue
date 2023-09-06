@@ -156,12 +156,11 @@ const ActionsComponents: Record<FormStateKeys, ConcreteComponent | string> = {
 
 const { username } = useAuth();
 const stores = {
-  issue: useIssueStore(),
   persona: usePersonaStore(),
 };
 
-const { personas } = storeToRefs(stores.issue);
 const {
+  personas,
   currentPersona,
   activePersona,
   activeId,

@@ -1,13 +1,5 @@
 import { z } from 'zod';
-import {
-  Base,
-  Workshop,
-  User,
-  Persona,
-  Case,
-  NewPersona,
-  NewCase,
-} from '@/types';
+import { Base, Workshop, User, Persona, Case } from '@/types';
 
 export const NewIssueSchema = z.object({
   title: z.string().trim().nonempty(),
@@ -28,20 +20,16 @@ export interface Issue extends BaseIssue, IssueResources {
   users?: User[];
 }
 
-export type IssueTabKeys = 'persona' | 'case' | 'keyword';
+export type IssueTabKeys = 'persona' | 'case' | 'keywordSort' | 'keywordVote';
 
 export interface IssueTab {
   name: IssueTabKeys;
-  resourceName: string;
   title: string;
 }
 
 export const IssueTabs: Record<IssueTabKeys, IssueTab> = {
-  persona: {
-    name: 'persona',
-    resourceName: '人物',
-    title: '人物清單',
-  },
-  case: { name: 'case', resourceName: '案例', title: '案例清單' },
-  keyword: { name: 'keyword', resourceName: '關鍵字', title: '案例整理' },
+  persona: { name: 'persona', title: '人物清單' },
+  case: { name: 'case', title: '案例清單' },
+  keywordSort: { name: 'keywordSort', title: '案例整理' },
+  keywordVote: { name: 'keywordVote', title: '案例分享' },
 } as const;

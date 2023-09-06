@@ -1,7 +1,5 @@
 <template>
-  <transition name="fade" mode="out-in">
-    <component :is="Tabs[currentTab.name]" />
-  </transition>
+  <component :is="Tabs[currentTab.name]" />
 </template>
 
 <script setup lang="ts">
@@ -11,7 +9,8 @@ import { IssueTabKeys } from '~/types';
 const Tabs: Record<IssueTabKeys, ConcreteComponent | string> = {
   persona: resolveComponent('PersonaTab'),
   case: resolveComponent('CaseTab'),
-  keyword: resolveComponent('KeywordTab'),
+  keywordSort: resolveComponent('KeywordSortTab'),
+  keywordVote: resolveComponent('KeywordVoteTab'),
 } as const;
 
 const { getTokenSilently } = useAuth();
