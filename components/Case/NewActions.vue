@@ -60,9 +60,10 @@ const handleCreate = async () => {
       }
     );
     createdCase.creator = user.value as User;
+    createdCase.keywords = [];
 
     console.log('Created: ', createdCase);
-    issue.value.cases.push(createdCase);
+    stores.case.upsertCase(createdCase);
     stores.case.changeActiveCase(createdCase);
   } catch (e) {
     console.error(e);

@@ -63,25 +63,14 @@ const { getTokenSilently } = useAuth();
 
 const stores = {
   issue: useIssueStore(),
-  case: useCaseStore(),
+  keyword: useKeywordStore(),
   modal: useModalStore(),
 };
 
-const { elements, keywords } = storeToRefs(stores.issue);
-const { loading } = storeToRefs(stores.case);
+const { elementsArray } = storeToRefs(stores.issue);
+const { keywords, loading } = storeToRefs(stores.keyword);
 
 const draggingKeyword = ref<Keyword | null>(null);
-
-const elementsArray = computed(() =>
-  elements.value
-    ? [
-        ...elements.value.objects,
-        ...elements.value.environments,
-        ...elements.value.messages,
-        ...elements.value.services,
-      ]
-    : []
-);
 const currentCategory = ref(elementsArray.value[0]);
 const filteredKeywords = computed(() =>
   keywords.value

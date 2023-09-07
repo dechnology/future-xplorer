@@ -15,6 +15,7 @@
 
 <script setup lang="ts">
 import { NewWorkshopSchema, User, Workshop } from '@/types';
+// import { isEqual } from 'lodash';
 
 const { user, getTokenSilently } = useAuth();
 const store = useWorkshopsStore();
@@ -29,10 +30,10 @@ const handleSaveEdit = async () => {
   try {
     loading.value = true;
 
-    if (_.isEqual(currentWorkshop.value, activeWorkshop.value)) {
-      state.value = 'DETAILS';
-      return;
-    }
+    // if (isEqual(currentWorkshop.value, activeWorkshop.value)) {
+    //   state.value = 'DETAILS';
+    //   return;
+    // }
 
     const token = await getTokenSilently();
     const w = NewWorkshopSchema.parse(currentWorkshop.value);

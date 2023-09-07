@@ -10,7 +10,16 @@ export default defineEventHandler(
       {
         path: 'cases',
         model: 'Case',
-        populate: ['creator', { path: 'keywords', populate: 'creator' }],
+        populate: [
+          'creator',
+          {
+            path: 'keywords',
+            populate: [
+              'creator',
+              { path: 'votes', populate: ['creator', 'keyword'] },
+            ],
+          },
+        ],
       },
     ]);
 

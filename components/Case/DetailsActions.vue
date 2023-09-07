@@ -23,7 +23,6 @@ import { Case } from '@/types';
 
 const { getTokenSilently } = useAuth();
 const stores = {
-  issue: useIssueStore(),
   case: useCaseStore(),
   modal: useModalStore(),
 };
@@ -45,7 +44,7 @@ const handleRemove = async () => {
     );
     console.log(message);
 
-    stores.issue.removeCase(activeId.value);
+    stores.case.removeCase(activeId.value);
     stores.case.changeActiveCase();
     console.log('case removed');
   } catch (e) {
