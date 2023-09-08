@@ -16,7 +16,9 @@
                 title="角色"
                 placeholder="角色名稱"
                 :disabled="formDisabled"
-                :select-options="[...PersonaPresets.role]"
+                :select-options="
+                  PersonaPresets.role.map((el) => ({ name: el, data: el }))
+                "
                 v-model="currentPersona.role"
               />
               <InputComponent
@@ -31,7 +33,9 @@
                 title="年齡"
                 placeholder="年齡"
                 :disabled="formDisabled"
-                :select-options="[...PersonaPresets.age]"
+                :select-options="
+                  PersonaPresets.age.map((el) => ({ name: el, data: el }))
+                "
                 v-model="currentPersona.age"
               />
               <InputComponent
@@ -39,7 +43,9 @@
                 title="性別"
                 placeholder="性別"
                 :disabled="formDisabled"
-                :select-options="[...PersonaPresets.gender]"
+                :select-options="
+                  PersonaPresets.gender.map((el) => ({ name: el, data: el }))
+                "
                 v-model="currentPersona.gender"
                 select-only
               />
@@ -50,7 +56,9 @@
               placeholder="特徵"
               input-classes="h-32"
               :disabled="formDisabled"
-              :select-options="[...PersonaPresets.trait]"
+              :select-options="
+                PersonaPresets.trait.map((el) => ({ name: el, data: el }))
+              "
               v-model="currentPersona.trait"
             />
             <InputComponent
