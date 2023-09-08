@@ -1,7 +1,10 @@
 <template>
   <div class="flex w-full flex-col gap-4">
-    <label class="bg-white px-1 text-lg font-semibold text-gray-700">
-      工作坊時間
+    <label
+      v-if="title"
+      class="bg-white px-1 text-lg font-semibold text-gray-700"
+    >
+      {{ title }}
     </label>
     <VueTailwindDatepicker
       :key="`${dateModelValue.start} - ${dateModelValue.end}`"
@@ -24,16 +27,17 @@
 import VueTailwindDatepicker from 'vue-tailwind-datepicker';
 import { DateValue } from '@/types/workshop';
 
-const emit = defineEmits<{
-  (e: 'update:dateValue', dateValue: DateValue): void;
-}>();
-
 interface Props {
+  title?: string;
   dateValue: DateValue;
   disabled: boolean;
 }
 
 const props = defineProps<Props>();
+
+const emit = defineEmits<{
+  (e: 'update:dateValue', dateValue: DateValue): void;
+}>();
 
 const dateModelValue = computed({
   get() {

@@ -25,6 +25,11 @@
               input-classes="h-28"
               :disabled="formDisabled"
             />
+            <InputDatePicker
+              title="工作坊時間"
+              v-model:date-value="currentWorkshop.dateValue"
+              :disabled="formDisabled"
+            />
             <div
               class="text-center text-sm font-medium leading-snug text-black text-opacity-60"
             >
