@@ -1,7 +1,7 @@
 export const refreshAccessToken = async () => {
   console.log('refreshing token');
 
-  const { data: accessToken, error } = await useFetch('/api/refresh');
+  const { data: accessToken, error } = await useFetch<string>('/api/refresh');
 
   if (error.value) {
     throw error.value;

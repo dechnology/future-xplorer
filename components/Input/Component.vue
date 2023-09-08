@@ -17,19 +17,29 @@
         v-if="selectOptions"
         class="absolute inset-y-0 right-2 flex items-center justify-center"
       >
-        <div
+        <Icon
           @click="() => (dropdownShown = !dropdownShown)"
-          class="cursor-pointer"
-        >
-          <Icon
-            class="transition-all duration-300"
-            :class="!dropdownShown && 'rotate-180'"
-            name="mdi:chevron-down"
-            size="3rem"
-          />
-        </div>
+          class="cursor-pointer transition-all duration-300"
+          :class="dropdownShown ? '-rotate-90' : 'rotate-90'"
+          name="pepicons-pop:triangle-left-filled"
+          size="1.25rem"
+        />
       </div>
-      <Dropdown
+      <div
+        ref="dropdownDiv"
+        class="absolute right-0 top-full z-10 mt-3 w-full origin-top-right transition-all duration-300"
+        :class="dropdownShown ? 'scale-100' : 'scale-0'"
+      >
+        <Dropdown v-if="selectOptions">
+          <DropdownItem
+            v-for="opt in selectOptions"
+            @click="() => handleClick(opt)"
+          >
+            {{ opt.name }}
+          </DropdownItem>
+        </Dropdown>
+      </div>
+      <!-- <Dropdown
         v-if="selectOptions"
         class="origin-top-right transition-all duration-300"
         :class="dropdownShown ? 'scale-100' : 'scale-0'"
@@ -42,12 +52,16 @@
         @close-menu="() => (dropdownShown = false)"
         :items="selectOptions"
         :shown="dropdownShown"
-      />
+      /> -->
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+interface SelectOption {
+  name: string;
+  data: string;
+}
 interface Props {
   // Required
   type: 'text' | 'textarea';
@@ -56,7 +70,7 @@ interface Props {
   // Optional
   title?: string;
   inputClasses?: string;
-  selectOptions?: string[];
+  selectOptions?: SelectOption[];
 
   // Optional with defaults
   placeholder?: string;
@@ -77,6 +91,7 @@ const emit = defineEmits<{
 }>();
 
 const dropdownShown = ref(false);
+const dropdownDiv = ref<HTMLDivElement | null>(null);
 
 const inputProps = computed(() => {
   return {
@@ -108,4 +123,13 @@ const handleInputChange = (e: Event) => {
     emit('update:modelValue', (e.target as HTMLInputElement).value);
   }
 };
+
+const handleClick = (option: SelectOption) => {
+  emit('update:modelValue', option.data);
+  dropdownShown.value = false;
+};
+
+onClickOutside(dropdownDiv, (e: PointerEvent) => {
+  dropdownShown.value = false;
+});
 </script>

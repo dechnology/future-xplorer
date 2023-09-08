@@ -17,7 +17,12 @@ const schema = new Schema<Workshop>(
     messages: [{ type: String, required: true }],
     services: [{ type: String, required: true }],
   },
-  { timestamps: true, strictQuery: true }
+  {
+    timestamps: true,
+    strictQuery: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
 
 export default mongoose.model<Workshop>('Workshop', schema, 'workshop');

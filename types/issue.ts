@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Base, Workshop, User, Persona, Case } from '@/types';
+import { Base, Workshop, User, Persona, Case, PoemsTemplate } from '@/types';
 
 export const NewIssueSchema = z.object({
   title: z.string().trim().nonempty(),
@@ -13,6 +13,7 @@ export type BaseIssue = NewIssue & Base;
 export interface IssueResources {
   personas: Persona[];
   cases: Case[];
+  poemsTemplates: PoemsTemplate[];
 }
 
 export interface Issue extends BaseIssue, IssueResources {
@@ -20,7 +21,12 @@ export interface Issue extends BaseIssue, IssueResources {
   users?: User[];
 }
 
-export type IssueTabKeys = 'persona' | 'case' | 'keywordSort' | 'keywordVote';
+export type IssueTabKeys =
+  | 'persona'
+  | 'case'
+  | 'keywordSort'
+  | 'keywordVote'
+  | 'poemsTemplate';
 
 export interface IssueTab {
   name: IssueTabKeys;
@@ -32,4 +38,5 @@ export const IssueTabs: Record<IssueTabKeys, IssueTab> = {
   case: { name: 'case', title: '案例清單' },
   keywordSort: { name: 'keywordSort', title: '案例整理' },
   keywordVote: { name: 'keywordVote', title: '案例分享' },
+  poemsTemplate: { name: 'poemsTemplate', title: '模板設計' },
 } as const;

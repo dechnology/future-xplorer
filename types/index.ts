@@ -8,6 +8,7 @@ export * from './cardState';
 export * from './persona';
 export * from './case';
 export * from './keyword';
+export * from './poemsTemplate';
 
 export * from './errors';
 export * from './response';

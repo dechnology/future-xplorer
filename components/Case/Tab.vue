@@ -65,6 +65,14 @@
               :disabled="formDisabled"
               v-model="currentCase.reference"
             />
+            <InputComponent
+              type="textarea"
+              title="其他"
+              placeholder="案例其他"
+              input-classes="h-[100px]"
+              :disabled="formDisabled"
+              v-model="currentCase.other"
+            />
 
             <div class="flex flex-col overflow-hidden rounded-lg">
               <NuxtImg

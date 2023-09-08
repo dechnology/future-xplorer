@@ -21,6 +21,17 @@ export default defineEventHandler(
           },
         ],
       },
+      {
+        path: 'poemsTemplates',
+        model: 'PoemsTemplates',
+        populate: [
+          'creator',
+          {
+            path: 'persona',
+            populate: 'creator',
+          },
+        ],
+      },
     ]);
 
     if (!issue) {
