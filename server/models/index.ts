@@ -5,3 +5,4 @@ export { default as PersonaModel } from './persona';
 export { default as CaseModel } from './case';
 export { default as KeywordModel } from './keyword';
 export { default as VoteModel } from './vote';
+export { default as PoemsTemplateModel } from './poemsTemplate';

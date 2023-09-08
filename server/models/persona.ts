@@ -21,7 +21,12 @@ const schema = new Schema<Persona>(
     creator: { type: Schema.Types.ObjectId, ref: 'User' },
     issue: { type: Schema.Types.ObjectId, ref: 'Issue' },
   },
-  { timestamps: true, strictQuery: true }
+  {
+    timestamps: true,
+    strictQuery: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
 
 export default mongoose.model<Persona>('Persona', schema, 'persona');

@@ -10,6 +10,10 @@ export const useKeywordStore = definePiniaStore('keywords', () => {
     caseStore.cases.flatMap((c) => [...c.keywords])
   );
 
+  const votedKeywords = computed(() => {
+    keywords.value.filter((kw) => kw.votes.length > 0);
+  });
+
   const keywordUsers = computed(() => {
     const users: User[] = [];
     const userIds: Set<string> = new Set(); // Assuming the ID is a string
@@ -54,8 +58,9 @@ export const useKeywordStore = definePiniaStore('keywords', () => {
   );
 
   return {
-    keywords,
     loading,
+    keywords,
+    votedKeywords,
     selfKeywords,
     selfVotes,
     selfVotedIds,

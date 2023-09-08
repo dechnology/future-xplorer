@@ -7,6 +7,7 @@ import {
   NewIssue,
   NewKeyword,
   NewPersona,
+  NewPoemsTemplate,
   NewWorkshop,
   User,
 } from '~/types';
@@ -125,4 +126,14 @@ export const getNewCase = (): NewCase => ({
 
 export const getNewKeyword = (): NewKeyword => ({
   body: '',
+});
+
+export const getNewPoemsTemplate = (): NewPoemsTemplate => ({
+  title: '',
+  content: '',
+  persona: '',
+  object: '',
+  environment: '',
+  message: '',
+  service: '',
 });

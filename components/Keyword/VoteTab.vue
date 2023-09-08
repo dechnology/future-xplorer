@@ -21,17 +21,22 @@
               <KeywordHeader> 我的關鍵字 </KeywordHeader>
               <KeywordGallery>
                 <KeywordCard
-                  v-for="k in filteredSelfKeywords"
-                  @update:keyword="(body) => (k.body = body)"
+                  v-for="kw in filteredSelfKeywords"
+                  @update:keyword="(body) => (kw.body = body)"
                   class="h-40"
                 >
                   <template #favIcon>
-                    <Icon name="ic:round-star-border" size="20px" />
+                    <Icon
+                      @click="() => vote(kw)"
+                      name="ic:round-star-border"
+                      size="20px"
+                      class="cursor-pointer"
+                    />
                   </template>
-                  <template v-if="k.category" #category>
-                    {{ k.category }}
+                  <template v-if="kw.category" #category>
+                    {{ kw.category }}
                   </template>
-                  {{ k.body }}
+                  {{ kw.body }}
                 </KeywordCard>
               </KeywordGallery>
             </KeywordGalleryPanel>
