@@ -18,6 +18,7 @@
         class="absolute inset-y-0 right-2 flex items-center justify-center"
       >
         <Icon
+          ref="dropdownIcon"
           @click="() => (dropdownShown = !dropdownShown)"
           class="cursor-pointer transition-all duration-300"
           :class="dropdownShown ? '-rotate-90' : 'rotate-90'"
@@ -91,6 +92,7 @@ const emit = defineEmits<{
 }>();
 
 const dropdownShown = ref(false);
+const dropdownIcon = ref<HTMLDivElement | null>(null);
 const dropdownDiv = ref<HTMLDivElement | null>(null);
 
 const inputProps = computed(() => {
@@ -129,7 +131,7 @@ const handleClick = (option: SelectOption) => {
   dropdownShown.value = false;
 };
 
-onClickOutside(dropdownDiv, (e: PointerEvent) => {
+onClickOutside(dropdownIcon, (e: PointerEvent) => {
   dropdownShown.value = false;
 });
 </script>
