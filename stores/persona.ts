@@ -13,12 +13,36 @@ export const usePersonaStore = definePiniaStore('persona', () => {
   const activeId = computed(() => activePersona.value?._id);
   const imageUrlBuffer = ref<string | null>(null);
   const imageFileBuffer = ref<File | null>(null);
+  const imgStatus = ref<'waitting' | 'prompt' | 'avatar' |  'uploading' | 'finished'>('waitting');
 
   const state = ref<FormStateKeys>('NEW');
   const loading = ref(false);
   const formDisabled = computed(
     () => state.value === 'DETAILS' || loading.value
   );
+  const aiDisabled = computed(() => {
+    const arr = Object.entries(currentPersona.value).map(([key, value]) => {
+      return { key, value };
+    });
+    console.log("arr =>", arr)
+    const optionalProps = ['other',
+      'image',
+      '_id',
+      'creator',
+      'issue',
+      'createdAt',
+      'updatedAt',
+      '__v',
+      'id'
+    ];
+    const requiredProps = arr.filter(
+      (item) => !optionalProps.includes(item.key)
+    );
+    // check if all required props are filled
+    const isFilled = requiredProps.every((item) => !!item.value);
+    const result = !isFilled || loading.value;
+    return result;
+  });
   const formCardProps = computed(() =>
     getCurrentFormCardProps(
       '人物',
@@ -63,6 +87,7 @@ export const usePersonaStore = definePiniaStore('persona', () => {
     currentPersona.value = getNewPersona();
     imageFileBuffer.value = null;
     imageUrlBuffer.value = null;
+    imgStatus.value = 'waitting'
   }
 
   function changeActivePersona(p?: Persona | null) {
@@ -79,6 +104,22 @@ export const usePersonaStore = definePiniaStore('persona', () => {
     imageUrlBuffer.value = null;
   }
 
+  function aiPromptGeneration() {
+    console.log("imgStatus.value =>", imgStatus.value)
+    imgStatus.value = 'prompt'
+    console.log("imgStatus.value =>", imgStatus.value)
+  }
+  function aiAvatarGeneration() {
+    console.log("imgStatus.value =>", imgStatus.value)
+    imgStatus.value = 'avatar'
+    console.log("imgStatus.value =>", imgStatus.value)
+  }
+  function aiFinishedGeneration() {
+    console.log("imgStatus.value =>", imgStatus.value)
+    imgStatus.value = 'finished'
+    console.log("imgStatus.value =>", imgStatus.value)
+  }
+
   return {
     personas,
     currentPersona,
@@ -87,15 +128,20 @@ export const usePersonaStore = definePiniaStore('persona', () => {
 
     imageUrlBuffer,
     imageFileBuffer,
+    imgStatus,
 
     state,
     loading,
     formDisabled,
+    aiDisabled,
     formCardProps,
 
     upsertPersona,
     removePersona,
     clearCurrentPersona,
     changeActivePersona,
+    aiPromptGeneration,
+    aiAvatarGeneration,
+    aiFinishedGeneration,
   };
 });

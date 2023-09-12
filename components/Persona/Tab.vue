@@ -78,7 +78,8 @@
               <NuxtImg
                 v-else-if="imageUrlBuffer"
                 :src="imageUrlBuffer"
-                alt=""
+                placeholder="https://lordicon.com/icons/wired/gradient/306-avatar-icon-calm.gif"
+                alt="人物圖遺失"
               />
               <InputFileDropzone
                 v-else
@@ -86,6 +87,7 @@
                 class="h-72 shrink-0 grow"
                 v-model:file="imageFileBuffer"
                 :disabled="formDisabled"
+                :status="imgStatus"
               />
             </div>
           </template>
@@ -177,6 +179,7 @@ const {
   state,
   formDisabled,
   formCardProps,
+  imgStatus,
 } = storeToRefs(stores.persona);
 
 const handleDblclick = () => {
