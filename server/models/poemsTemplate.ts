@@ -4,7 +4,6 @@ import { PoemsTemplate } from '~/types';
 const schema = new Schema<PoemsTemplate>(
   {
     title: { type: String, required: true },
-    content: { type: String, required: true },
     persona: { type: Schema.Types.ObjectId, ref: 'Persona' },
     object: { type: String, required: true },
     environment: { type: String, required: true },

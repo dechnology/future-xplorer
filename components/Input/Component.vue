@@ -28,10 +28,11 @@
       </div>
       <div
         ref="dropdownDiv"
+        v-if="selectOptions"
         class="absolute right-0 top-full z-10 mt-3 w-full origin-top-right transition-all duration-300"
         :class="dropdownShown ? 'scale-100' : 'scale-0'"
       >
-        <Dropdown v-if="selectOptions">
+        <Dropdown>
           <DropdownItem
             v-for="opt in selectOptions"
             @click="() => handleClick(opt)"
@@ -40,20 +41,6 @@
           </DropdownItem>
         </Dropdown>
       </div>
-      <!-- <Dropdown
-        v-if="selectOptions"
-        class="origin-top-right transition-all duration-300"
-        :class="dropdownShown ? 'scale-100' : 'scale-0'"
-        @item-click="
-          (item) => {
-            dropdownShown = false;
-            $emit('update:modelValue', item);
-          }
-        "
-        @close-menu="() => (dropdownShown = false)"
-        :items="selectOptions"
-        :shown="dropdownShown"
-      /> -->
     </div>
   </div>
 </template>
@@ -65,8 +52,8 @@ interface SelectOption {
 }
 interface Props {
   // Required
-  type: 'text' | 'textarea';
-  modelValue: string | number;
+  type: 'text' | 'textarea' | 'select';
+  modelValue: string;
 
   // Optional
   title?: string;
