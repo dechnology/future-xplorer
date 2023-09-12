@@ -76,7 +76,7 @@ export const getNewPersona = (): NewPersona => ({
   name: '',
   age: '',
   trait: '',
-  gender: 'male',
+  gender: '',
   other: '',
   image: null,
 });
