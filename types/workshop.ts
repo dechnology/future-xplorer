@@ -15,6 +15,13 @@ export const WorkshopElementsSchema = z.object({
   services: z.string().trim().nonempty().array().nonempty(),
 });
 
+export type WorkshopElementType = 'O' | 'E' | 'M' | 'S';
+
+export interface WorkshopElement {
+  type: WorkshopElementType;
+  name: string;
+}
+
 export type WorkshopElements = z.infer<typeof WorkshopElementsSchema>;
 
 export const NewWorkshopSchema = WorkshopElementsSchema.extend({

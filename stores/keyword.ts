@@ -10,9 +10,9 @@ export const useKeywordStore = definePiniaStore('keywords', () => {
     caseStore.cases.flatMap((c) => [...c.keywords])
   );
 
-  const votedKeywords = computed(() => {
-    keywords.value.filter((kw) => kw.votes.length > 0);
-  });
+  const votedKeywords = computed(() =>
+    keywords.value.filter((kw) => kw.votes.length > 0)
+  );
 
   const keywordUsers = computed(() => {
     const users: User[] = [];

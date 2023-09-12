@@ -1,7 +1,7 @@
 <template>
   <KeywordHeader class="relative">
     <slot :selected="selected" />
-    <span v-if="options">
+    <span>
       <Icon
         @click="() => (dropdownShown = !dropdownShown)"
         class="cursor-pointer transition-all duration-300"

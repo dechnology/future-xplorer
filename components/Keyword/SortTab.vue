@@ -11,7 +11,7 @@
         <KeywordGallery :n_cols="2">
           <KeywordCard
             :draggable="true"
-            v-for="k in keywords"
+            v-for="k in selfKeywords"
             @update:keyword="(body) => (k.body = body)"
             @dragstart="() => (draggingKeyword = k)"
             class="h-40"
@@ -26,10 +26,11 @@
       <KeywordCategoryTabWrapper>
         <KeywordCategoryTab
           v-for="el in elementsArray"
-          @click="() => (currentCategory = el)"
-          :active="currentCategory === el"
+          :key="`${el.type}_${el.name}`"
+          @click="() => (currentElement = el)"
+          :active="currentElement.name === el.name"
         >
-          {{ el }}
+          {{ el.name }}
         </KeywordCategoryTab>
         <!-- TODO add button to create new category -->
         <!-- <KeywordCategoryTab class="ml-auto">
@@ -68,13 +69,15 @@ const stores = {
 };
 
 const { elementsArray } = storeToRefs(stores.issue);
-const { keywords, loading } = storeToRefs(stores.keyword);
+const { selfKeywords, loading } = storeToRefs(stores.keyword);
 
 const draggingKeyword = ref<Keyword | null>(null);
-const currentCategory = ref(elementsArray.value[0]);
+const currentElement = ref(elementsArray.value[0]);
 const filteredKeywords = computed(() =>
-  keywords.value
-    ? keywords.value.filter((kw) => kw.category === currentCategory.value)
+  selfKeywords.value
+    ? selfKeywords.value.filter(
+        (kw) => kw.category === currentElement.value.name
+      )
     : []
 );
 
@@ -86,7 +89,8 @@ const handleDrop = async (e: DragEvent) => {
       return;
     }
 
-    draggingKeyword.value.category = currentCategory.value;
+    draggingKeyword.value.category = currentElement.value.name;
+    draggingKeyword.value.type = currentElement.value.type;
 
     const token = await getTokenSilently();
     console.log('Patching: ', draggingKeyword);
@@ -98,11 +102,10 @@ const handleDrop = async (e: DragEvent) => {
         body: {
           body: draggingKeyword.value.body,
           category: draggingKeyword.value.category,
+          type: draggingKeyword.value.type,
         },
       }
     );
-
-    editedKeyword.creator = user.value as User;
 
     console.log('Patched: ', editedKeyword);
   } catch (e) {

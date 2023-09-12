@@ -13,8 +13,6 @@ export const usePoemsTemplateStore = definePiniaStore('poems template', () => {
   );
   const activePoemsTemplate = ref<PoemsTemplate | null>(null);
   const activeId = computed(() => activePoemsTemplate.value?._id);
-  const imageUrlBuffer = ref<string | null>(null);
-  const imageFileBuffer = ref<File | null>(null);
 
   const state = ref<FormStateKeys>('NEW');
   const loading = ref(false);
@@ -75,8 +73,6 @@ export const usePoemsTemplateStore = definePiniaStore('poems template', () => {
       clearCurrentPoemsTemplate();
       state.value = 'NEW';
     }
-    imageFileBuffer.value = null;
-    imageUrlBuffer.value = null;
   }
 
   return {
@@ -84,9 +80,6 @@ export const usePoemsTemplateStore = definePiniaStore('poems template', () => {
     currentPoemsTemplate,
     activePoemsTemplate,
     activeId,
-
-    imageUrlBuffer,
-    imageFileBuffer,
 
     state,
     loading,

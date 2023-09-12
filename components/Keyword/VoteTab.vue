@@ -121,7 +121,7 @@ const {
 const categoryTabs = computed(() => [
   { name: '全部', value: null },
   { name: '未分類', value: undefined },
-  ...elementsArray.value.map((el) => ({ name: el, value: el })),
+  ...elementsArray.value.map((el) => ({ name: el.name, value: el.name })),
 ]);
 
 const currentUser = ref(keywordUsers.value[0]);

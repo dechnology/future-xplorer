@@ -8,8 +8,9 @@ export const NewKeywordSchema = z.object({
 export type NewKeyword = z.infer<typeof NewKeywordSchema>;
 
 export interface Keyword extends Base, NewKeyword {
-  case: string | Case;
+  case: Case | string;
   category?: string;
+  type?: 'O' | 'E' | 'M' | 'S';
   votes: Vote[];
 }
 

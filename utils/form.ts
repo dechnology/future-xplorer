@@ -76,7 +76,7 @@ export const getNewPersona = (): NewPersona => ({
   name: '',
   age: '',
   trait: '',
-  gender: '',
+  gender: 'male',
   other: '',
   image: null,
 });
@@ -131,7 +131,7 @@ export const getNewKeyword = (): NewKeyword => ({
 export const getNewPoemsTemplate = (): NewPoemsTemplate => ({
   title: '',
   content: '',
-  persona: '',
+  persona: getNewPersona(),
   object: '',
   environment: '',
   message: '',
