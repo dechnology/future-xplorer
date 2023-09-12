@@ -6,12 +6,12 @@
   />
   <div class="flex items-center justify-around">
     <CardButton
-      @click="handleCancel"
+      @click.prevent="handleCancel"
       class="rounded-lg bg-red-400 px-8 py-3 text-white hover:bg-red-500"
       body="取消"
     />
     <CardButton
-      @click="handleSaveEdit"
+      @click.prevent="handleSaveEdit"
       class="rounded-lg bg-indigo-500 px-8 py-3 text-white hover:bg-indigo-600"
       body="儲存"
     />
@@ -92,7 +92,7 @@ const handleSaveEdit = async () => {
     console.log('Patching: ', p);
     const { data: editedPersona } = await fetchResource<Persona>(
       token,
-      `/api/issues/${activeId.value}`,
+      `/api/personas/${activeId.value}`,
       { method: 'put', body: p }
     );
 

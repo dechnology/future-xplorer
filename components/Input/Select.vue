@@ -1,90 +1,94 @@
 <template>
   <div class="flex flex-col gap-2">
-    <label
-      v-if="title"
-      class="bg-white px-1 text-lg font-semibold text-gray-700"
-    >
-      {{ title }}
-    </label>
-    <select
-      class="h-16"
-      :placeholder="placeholder"
-      :disabled="disabled"
-      :class="classes"
-      :value="modelValue"
-      @input="
-        $emit('update:modelValue', ($event.target as HTMLInputElement).value)
-      "
-    >
-      <option v-for="opt in options" :value="opt">{{ opt }}</option>
-    </select>
-    <!-- <div
-        v-if="options"
-        class="absolute inset-y-0 right-2 flex items-center justify-center"
-      >
-        <div
-          @click="() => (dropdownShown = !dropdownShown)"
-          class="cursor-pointer"
-        >
-          <Icon
-            class="transition-all duration-300"
-            :class="!dropdownShown && 'rotate-180'"
-            name="mdi:chevron-down"
-            size="3rem"
-          />
-        </div>
+    <InputLabel v-if="title">{{ title }}</InputLabel>
+    <div class="relative">
+      <div v-bind="inputProps">
+        <slot :selected="selected" />
       </div>
-      <Dropdown
-        v-if="options"
-        class="origin-top-right transition-all duration-300"
+      <div class="absolute inset-y-0 right-2 flex items-center justify-center">
+        <Icon
+          ref="dropdownIcon"
+          @click="() => (dropdownShown = !dropdownShown)"
+          class="cursor-pointer transition-all duration-300"
+          :class="dropdownShown ? '-rotate-90' : 'rotate-90'"
+          name="pepicons-pop:triangle-left-filled"
+          size="1.25rem"
+        />
+      </div>
+      <div
+        ref="dropdownDiv"
+        class="absolute right-0 top-full z-10 mt-3 w-full origin-top-right transition-all duration-300"
         :class="dropdownShown ? 'scale-100' : 'scale-0'"
-        @item-click="
-          (item) => {
-            dropdownShown = false;
-            $emit('update:modelValue', item);
-          }
-        "
-        :items="options"
-      />
-    </div> -->
+      >
+        <Dropdown>
+          <DropdownItem v-for="opt in options" @click="() => handleClick(opt)">
+            {{ opt.name }}
+          </DropdownItem>
+        </Dropdown>
+      </div>
+    </div>
   </div>
 </template>
 
-<script setup lang="ts">
-import { ClassNameValue, twMerge } from 'tailwind-merge';
-
+<script setup lang="ts" generic="T">
+interface Option {
+  name: string;
+  data: T;
+}
 interface Props {
+  // Required
+  modelValue: T;
+  options: Option[];
+
+  // Optional
   title?: string;
-  placeholder: string;
-  disabled: boolean;
-  modelValue: string | number;
-  options?: string[];
+  inputClasses?: string;
+
+  // Optional with defaults
+  disabled?: boolean;
 }
 
-const props = withDefaults(defineProps<Props>(), { disabled: false });
+const props = withDefaults(defineProps<Props>(), {
+  disabled: false,
+});
 
 const emit = defineEmits<{
-  (e: 'update:modelValue'): void;
+  (e: 'update:modelValue', value: T): void;
 }>();
 
+const selected = shallowRef<Option>(props.options[0]);
 const dropdownShown = ref(false);
+const dropdownIcon = ref<HTMLDivElement | null>(null);
+const dropdownDiv = ref<HTMLDivElement | null>(null);
 
-const defaultClasses: ClassNameValue = [
-  'w-full',
-  'rounded',
-  'px-3',
-  'py-4',
-  'border',
-  'border-solid',
-  'border-gray-200',
-];
+const inputProps = computed(() => {
+  return {
+    class: twMerge(
+      [
+        'w-full',
+        'rounded',
+        'pl-4',
+        'pr-4',
+        'py-4',
+        'border',
+        'border-solid',
+        'border-black',
+      ],
+      props.inputClasses,
+      props.options && 'pr-12',
+      props.disabled ? ['bg-slate-50'] : ['border-opacity-40']
+    ),
+    disabled: props.disabled,
+    value: props.modelValue,
+  };
+});
 
-const classes = computed(() => {
-  if (props.disabled) {
-    return twMerge(defaultClasses, 'bg-slate-50');
-  }
-  return twMerge(defaultClasses, ['border-gray-500', 'bg-white']);
+const handleClick = (option: Option) => {
+  emit('update:modelValue', option.data);
+  dropdownShown.value = false;
+};
+
+onClickOutside(dropdownIcon, (e: PointerEvent) => {
+  dropdownShown.value = false;
 });
 </script>
-
-<style scoped></style>

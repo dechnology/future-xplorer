@@ -52,8 +52,8 @@ interface SelectOption {
 }
 interface Props {
   // Required
-  type: 'text' | 'textarea';
-  modelValue: string | number;
+  type: 'text' | 'textarea' | 'select';
+  modelValue: string;
 
   // Optional
   title?: string;

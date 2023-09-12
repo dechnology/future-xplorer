@@ -1,12 +1,7 @@
 <template>
-  <CardButton
-    @click.prevent="() => handlePortraitGeneration()"
-    class="mx-auto h-12 w-44 rounded-lg bg-lime-600 text-white hover:bg-lime-700"
-    body="AI生成圖片"
-  />
   <div class="flex items-center justify-around">
     <CardButton
-      @click.prevent="() => stores.persona.clearCurrentPersona()"
+      @click.prevent="() => stores.poemsTemplate.clearCurrentPoemsTemplate()"
       class="rounded-lg bg-red-400 px-8 py-3 text-white hover:bg-red-500"
       body="清除"
     />
@@ -19,77 +14,44 @@
 </template>
 
 <script setup lang="ts">
-import type { User, Persona } from '@/types';
-import { NewPersonaSchema } from '@/types';
+import type { User, PoemsTemplate } from '@/types';
+import { NewPoemsTemplateSchema } from '@/types';
 
 const { user, getTokenSilently } = useAuth();
 const stores = {
   issue: useIssueStore(),
-  persona: usePersonaStore(),
+  poemsTemplate: usePoemsTemplateStore(),
 };
-const { workshop, issue, issueId } = storeToRefs(stores.issue);
-const { currentPersona, imageFileBuffer, imageUrlBuffer, loading } =
-  storeToRefs(stores.persona);
-
-const handlePortraitGeneration = async () => {
-  try {
-    if (!(workshop.value && issue.value)) {
-      throw new Error('no workshop or issue');
-    }
-
-    const persona = NewPersonaSchema.parse(currentPersona.value);
-    const token = await getTokenSilently();
-
-    console.log('generating portrait for persona: ', persona);
-    const { prompt } = await generatePrompt(token, {
-      workshop: workshop.value,
-      issue: issue.value,
-      persona,
-    });
-    console.log('prompt: ', prompt);
-
-    const { image } = await generateImage(token, { prompt });
-    console.log('image: ', image);
-
-    imageFileBuffer.value = null;
-    imageUrlBuffer.value = image;
-  } catch (e) {
-    console.error(e);
-  }
-};
+const { issueId } = storeToRefs(stores.issue);
+const { currentPoemsTemplate, loading } = storeToRefs(stores.poemsTemplate);
 
 const handleCreate = async () => {
   try {
     loading.value = true;
 
-    if (!(issueId.value && issue.value)) {
-      throw new Error('issue undefined');
-    }
+    console.log(currentPoemsTemplate.value);
 
     const token = await getTokenSilently();
-    const p = NewPersonaSchema.parse(currentPersona.value);
-
-    if (imageUrlBuffer.value) {
-      p.image = imageFileBuffer.value
-        ? (await uploadImageFile(token, imageFileBuffer.value)).data
-        : (await uploadImageUrl(token, imageUrlBuffer.value)).data;
-      console.log(`image url: ${p.image}`);
-    }
+    const p = NewPoemsTemplateSchema.passthrough().parse(
+      currentPoemsTemplate.value
+    );
 
     console.log('Creating: ', p);
-    const { data: createdPersona } = await fetchResource<Persona>(
+    const { data: createdPoemsTemplate } = await fetchResource<PoemsTemplate>(
       token,
-      `/api/issues/${issueId.value}/personas`,
+      `/api/issues/${issueId.value}/poemsTemplates`,
       {
         method: 'post',
-        body: p,
+        body: { ...p, persona: currentPoemsTemplate.value.persona._id },
       }
     );
-    createdPersona.creator = user.value as User;
 
-    console.log('Created: ', createdPersona);
-    stores.persona.upsertPersona(createdPersona);
-    stores.persona.changeActivePersona(createdPersona);
+    createdPoemsTemplate.creator = user.value as User;
+    createdPoemsTemplate.persona = currentPoemsTemplate.value.persona;
+
+    console.log('Created: ', createdPoemsTemplate);
+    stores.poemsTemplate.upsertPoemsTemplate(createdPoemsTemplate);
+    stores.poemsTemplate.changeActivePoemsTemplate(createdPoemsTemplate);
   } catch (e) {
     console.error(e);
   } finally {

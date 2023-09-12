@@ -17,49 +17,67 @@
               :disabled="formDisabled"
               v-model="currentPoemsTemplate.title"
             />
-            <!-- <InputComponent
-                type="textarea"
-                title="姓名"
-                placeholder="姓名"
-                input-classes="h-[90px]"
-                :disabled="formDisabled"
-                v-model="currentPoemsTemplate.persona"
-              /> -->
+            <InputSelect
+              type="select"
+              title="人物 (P)"
+              placeholder="模板人物"
+              :disabled="formDisabled"
+              v-model="currentPoemsTemplate.persona"
+              :options="personas.map((el) => ({ name: el.name, data: el }))"
+              input-classes="h-16"
+              >{{ currentPoemsTemplate.persona.name }}</InputSelect
+            >
             <InputComponent
               type="textarea"
               title="物件 (O)"
               placeholder="模板物件"
-              input-classes="h-[90px]"
               :disabled="formDisabled"
-              :select-options="[...PersonaPresets.age]"
               v-model="currentPoemsTemplate.object"
+              :select-options="
+                votedKeywords
+                  .filter((el) => el.type === 'O')
+                  .map((el) => ({ name: el.body, data: el.body }))
+              "
+              input-classes="h-[90px]"
             />
             <InputComponent
               type="textarea"
               title="環境 (E)"
               placeholder="模板環境"
-              input-classes="h-[90px]"
               :disabled="formDisabled"
-              :select-options="[...PersonaPresets.gender]"
               v-model="currentPoemsTemplate.environment"
-              select-only
+              :select-options="
+                votedKeywords
+                  .filter((el) => el.type === 'E')
+                  .map((el) => ({ name: el.body, data: el.body }))
+              "
+              input-classes="h-[90px]"
             />
             <InputComponent
               type="textarea"
               title="訊息 (M)"
               placeholder="模板訊息"
-              input-classes="h-[90px]"
               :disabled="formDisabled"
-              :select-options="[...PersonaPresets.trait]"
               v-model="currentPoemsTemplate.message"
+              input-classes="h-[90px]"
+              :select-options="
+                votedKeywords
+                  .filter((el) => el.type === 'M')
+                  .map((el) => ({ name: el.body, data: el.body }))
+              "
             />
             <InputComponent
               type="textarea"
               title="服務 (S)"
               placeholder="模板服務"
-              input-classes="h-[90px]"
               :disabled="formDisabled"
               v-model="currentPoemsTemplate.service"
+              input-classes="h-[90px]"
+              :select-options="
+                votedKeywords
+                  .filter((el) => el.type === 'S')
+                  .map((el) => ({ name: el.body, data: el.body }))
+              "
             />
           </template>
           <template #actions>
@@ -68,7 +86,43 @@
         </FormCard>
       </FormPanel>
     </template>
-    test
+    <CardGalleryPanel>
+      <CardGallery :grid-cols="3">
+        <Card
+          :active="!activePoemsTemplate"
+          @click="() => stores.poemsTemplate.changeActivePoemsTemplate()"
+          class="h-[350px]"
+        >
+          <CardIcon :icon="{ name: 'mdi:plus', size: '5rem' }">
+            新增案例
+          </CardIcon>
+        </Card>
+        <!-- Should be async component -->
+        <Card
+          v-for="el in poemsTemplates"
+          :active="activeId === el._id"
+          @dblclick="() => handleDblclick()"
+          @click="() => stores.poemsTemplate.changeActivePoemsTemplate(el)"
+          class="h-[350px]"
+        >
+          <CardTitle>{{ el.title }}</CardTitle>
+          <CardDescription>
+            {{
+              [
+                `P: ${el.persona.trait}的${el.persona.role}`,
+                `O: ${el.object}`,
+                `E: ${el.environment}`,
+                `S: ${el.service}`,
+              ].join('\n\n')
+            }}
+          </CardDescription>
+          <CardFootnote>
+            {{ `建立者：${el.creator.name}` }}
+          </CardFootnote>
+        </Card>
+        <!-- Should be async component (end) -->
+      </CardGallery>
+    </CardGalleryPanel>
   </NuxtLayout>
 </template>
 
@@ -89,16 +143,26 @@ const formPanelProps = {
 
 const { user, username, userId, getTokenSilently } = useAuth();
 const stores = {
+  modal: useModalStore(),
   issue: useIssueStore(),
+  persona: usePersonaStore(),
+  keyword: useKeywordStore(),
   poemsTemplate: usePoemsTemplateStore(),
 };
-const { elementsArray } = storeToRefs(stores.issue);
+const { personas } = storeToRefs(stores.persona);
+const { votedKeywords } = storeToRefs(stores.keyword);
 const {
   loading,
   poemsTemplates,
+  activePoemsTemplate,
+  activeId,
   currentPoemsTemplate,
   state,
   formCardProps,
   formDisabled,
 } = storeToRefs(stores.poemsTemplate);
+
+const handleDblclick = () => {
+  stores.modal.show();
+};
 </script>

@@ -14,33 +14,33 @@
 </template>
 
 <script setup lang="ts">
-import { Persona } from '@/types';
+import { PoemsTemplate } from '@/types';
 
 const { getTokenSilently } = useAuth();
 const stores = {
-  persona: usePersonaStore(),
+  poemsTemplate: usePoemsTemplateStore(),
 };
-const { activeId, state, loading } = storeToRefs(stores.persona);
+const { activeId, state, loading } = storeToRefs(stores.poemsTemplate);
 
 const handleRemove = async () => {
   try {
     loading.value = true;
 
     if (!activeId.value) {
-      throw new Error('No active persona to remove');
+      throw new Error('No active poemsTemplate to remove');
     }
 
     const token = await getTokenSilently();
-    const { message } = await fetchResource<Persona>(
+    const { message } = await fetchResource<PoemsTemplate>(
       token,
-      `/api/personas/${activeId.value}`,
+      `/api/poemsTemplates/${activeId.value}`,
       { method: 'delete' }
     );
     console.log(message);
 
-    stores.persona.removePersona(activeId.value);
-    stores.persona.changeActivePersona();
-    console.log('persona removed');
+    stores.poemsTemplate.removePoemsTemplate(activeId.value);
+    stores.poemsTemplate.changeActivePoemsTemplate();
+    console.log('poemsTemplate removed');
   } catch (e) {
     console.error(e);
   } finally {

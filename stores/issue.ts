@@ -1,4 +1,4 @@
-import { Persona, Workshop, Issue, Case, IssueTabs, IssueTab } from '@/types';
+import { Workshop, Issue, IssueTabs, IssueTab, WorkshopElement } from '@/types';
 
 export const useIssueStore = definePiniaStore('issue', () => {
   const workshop = ref<Workshop | null>(null);
@@ -16,10 +16,30 @@ export const useIssueStore = definePiniaStore('issue', () => {
   const elementsArray = computed(() =>
     elements.value
       ? [
-          ...elements.value.objects,
-          ...elements.value.environments,
-          ...elements.value.messages,
-          ...elements.value.services,
+          ...elements.value.objects.map(
+            (el): WorkshopElement => ({
+              type: 'O',
+              name: el,
+            })
+          ),
+          ...elements.value.environments.map(
+            (el): WorkshopElement => ({
+              type: 'E',
+              name: el,
+            })
+          ),
+          ...elements.value.messages.map(
+            (el): WorkshopElement => ({
+              type: 'M',
+              name: el,
+            })
+          ),
+          ...elements.value.services.map(
+            (el): WorkshopElement => ({
+              type: 'S',
+              name: el,
+            })
+          ),
         ]
       : []
   );
@@ -39,6 +59,7 @@ export const useIssueStore = definePiniaStore('issue', () => {
     workshop.value = workshopResponse.data;
     issue.value = issuesResponse.data;
   }
+
   return {
     workshop,
     elements,
