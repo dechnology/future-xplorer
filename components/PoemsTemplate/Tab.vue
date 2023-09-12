@@ -19,14 +19,23 @@
             />
             <InputSelect
               type="select"
-              title="人物 (P)"
-              placeholder="模板人物"
+              title="使用者 (P)"
+              placeholder="模板使用者"
               :disabled="formDisabled"
               v-model="currentPoemsTemplate.persona"
-              :options="personas.map((el) => ({ name: el.name, data: el }))"
+              :options="
+                personas.map((el) => ({
+                  name: `${el.trait}的${el.role}(${el.name})`,
+                  data: el,
+                }))
+              "
               input-classes="h-16"
-              >{{ currentPoemsTemplate.persona.name }}</InputSelect
+              v-slot="slotProps"
             >
+              {{ slotProps.selected.data.trait }}的{{
+                slotProps.selected.data.role
+              }}
+            </InputSelect>
             <InputComponent
               type="textarea"
               title="物件 (O)"
@@ -94,7 +103,7 @@
           class="h-[350px]"
         >
           <CardIcon :icon="{ name: 'mdi:plus', size: '5rem' }">
-            新增案例
+            新增模板
           </CardIcon>
         </Card>
         <!-- Should be async component -->

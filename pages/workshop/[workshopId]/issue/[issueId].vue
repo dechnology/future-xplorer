@@ -12,6 +12,7 @@ const Tabs: Record<IssueTabKeys, ConcreteComponent | string> = {
   keywordSort: resolveComponent('KeywordSortTab'),
   keywordVote: resolveComponent('KeywordVoteTab'),
   poemsTemplate: resolveComponent('PoemsTemplateTab'),
+  story: resolveComponent('StoryTab'),
 } as const;
 
 const { getTokenSilently } = useAuth();
