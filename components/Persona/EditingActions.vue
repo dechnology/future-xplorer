@@ -3,6 +3,7 @@
     @click.prevent="() => handlePortraitGeneration()"
     class="mx-auto h-12 w-44 rounded-lg bg-lime-600 text-white hover:bg-lime-700"
     body="AI生成圖片"
+    :disabled="aiDisabled"
   />
   <div class="flex items-center justify-around">
     <CardButton
@@ -37,6 +38,7 @@ const {
   imageUrlBuffer,
   state,
   loading,
+  aiDisabled,
 } = storeToRefs(stores.persona);
 
 const handlePortraitGeneration = async () => {
@@ -48,6 +50,11 @@ const handlePortraitGeneration = async () => {
     const persona = NewPersonaSchema.parse(currentPersona.value);
     const token = await getTokenSilently();
 
+    currentPersona.value.image = null;
+    imageFileBuffer.value = null;
+    imageUrlBuffer.value = null;
+
+    stores.persona.aiPromptGeneration();
     console.log('generating portrait for persona: ', persona);
     const { prompt } = await generatePrompt(token, {
       workshop: workshop.value,
@@ -56,6 +63,7 @@ const handlePortraitGeneration = async () => {
     });
     console.log('prompt: ', prompt);
 
+    stores.persona.aiAvatarGeneration();
     const { image } = await generateImage(token, { prompt });
     console.log('image: ', image);
 
