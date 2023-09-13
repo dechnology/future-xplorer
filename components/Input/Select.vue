@@ -3,16 +3,21 @@
     <InputLabel v-if="title">{{ title }}</InputLabel>
     <div class="relative">
       <div v-bind="inputProps">
-        <slot :selected="selected" />
+        <slot :selected="selected">
+          <span v-if="placeholder" class="text-gray-500">
+            {{ placeholder }}
+          </span>
+          <span v-else class="invisible">placeholder</span>
+        </slot>
       </div>
       <div class="absolute inset-y-0 right-2 flex items-center justify-center">
         <Icon
           ref="dropdownIcon"
-          @click="() => (dropdownShown = !dropdownShown)"
           class="cursor-pointer transition-all duration-300"
           :class="dropdownShown ? '-rotate-90' : 'rotate-90'"
           name="pepicons-pop:triangle-left-filled"
           size="1.25rem"
+          @click="() => (dropdownShown = !dropdownShown)"
         />
       </div>
       <div
@@ -21,7 +26,11 @@
         :class="dropdownShown ? 'scale-100' : 'scale-0'"
       >
         <Dropdown>
-          <DropdownItem v-for="opt in options" @click="() => handleClick(opt)">
+          <DropdownItem
+            v-for="opt in options"
+            :key="`${opt.name}_${opt.data}`"
+            @click="() => handleClick(opt)"
+          >
             {{ opt.name }}
           </DropdownItem>
         </Dropdown>
@@ -42,6 +51,7 @@ interface Props {
 
   // Optional
   title?: string;
+  placeholder?: string;
   inputClasses?: string;
 
   // Optional with defaults
@@ -56,7 +66,7 @@ const emit = defineEmits<{
   (e: 'update:modelValue', value: T): void;
 }>();
 
-const selected = shallowRef<Option>(props.options[0]);
+const selected = shallowRef<Option>();
 const dropdownShown = ref(false);
 const dropdownIcon = ref<HTMLDivElement | null>(null);
 const dropdownDiv = ref<HTMLDivElement | null>(null);
@@ -84,6 +94,7 @@ const inputProps = computed(() => {
 });
 
 const handleClick = (option: Option) => {
+  selected.value = option;
   emit('update:modelValue', option.data);
   dropdownShown.value = false;
 };

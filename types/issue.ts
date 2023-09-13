@@ -1,5 +1,13 @@
 import { z } from 'zod';
-import { Base, Workshop, User, Persona, Case, PoemsTemplate } from '@/types';
+import {
+  Base,
+  Workshop,
+  User,
+  Persona,
+  Case,
+  PoemsTemplate,
+  Story,
+} from '@/types';
 
 export const NewIssueSchema = z.object({
   title: z.string().trim().nonempty(),
@@ -14,6 +22,7 @@ export interface IssueResources {
   personas: Persona[];
   cases: Case[];
   poemsTemplates: PoemsTemplate[];
+  stories: Story[];
 }
 
 export interface Issue extends BaseIssue, IssueResources {

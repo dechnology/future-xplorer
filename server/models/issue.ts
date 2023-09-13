@@ -37,6 +37,13 @@ schema.virtual('poemsTemplates', {
   justOne: false,
 });
 
+schema.virtual('stories', {
+  ref: 'Story',
+  localField: '_id',
+  foreignField: 'issue',
+  justOne: false,
+});
+
 schema.virtual('users', {
   ref: 'User',
   localField: '_id',

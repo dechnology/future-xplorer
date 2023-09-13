@@ -11,37 +11,38 @@
         <FormCard v-bind="formCardProps" :username="username">
           <template #body>
             <InputComponent
+              v-model="currentPoemsTemplate.title"
               type="text"
               title="標題"
               placeholder="模板標題"
               :disabled="formDisabled"
-              v-model="currentPoemsTemplate.title"
             />
             <InputSelect
+              v-slot="slotProps"
+              v-model="currentPoemsTemplate.persona"
               type="select"
               title="使用者 (P)"
               placeholder="模板使用者"
               :disabled="formDisabled"
-              v-model="currentPoemsTemplate.persona"
               :options="
                 personas.map((el) => ({
                   name: `${el.trait}的${el.role}(${el.name})`,
                   data: el,
                 }))
               "
-              input-classes="h-16"
-              v-slot="slotProps"
             >
-              {{ slotProps.selected.data.trait }}的{{
-                slotProps.selected.data.role
-              }}
+              <span v-if="slotProps.selected && slotProps.selected.data">
+                {{ slotProps.selected.data.trait }}的{{
+                  slotProps.selected.data.role
+                }}
+              </span>
             </InputSelect>
             <InputComponent
+              v-model="currentPoemsTemplate.object"
               type="textarea"
               title="物件 (O)"
               placeholder="模板物件"
               :disabled="formDisabled"
-              v-model="currentPoemsTemplate.object"
               :select-options="
                 votedKeywords
                   .filter((el) => el.type === 'O')
@@ -50,11 +51,11 @@
               input-classes="h-[90px]"
             />
             <InputComponent
+              v-model="currentPoemsTemplate.environment"
               type="textarea"
               title="環境 (E)"
               placeholder="模板環境"
               :disabled="formDisabled"
-              v-model="currentPoemsTemplate.environment"
               :select-options="
                 votedKeywords
                   .filter((el) => el.type === 'E')
@@ -63,11 +64,11 @@
               input-classes="h-[90px]"
             />
             <InputComponent
+              v-model="currentPoemsTemplate.message"
               type="textarea"
               title="訊息 (M)"
               placeholder="模板訊息"
               :disabled="formDisabled"
-              v-model="currentPoemsTemplate.message"
               input-classes="h-[90px]"
               :select-options="
                 votedKeywords
@@ -76,11 +77,11 @@
               "
             />
             <InputComponent
+              v-model="currentPoemsTemplate.service"
               type="textarea"
               title="服務 (S)"
               placeholder="模板服務"
               :disabled="formDisabled"
-              v-model="currentPoemsTemplate.service"
               input-classes="h-[90px]"
               :select-options="
                 votedKeywords
@@ -98,9 +99,9 @@
     <CardGalleryPanel>
       <CardGallery :grid-cols="3">
         <Card
+          class="h-[350px]"
           :active="!activePoemsTemplate"
           @click="() => stores.poemsTemplate.changeActivePoemsTemplate()"
-          class="h-[350px]"
         >
           <CardIcon :icon="{ name: 'mdi:plus', size: '5rem' }">
             新增模板
@@ -109,10 +110,11 @@
         <!-- Should be async component -->
         <Card
           v-for="el in poemsTemplates"
+          :key="el._id"
+          class="h-[350px]"
           :active="activeId === el._id"
           @dblclick="() => handleDblclick()"
           @click="() => stores.poemsTemplate.changeActivePoemsTemplate(el)"
-          class="h-[350px]"
         >
           <CardTitle>{{ el.title }}</CardTitle>
           <CardDescription>

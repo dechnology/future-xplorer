@@ -11,9 +11,10 @@ export const NewPoemsTemplateSchema = z.object({
 
 export interface NewPoemsTemplate
   extends z.infer<typeof NewPoemsTemplateSchema> {
-  persona: Persona;
+  persona?: Persona;
 }
 
-export interface PoemsTemplate extends Base, NewPoemsTemplate {
+export interface PoemsTemplate extends Base, Omit<NewPoemsTemplate, 'persona'> {
   issue: Issue | string;
+  persona: Persona;
 }
