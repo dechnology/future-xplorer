@@ -10,11 +10,12 @@
         </template>
         <KeywordGallery :n_cols="2">
           <KeywordCard
-            :draggable="true"
             v-for="k in selfKeywords"
+            :key="k._id"
+            :draggable="true"
+            class="h-40"
             @update:keyword="(body) => (k.body = body)"
             @dragstart="() => (draggingKeyword = k)"
-            class="h-40"
           >
             <template v-if="k.category" #category>{{ k.category }}</template>
             {{ k.body }}
@@ -27,8 +28,8 @@
         <KeywordCategoryTab
           v-for="el in elementsArray"
           :key="`${el.type}_${el.name}`"
-          @click="() => (currentElement = el)"
           :active="currentElement.name === el.name"
+          @click="() => (currentElement = el)"
         >
           {{ el.name }}
         </KeywordCategoryTab>
@@ -40,8 +41,9 @@
       <KeywordGallery @dragover.prevent @drop="handleDrop">
         <KeywordCard
           v-for="k in filteredKeywords"
-          @update:keyword="(body) => (k.body = body)"
+          :key="k._id"
           class="h-32"
+          @update:keyword="(body) => (k.body = body)"
         >
           <template #category>{{ k.category }}</template>
           {{ k.body }}
@@ -52,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import { User, Keyword } from 'types';
+import { Keyword } from 'types';
 
 const formPanelProps = {
   title: '關鍵字整理',
@@ -60,7 +62,7 @@ const formPanelProps = {
     '第三步需自行在網路平台查詢收集可能的產品與服務案例資料，彙整成獨立的牌卡。',
 };
 
-const { user, getTokenSilently } = useAuth();
+const { getTokenSilently } = useAuth();
 
 const stores = {
   issue: useIssueStore(),
@@ -81,7 +83,7 @@ const filteredKeywords = computed(() =>
     : []
 );
 
-const handleDrop = async (e: DragEvent) => {
+const handleDrop = async () => {
   try {
     loading.value = true;
     if (!draggingKeyword.value) {

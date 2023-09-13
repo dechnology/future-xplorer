@@ -9,4 +9,9 @@ module.exports = {
     parser: '@typescript-eslint/parser',
   },
   extends: ['@nuxtjs/eslint-config-typescript', 'plugin:prettier/recommended'],
+  rules: {
+    'no-console': 'off',
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': 'warn',
+  },
 };
