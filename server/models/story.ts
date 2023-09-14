@@ -9,15 +9,7 @@ const schema = new Schema<Story>(
       persona: {
         role: { type: String, required: true },
         name: { type: String, required: true },
-        age: {
-          type: Schema.Types.Mixed,
-          validate: {
-            validator: function (v: unknown) {
-              return typeof v === 'string' || typeof v === 'number';
-            },
-            message: (props) => `${props.value} is not a valid value for age`,
-          },
-        },
+        age: { type: String, required: true },
         gender: { type: String, enum: ['male', 'female'], required: true },
         trait: { type: String, required: true },
         other: { type: String },

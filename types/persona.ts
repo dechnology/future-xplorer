@@ -4,10 +4,7 @@ import { Base, Issue, Workshop } from '@/types';
 export const NewPersonaSchema = z.object({
   role: z.string().trim().nonempty(),
   name: z.string().trim().nonempty(),
-  age: z.union([
-    z.string().trim().nonempty(),
-    z.number().int().positive().finite().safe(),
-  ]),
+  age: z.string().trim().nonempty(),
   gender: z.enum(PersonaPresets.gender),
   trait: z.string().trim().nonempty(),
   other: z.string().trim(),

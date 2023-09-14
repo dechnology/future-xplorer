@@ -68,7 +68,7 @@ export const listObjects = async (bucket: string) => {
   }
 };
 
-export default defineNitroPlugin(async (nitroApp) => {
+export default defineNitroPlugin((nitroApp) => {
   try {
     listBuckets();
   } catch (e) {
