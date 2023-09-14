@@ -36,7 +36,8 @@ export type IssueTabKeys =
   | 'keywordSort'
   | 'keywordVote'
   | 'poemsTemplate'
-  | 'story';
+  | 'story'
+  | 'image';
 
 export interface IssueTab {
   name: IssueTabKeys;
@@ -50,4 +51,5 @@ export const IssueTabs: Record<IssueTabKeys, IssueTab> = {
   keywordVote: { name: 'keywordVote', title: '案例分享' },
   poemsTemplate: { name: 'poemsTemplate', title: '模板設計' },
   story: { name: 'story', title: '情境故事' },
+  image: { name: 'image', title: '圖片產製' },
 } as const;

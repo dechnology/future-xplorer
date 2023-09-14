@@ -1,8 +1,22 @@
 import {
+  S3Client,
   GetObjectCommand,
   ListBucketsCommand,
   ListObjectsV2Command,
 } from '@aws-sdk/client-s3';
+
+const { s3AccessKeyId, s3SecretAccessKey } = useRuntimeConfig();
+
+console.log('s3AccessKeyId: ', s3AccessKeyId);
+console.log('s3SecretAccessKey: ', s3SecretAccessKey);
+
+const s3 = new S3Client({
+  region: 'us-west-2',
+  credentials: {
+    accessKeyId: s3AccessKeyId,
+    secretAccessKey: s3SecretAccessKey,
+  },
+});
 
 const getImage = async (bucket: string, key: string) => {
   const command = new GetObjectCommand({
@@ -70,7 +84,7 @@ export const listObjects = async (bucket: string) => {
 
 export default defineNitroPlugin((nitroApp) => {
   try {
-    listBuckets();
+    listObjects('dechnology');
   } catch (e) {
     console.error(e);
   }
