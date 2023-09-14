@@ -65,12 +65,12 @@ const iconNow = computed(() => {
     }
   } else if (props.status === "prompt") {
     iconChangeTo.value = {
-      name: 'material-symbols:short-text',
+      name: 'svg-spinners:dot-revolve',
       size: '5rem',
     }
   } else if (props.status === "avatar") {
     iconChangeTo.value = {
-      name: 'material-symbols:account-box',
+      name: 'svg-spinners:blocks-wave',
       size: '5rem',
     }
   } else if (props.status === "uploading") {
