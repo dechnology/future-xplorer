@@ -10,8 +10,9 @@
         </template>
         <FormCard v-bind="formCardProps" :username="username">
           <template #body>
-            <div class="grid grid-cols-2 gap-x-5 gap-y-7 rounded-lg">
+            <div class="grid grid-cols-2 gap-x-5 gap-y-7">
               <InputComponent
+                v-model="currentPersona.role"
                 type="text"
                 title="角色"
                 placeholder="角色名稱"
@@ -19,16 +20,16 @@
                 :select-options="
                   PersonaPresets.role.map((el) => ({ name: el, data: el }))
                 "
-                v-model="currentPersona.role"
               />
               <InputComponent
+                v-model="currentPersona.name"
                 type="text"
                 title="姓名"
                 placeholder="姓名"
                 :disabled="formDisabled"
-                v-model="currentPersona.name"
               />
               <InputComponent
+                v-model="currentPersona.age"
                 type="text"
                 title="年齡"
                 placeholder="年齡"
@@ -36,9 +37,9 @@
                 :select-options="
                   PersonaPresets.age.map((el) => ({ name: el, data: el }))
                 "
-                v-model="currentPersona.age"
               />
               <InputComponent
+                v-model="currentPersona.gender"
                 type="text"
                 title="性別"
                 placeholder="性別"
@@ -46,11 +47,11 @@
                 :select-options="
                   PersonaPresets.gender.map((el) => ({ name: el, data: el }))
                 "
-                v-model="currentPersona.gender"
                 select-only
               />
             </div>
             <InputComponent
+              v-model="currentPersona.trait"
               type="textarea"
               title="特徵"
               placeholder="特徵"
@@ -59,15 +60,14 @@
               :select-options="
                 PersonaPresets.trait.map((el) => ({ name: el, data: el }))
               "
-              v-model="currentPersona.trait"
             />
             <InputComponent
+              v-model="currentPersona.other"
               type="textarea"
               title="其他"
               placeholder="其他"
               input-classes="h-32"
               :disabled="formDisabled"
-              v-model="currentPersona.other"
             />
             <div class="flex flex-col overflow-hidden rounded-lg">
               <NuxtImg
@@ -83,11 +83,11 @@
               />
               <InputFileDropzone
                 v-else
-                @blob-url-created="(url) => (imageUrlBuffer = url)"
-                class="h-72 shrink-0 grow"
                 v-model:file="imageFileBuffer"
+                class="h-72 shrink-0 grow"
                 :disabled="formDisabled"
                 :status="imgStatus"
+                @blob-url-created="(url) => (imageUrlBuffer = url)"
               />
             </div>
           </template>
@@ -97,10 +97,10 @@
           <template #icon-actions>
             <Icon
               v-if="state !== 'DETAILS'"
-              @click="() => (currentPersona = getRandomNewPersona())"
               class="cursor-pointer text-blue-950"
               name="game-icons:rolling-dices"
               size="1.75rem"
+              @click="() => (currentPersona = getRandomNewPersona())"
             />
           </template>
         </FormCard>
@@ -110,8 +110,8 @@
       <CardGallery>
         <Card
           :active="!activePersona"
-          @click="() => stores.persona.changeActivePersona()"
           class="h-[350px]"
+          @click="() => stores.persona.changeActivePersona()"
         >
           <CardIcon :icon="{ name: 'mdi:plus', size: '5rem' }">
             新增人物
@@ -120,10 +120,11 @@
         <!-- Should be async component -->
         <Card
           v-for="p in personas"
+          :key="p._id"
           :active="activeId === p._id"
+          class="h-[350px]"
           @dblclick="() => handleDblclick()"
           @click="() => stores.persona.changeActivePersona(p)"
-          class="h-[350px]"
         >
           <template #image>
             <CardImage :url="p.image" />

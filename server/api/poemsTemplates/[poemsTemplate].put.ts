@@ -15,7 +15,7 @@ export default defineEventHandler(
     );
 
     if (!poemsTemplate) {
-      throw Error('PoemsTemplate update failed');
+      throw new Error('PoemsTemplate update failed');
     }
     return { data: poemsTemplate };
   }

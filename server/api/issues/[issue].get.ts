@@ -1,5 +1,5 @@
 import { Issue, ResourceObject } from '@/types';
-import { CaseModel, IssueModel } from '@/server/models';
+import { IssueModel } from '@/server/models';
 
 export default defineEventHandler(
   async (event): Promise<ResourceObject<Issue>> => {
@@ -32,6 +32,7 @@ export default defineEventHandler(
           },
         ],
       },
+      { path: 'stories', populate: 'creator' },
     ]);
 
     if (!issue) {

@@ -10,8 +10,9 @@
           <KeywordCategoryTabWrapper>
             <KeywordCategoryTab
               v-for="{ name, value } in categoryTabs"
-              @click="() => (currentCategory = value)"
+              :key="`${name}_${value}`"
               :active="currentCategory === value"
+              @click="() => (currentCategory = value)"
             >
               {{ name }}
             </KeywordCategoryTab>
@@ -22,15 +23,16 @@
               <KeywordGallery>
                 <KeywordCard
                   v-for="kw in filteredSelfKeywords"
-                  @update:keyword="(body) => (kw.body = body)"
+                  :key="kw._id"
                   class="h-40"
+                  @update:keyword="(body) => (kw.body = body)"
                 >
                   <template #favIcon>
                     <Icon
-                      @click="() => vote(kw)"
                       name="ic:round-star-border"
                       size="20px"
                       class="cursor-pointer"
+                      @click="() => vote(kw)"
                     />
                   </template>
                   <template v-if="kw.category" #category>
@@ -42,25 +44,26 @@
             </KeywordGalleryPanel>
             <KeywordGalleryPanel input-classes="basis-1/2">
               <CustomSelect
-                :options="keywordUsers.map((u) => ({ name: u.name, data: u }))"
-                v-model="currentUser"
                 v-slot="slotProps"
+                v-model="currentUser"
                 class="px-2"
+                :options="keywordUsers.map((u) => ({ name: u.name, data: u }))"
               >
                 {{ slotProps.selected.name }}的關鍵字
               </CustomSelect>
               <KeywordGallery>
                 <KeywordCard
                   v-for="kw in filteredUserKeywords"
-                  @update:keyword="(body) => (kw.body = body)"
+                  :key="kw._id"
                   class="h-40"
+                  @update:keyword="(body) => (kw.body = body)"
                 >
                   <template #favIcon>
                     <Icon
-                      @click="() => vote(kw)"
                       name="ic:round-star-border"
                       size="20px"
                       class="cursor-pointer"
+                      @click="() => vote(kw)"
                     />
                   </template>
                   <template v-if="kw.category" #category>
@@ -79,15 +82,16 @@
       <KeywordGallery>
         <KeywordCard
           v-for="kw in favoriteKeywords"
-          @update:keyword="(body) => (kw.body = body)"
+          :key="kw._id"
           class="h-32"
+          @update:keyword="(body) => (kw.body = body)"
         >
           <template #favIcon>
             <Icon
-              @click="() => cancelVote(kw)"
               name="ic:round-star"
               size="20px"
               class="cursor-pointer"
+              @click="() => cancelVote(kw)"
             />
           </template>
           <template v-if="kw.category" #category>{{ kw.category }}</template>

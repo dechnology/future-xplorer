@@ -1,14 +1,14 @@
 <template>
   <div class="flex items-center justify-around">
     <CardButton
-      @click.prevent="handleCancel"
       class="rounded-lg bg-red-400 px-8 py-3 text-white hover:bg-red-500"
       body="取消"
+      @click.prevent="handleCancel"
     />
     <CardButton
-      @click.prevent="handleSaveEdit"
       class="rounded-lg bg-indigo-500 px-8 py-3 text-white hover:bg-indigo-600"
       body="儲存"
+      @click.prevent="handleSaveEdit"
     />
   </div>
 </template>
@@ -23,8 +23,7 @@ const stores = {
   issue: useIssueStore(),
   poemsTemplate: usePoemsTemplateStore(),
 };
-const { workshop, issue } = storeToRefs(stores.issue);
-const { currentPoemsTemplate, activePoemsTemplate, activeId, state, loading } =
+const { currentPoemsTemplate, activePoemsTemplate, activeId, loading } =
   storeToRefs(stores.poemsTemplate);
 
 const handleCancel = () => {
@@ -39,6 +38,10 @@ const handleSaveEdit = async () => {
     //   state.value = 'DETAILS';
     //   return;
     // }
+
+    if (!currentPoemsTemplate.value.persona) {
+      throw new Error('no persona');
+    }
 
     const token = await getTokenSilently();
     const p = NewPoemsTemplateSchema.passthrough().parse(

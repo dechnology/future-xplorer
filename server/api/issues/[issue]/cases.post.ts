@@ -16,7 +16,7 @@ export default defineEventHandler(
     });
 
     if (!studyCase) {
-      throw Error('Case creation failed');
+      throw new Error('Case creation failed');
     }
     return { data: studyCase };
   }

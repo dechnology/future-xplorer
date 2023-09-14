@@ -1,65 +1,62 @@
 <template>
   <div class="flex items-center justify-around">
     <CardButton
-      @click.prevent="handleCancel"
       class="rounded-lg bg-red-400 px-8 py-3 text-white hover:bg-red-500"
       body="取消"
+      @click.prevent="handleCancel"
     />
     <CardButton
-      @click.prevent="handleSaveEdit"
       class="rounded-lg bg-indigo-500 px-8 py-3 text-white hover:bg-indigo-600"
       body="儲存"
+      @click.prevent="handleSaveEdit"
     />
   </div>
 </template>
 
 <script setup lang="ts">
 // import { isEqual } from 'lodash';
-import type { User, PoemsTemplate } from '@/types';
-import { NewPoemsTemplateSchema } from '@/types';
+import type { User, Story } from '@/types';
+import { NewStorySchema } from '@/types';
 
 const { user, getTokenSilently } = useAuth();
 const stores = {
   issue: useIssueStore(),
-  poemsTemplate: usePoemsTemplateStore(),
+  story: useStoryStore(),
 };
-const { workshop, issue } = storeToRefs(stores.issue);
-const { currentPoemsTemplate, activePoemsTemplate, activeId, state, loading } =
-  storeToRefs(stores.poemsTemplate);
+const { currentStory, activeStory, activeId, state, loading } = storeToRefs(
+  stores.story
+);
 
 const handleCancel = () => {
-  stores.poemsTemplate.changeActivePoemsTemplate(activePoemsTemplate.value);
+  stores.story.changeActiveStory(activeStory.value);
 };
 
 const handleSaveEdit = async () => {
   try {
     loading.value = true;
 
-    // if (isEqual(currentPoemsTemplate.value, activePoemsTemplate.value)) {
+    // if (isEqual(currentStory.value, activeStory.value)) {
     //   state.value = 'DETAILS';
     //   return;
     // }
 
     const token = await getTokenSilently();
-    const p = NewPoemsTemplateSchema.passthrough().parse(
-      currentPoemsTemplate.value
-    );
+    const story = NewStorySchema.passthrough().parse(currentStory.value);
 
-    console.log('Patching: ', p);
-    const { data: editedPoemsTemplate } = await fetchResource<PoemsTemplate>(
+    console.log('Patching: ', story);
+    const { data: editedStory } = await fetchResource<Story>(
       token,
-      `/api/poemsTemplates/${activeId.value}`,
+      `/api/stories/${activeId.value}`,
       {
         method: 'put',
-        body: { ...p, persona: currentPoemsTemplate.value.persona._id },
+        body: story,
       }
     );
 
-    editedPoemsTemplate.creator = user.value as User;
-    editedPoemsTemplate.persona = currentPoemsTemplate.value.persona;
-    console.log('Patched: ', editedPoemsTemplate);
-    stores.poemsTemplate.upsertPoemsTemplate(editedPoemsTemplate);
-    stores.poemsTemplate.changeActivePoemsTemplate(editedPoemsTemplate);
+    editedStory.creator = user.value as User;
+    console.log('Patched: ', editedStory);
+    stores.story.upsertStory(editedStory);
+    stores.story.changeActiveStory(editedStory);
   } catch (e) {
     console.error(e);
   } finally {

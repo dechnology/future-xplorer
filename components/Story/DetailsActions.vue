@@ -1,46 +1,46 @@
 <template>
   <div class="flex items-center justify-around">
     <CardButton
-      @click.prevent="handleRemove"
       class="rounded-lg bg-red-400 px-8 py-3 text-white transition-all hover:bg-red-500"
       body="刪除"
+      @click.prevent="handleRemove"
     />
     <CardButton
-      @click.prevent="handleEdit"
       class="rounded-lg bg-black bg-opacity-40 px-8 py-3 text-white transition-all hover:bg-opacity-50"
       body="編輯"
+      @click.prevent="handleEdit"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { PoemsTemplate } from '@/types';
+import { Story } from '@/types';
 
 const { getTokenSilently } = useAuth();
 const stores = {
-  poemsTemplate: usePoemsTemplateStore(),
+  story: useStoryStore(),
 };
-const { activeId, state, loading } = storeToRefs(stores.poemsTemplate);
+const { activeId, state, loading } = storeToRefs(stores.story);
 
 const handleRemove = async () => {
   try {
     loading.value = true;
 
     if (!activeId.value) {
-      throw new Error('No active poemsTemplate to remove');
+      throw new Error('No active story to remove');
     }
 
     const token = await getTokenSilently();
-    const { message } = await fetchResource<PoemsTemplate>(
+    const { message } = await fetchResource<Story>(
       token,
-      `/api/poemsTemplates/${activeId.value}`,
+      `/api/stories/${activeId.value}`,
       { method: 'delete' }
     );
     console.log(message);
 
-    stores.poemsTemplate.removePoemsTemplate(activeId.value);
-    stores.poemsTemplate.changeActivePoemsTemplate();
-    console.log('poemsTemplate removed');
+    stores.story.removeStory(activeId.value);
+    stores.story.changeActiveStory();
+    console.log('story removed');
   } catch (e) {
     console.error(e);
   } finally {

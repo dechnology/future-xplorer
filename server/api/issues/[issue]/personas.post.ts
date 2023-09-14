@@ -14,7 +14,7 @@ export default defineEventHandler(
     });
 
     if (!persona) {
-      throw Error('Persona creation failed');
+      throw new Error('Persona creation failed');
     }
     return { data: persona };
   }

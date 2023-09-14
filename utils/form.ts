@@ -8,6 +8,7 @@ import {
   NewKeyword,
   NewPersona,
   NewPoemsTemplate,
+  NewStory,
   NewWorkshop,
   User,
 } from '~/types';
@@ -130,10 +131,19 @@ export const getNewKeyword = (): NewKeyword => ({
 
 export const getNewPoemsTemplate = (): NewPoemsTemplate => ({
   title: '',
-  content: '',
-  persona: getNewPersona(),
   object: '',
   environment: '',
   message: '',
   service: '',
+});
+
+export const getNewStory = (): NewStory => ({
+  title: '',
+  content: '',
+  context: {
+    object: '',
+    environment: '',
+    message: '',
+    service: '',
+  },
 });
