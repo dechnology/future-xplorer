@@ -14,6 +14,8 @@ module.exports = {
     'no-console': 'off',
     'no-unused-vars': 'off',
     'vue/multi-word-component-names': 'off',
+    'no-useless-return': 'warn',
+    'require-await': 'warn',
     '@typescript-eslint/no-unused-vars': ['warn', { varsIgnorePattern: '^_' }],
   },
 };

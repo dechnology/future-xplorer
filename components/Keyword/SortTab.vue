@@ -54,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import { Keyword } from 'types';
+import { Keyword } from '@/types';
 
 const formPanelProps = {
   title: '關鍵字整理',

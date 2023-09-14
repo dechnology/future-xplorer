@@ -1,15 +1,17 @@
 <template>
   <div class="flex items-center justify-around">
     <CardButton
-      @click.prevent="handleRemove"
       class="rounded-lg bg-red-400 px-8 py-3 text-white transition-all hover:bg-red-500"
-      body="刪除"
-    />
+      @click.prevent="handleRemove"
+    >
+      刪除
+    </CardButton>
     <CardButton
-      @click.prevent="handleEdit"
       class="rounded-lg bg-black bg-opacity-40 px-8 py-3 text-white transition-all hover:bg-opacity-50"
-      body="編輯"
-    />
+      @click.prevent="handleEdit"
+    >
+      編輯
+    </CardButton>
   </div>
 </template>
 

@@ -1,23 +1,27 @@
 <template>
   <div class="flex flex-wrap items-center justify-center gap-6">
     <CardButton
-      class="h-12 rounded-lg bg-lime-500 px-8 py-3 text-white hover:bg-lime-600"
-      body="AI生成關鍵字"
-    />
+      class="h-12 rounded-lg bg-lime-600 px-8 py-3 text-white hover:bg-lime-700"
+    >
+      AI生成關鍵字
+    </CardButton>
     <CardButton
-      @click="handleSaveClick"
       class="h-12 rounded-lg bg-indigo-500 px-8 py-3 text-white hover:bg-indigo-600"
-      body="儲存關鍵字"
-    />
+      @click="handleSaveClick"
+    >
+      儲存關鍵字
+    </CardButton>
     <CardButton
       class="h-12 rounded-lg bg-black bg-opacity-40 px-8 py-3 text-white hover:bg-opacity-50"
-      body="使用說明"
-    />
+    >
+      使用說明
+    </CardButton>
     <CardButton
+      class="h-12 rounded-lg bg-black bg-opacity-40 px-8 py-3 text-white hover:bg-opacity-50"
       @click="() => stores.modal.close()"
-      class="h-12 rounded-lg bg-black bg-opacity-40 px-8 py-3 text-white hover:bg-opacity-50"
-      body="關閉"
-    />
+    >
+      關閉
+    </CardButton>
   </div>
 </template>
 
