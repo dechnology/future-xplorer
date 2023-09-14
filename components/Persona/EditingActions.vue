@@ -1,21 +1,24 @@
 <template>
   <CardButton
-    @click.prevent="() => handlePortraitGeneration()"
     class="mx-auto h-12 w-44 rounded-lg bg-lime-600 text-white hover:bg-lime-700"
-    body="AI生成圖片"
     :disabled="aiDisabled"
-  />
+    @click.prevent="() => handlePortraitGeneration()"
+  >
+    AI生成圖片
+  </CardButton>
   <div class="flex items-center justify-around">
     <CardButton
-      @click.prevent="handleCancel"
       class="rounded-lg bg-red-400 px-8 py-3 text-white hover:bg-red-500"
-      body="取消"
-    />
+      @click.prevent="handleCancel"
+    >
+      取消
+    </CardButton>
     <CardButton
-      @click.prevent="handleSaveEdit"
       class="rounded-lg bg-indigo-500 px-8 py-3 text-white hover:bg-indigo-600"
-      body="儲存"
-    />
+      @click.prevent="handleSaveEdit"
+    >
+      儲存
+    </CardButton>
   </div>
 </template>
 

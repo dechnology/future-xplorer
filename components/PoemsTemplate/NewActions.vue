@@ -2,14 +2,16 @@
   <div class="flex items-center justify-around">
     <CardButton
       class="rounded-lg bg-red-400 px-8 py-3 text-white hover:bg-red-500"
-      body="清除"
       @click.prevent="() => stores.poemsTemplate.clearCurrentPoemsTemplate()"
-    />
+    >
+      清除
+    </CardButton>
     <CardButton
       class="rounded-lg bg-indigo-500 px-8 py-3 text-white hover:bg-indigo-600"
-      body="新增"
       @click.prevent="handleCreate"
-    />
+    >
+      新增
+    </CardButton>
   </div>
 </template>
 

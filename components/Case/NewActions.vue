@@ -1,20 +1,23 @@
 <template>
   <div class="flex items-center justify-around">
     <CardButton
-      @click.prevent="() => stores.case.clearCurrentCase()"
       class="rounded-lg bg-red-400 px-8 py-3 text-white hover:bg-red-500"
-      body="清除"
-    />
+      @click.prevent="() => stores.case.clearCurrentCase()"
+    >
+      清除
+    </CardButton>
     <CardButton
-      @click.prevent="handleCreate"
       class="rounded-lg bg-indigo-500 px-8 py-3 text-white hover:bg-indigo-600"
-      body="新增"
-    />
+      @click.prevent="handleCreate"
+    >
+      新增
+    </CardButton>
     <CardButton
-      @click.prevent="handleCreate"
       class="rounded-lg bg-indigo-500 px-8 py-3 text-white hover:bg-indigo-600"
-      body="歷史案例"
-    />
+      @click.prevent="handleCreate"
+    >
+      歷史案例
+    </CardButton>
   </div>
 </template>
 

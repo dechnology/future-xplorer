@@ -1,21 +1,24 @@
 <template>
   <CardButton
-    @click.prevent="() => handlePortraitGeneration()"
-    class="mx-auto h-12 w-44 rounded-lg bg-lime-600 text-white hover:bg-lime-700"
-    body="AI生成圖片"
     :disabled="aiDisabled"
-  />
+    class="mx-auto h-12 w-44 rounded-lg bg-lime-600 text-white hover:bg-lime-700"
+    @click.prevent="() => handlePortraitGeneration()"
+  >
+    AI生成圖片
+  </CardButton>
   <div class="flex items-center justify-around">
     <CardButton
-      @click.prevent="() => stores.persona.clearCurrentPersona()"
       class="rounded-lg bg-red-400 px-8 py-3 text-white hover:bg-red-500"
-      body="清除"
-    />
+      @click.prevent="() => stores.persona.clearCurrentPersona()"
+    >
+      清除
+    </CardButton>
     <CardButton
-      @click.prevent="handleCreate"
       class="rounded-lg bg-indigo-500 px-8 py-3 text-white hover:bg-indigo-600"
-      body="新增"
-    />
+      @click.prevent="handleCreate"
+    >
+      新增
+    </CardButton>
   </div>
 </template>
 
@@ -29,13 +32,8 @@ const stores = {
   persona: usePersonaStore(),
 };
 const { workshop, issue, issueId } = storeToRefs(stores.issue);
-const {
-  currentPersona,
-  imageFileBuffer,
-  imageUrlBuffer,
-  loading,
-  aiDisabled
-} = storeToRefs(stores.persona);
+const { currentPersona, imageFileBuffer, imageUrlBuffer, loading, aiDisabled } =
+  storeToRefs(stores.persona);
 
 const handlePortraitGeneration = async () => {
   try {

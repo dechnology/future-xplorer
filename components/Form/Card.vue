@@ -2,8 +2,15 @@
   <form
     class="flex flex-col justify-start gap-5 rounded-lg bg-white p-8 shadow"
   >
-    <div class="flex items-start justify-between">
-      <CardHeader :title="formTitle" :creator-name="creatorName" />
+    <div
+      v-if="(formTitle && creatorName) || $slots['icon-actions']"
+      class="flex items-start justify-between"
+    >
+      <CardHeader
+        v-if="formTitle && creatorName"
+        :title="formTitle"
+        :creator-name="creatorName"
+      />
       <slot name="icon-actions" />
     </div>
     <slot name="body" />
@@ -28,7 +35,7 @@ import { format } from 'date-fns';
 import { User } from '@/types';
 
 const props = defineProps<{
-  formTitle: string;
+  formTitle?: string;
   creator?: User;
   username?: string;
   timestamps?: { createdAt: Date; updatedAt: Date };

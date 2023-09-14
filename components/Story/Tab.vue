@@ -101,10 +101,11 @@
             />
             <div class="flex flex-col items-center">
               <CardButton
-                class="rounded-lg bg-lime-600 px-8 py-3 text-white transition-all hover:bg-lime-700"
-                body="AI組成故事"
+                class="rounded-lg bg-lime-500 px-8 py-3 text-white transition-all hover:bg-lime-700"
                 @click.prevent="handleStoryGeneration"
-              />
+              >
+                AI組成故事
+              </CardButton>
               <Icon
                 name="material-symbols:double-arrow"
                 size="4rem"
