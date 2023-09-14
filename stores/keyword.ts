@@ -57,6 +57,21 @@ export const useKeywordStore = definePiniaStore('keywords', () => {
     nonFavoriteKeywords.value.filter((kw) => kw.creator._id === user.value?._id)
   );
 
+  const categoriedVotedKeywords = computed(() => {
+    const result: Record<'O' | 'E' | 'M' | 'S', string[]> = {
+      O: [],
+      E: [],
+      M: [],
+      S: [],
+    };
+
+    for (const kw of votedKeywords.value) {
+      kw.type && result[kw.type].push(kw.body);
+    }
+
+    return result;
+  });
+
   return {
     loading,
     keywords,
@@ -68,5 +83,6 @@ export const useKeywordStore = definePiniaStore('keywords', () => {
     nonFavoriteKeywords,
     nonFavoriteSelfKeywords,
     keywordUsers,
+    categoriedVotedKeywords,
   };
 });

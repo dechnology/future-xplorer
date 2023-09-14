@@ -15,7 +15,7 @@ export default defineEventHandler(
     );
 
     if (!persona) {
-      throw Error('Persona update failed');
+      throw new Error('Persona update failed');
     }
     return { data: persona };
   }

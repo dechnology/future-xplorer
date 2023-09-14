@@ -37,35 +37,32 @@
               </InputSelect>
             </div>
             <InputSelect
-              v-slot="slotProps"
               v-model="currentStory.context.persona"
               type="select"
               title="使用者 (P)"
               placeholder="故事使用者"
               :disabled="formDisabled"
               :options="
-                personas.map((el) => ({
-                  name: `${el.trait}的${el.role}(${el.name})`,
+                personaOptions.map((el) => ({
+                  name: `${el.trait}的${el.role} (${el.name})`,
                   data: el,
                 }))
               "
             >
-              <span v-if="slotProps.selected">
-                {{ slotProps.selected.data.trait }}的{{
-                  slotProps.selected.data.role
+              <span v-if="currentStory.context.persona">
+                {{ currentStory.context.persona.trait }}的{{
+                  currentStory.context.persona.role
                 }}
               </span>
             </InputSelect>
             <InputComponent
               v-model="currentStory.context.object"
               type="textarea"
-              title="環境 (E)"
-              placeholder="故事環境"
+              title="物件 (O)"
+              placeholder="故事物件"
               :disabled="formDisabled"
               :select-options="
-                votedKeywords
-                  .filter((el) => el.type === 'E')
-                  .map((el) => ({ name: el.body, data: el.body }))
+                categoriedVotedKeywords.O.map((el) => ({ name: el, data: el }))
               "
               input-classes="h-[90px]"
             />
@@ -76,9 +73,7 @@
               placeholder="故事環境"
               :disabled="formDisabled"
               :select-options="
-                votedKeywords
-                  .filter((el) => el.type === 'E')
-                  .map((el) => ({ name: el.body, data: el.body }))
+                categoriedVotedKeywords.E.map((el) => ({ name: el, data: el }))
               "
               input-classes="h-[90px]"
             />
@@ -90,9 +85,7 @@
               :disabled="formDisabled"
               input-classes="h-[90px]"
               :select-options="
-                votedKeywords
-                  .filter((el) => el.type === 'M')
-                  .map((el) => ({ name: el.body, data: el.body }))
+                categoriedVotedKeywords.M.map((el) => ({ name: el, data: el }))
               "
             />
             <InputComponent
@@ -103,9 +96,7 @@
               :disabled="formDisabled"
               input-classes="h-[90px]"
               :select-options="
-                votedKeywords
-                  .filter((el) => el.type === 'S')
-                  .map((el) => ({ name: el.body, data: el.body }))
+                categoriedVotedKeywords.S.map((el) => ({ name: el, data: el }))
               "
             />
             <div class="flex flex-col items-center">
@@ -131,6 +122,15 @@
           </template>
           <template #actions>
             <component :is="ActionsComponents[state]" />
+          </template>
+          <template #icon-actions>
+            <Icon
+              v-if="state !== 'DETAILS'"
+              class="cursor-pointer text-blue-950"
+              name="game-icons:rolling-dices"
+              size="1.75rem"
+              @click="() => randomizeContext()"
+            />
           </template>
         </FormCard>
       </FormPanel>
@@ -164,8 +164,9 @@
 </template>
 
 <script setup lang="ts">
+import { fakerZH_TW } from '@faker-js/faker';
 import { ConcreteComponent } from 'nuxt/dist/app/compat/capi';
-import { FormStateKeys, PoemsTemplate } from '@/types';
+import type { FormStateKeys, NewPersona, PoemsTemplate } from '@/types';
 
 const ActionsComponents: Record<FormStateKeys, ConcreteComponent | string> = {
   NEW: resolveComponent('StoryNewActions'),
@@ -189,7 +190,7 @@ const stores = {
   story: useStoryStore(),
 };
 const { personas } = storeToRefs(stores.persona);
-const { votedKeywords } = storeToRefs(stores.keyword);
+const { categoriedVotedKeywords } = storeToRefs(stores.keyword);
 const { poemsTemplates } = storeToRefs(stores.poemsTemplate);
 const {
   loading,
@@ -203,6 +204,32 @@ const {
 } = storeToRefs(stores.story);
 
 const currentPoemsTemplate = ref<PoemsTemplate>();
+
+const personaOptions = computed(() =>
+  personas.value.map((el): Omit<NewPersona, 'image'> => {
+    const { name, age, gender, role, trait, other, ..._ } = el;
+    return {
+      name,
+      age,
+      gender,
+      role,
+      trait,
+      other,
+    };
+  })
+);
+
+const randomizeContext = () => {
+  currentStory.value.context = {
+    persona: fakerZH_TW.helpers.arrayElement(personaOptions.value),
+    object: fakerZH_TW.helpers.arrayElement(categoriedVotedKeywords.value.O),
+    environment: fakerZH_TW.helpers.arrayElement(
+      categoriedVotedKeywords.value.E
+    ),
+    message: fakerZH_TW.helpers.arrayElement(categoriedVotedKeywords.value.M),
+    service: fakerZH_TW.helpers.arrayElement(categoriedVotedKeywords.value.S),
+  };
+};
 
 const handleStoryGeneration = async () => {};
 

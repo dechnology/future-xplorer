@@ -138,9 +138,9 @@ export const getNewPoemsTemplate = (): NewPoemsTemplate => ({
 });
 
 export const getNewStory = (): NewStory => ({
+  title: '',
   content: '',
   context: {
-    persona: getNewPersona(),
     object: '',
     environment: '',
     message: '',

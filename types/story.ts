@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { Base, Issue, NewPersonaSchema } from '@/types';
 
 export const StoryContextSchema = z.object({
-  persona: NewPersonaSchema.omit({ image: true }),
+  persona: NewPersonaSchema.omit({ image: true }).optional(),
   object: z.string().trim().nonempty(),
   environment: z.string().trim().nonempty(),
   message: z.string().trim().nonempty(),

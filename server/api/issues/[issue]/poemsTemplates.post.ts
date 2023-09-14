@@ -15,7 +15,7 @@ export default defineEventHandler(
     });
 
     if (!poemsTemplate) {
-      throw Error('PoemsTemplate creation failed');
+      throw new Error('PoemsTemplate creation failed');
     }
     return { data: poemsTemplate };
   }

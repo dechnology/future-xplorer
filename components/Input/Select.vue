@@ -64,6 +64,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: T): void;
+  (e: 'select', value: T): void;
 }>();
 
 const selected = shallowRef<Option>();
@@ -83,6 +84,7 @@ const inputProps = computed(() => {
         'border',
         'border-solid',
         'border-black',
+        'text-black',
       ],
       props.inputClasses,
       props.options && 'pr-12',
@@ -96,6 +98,7 @@ const inputProps = computed(() => {
 const handleClick = (option: Option) => {
   selected.value = option;
   emit('update:modelValue', option.data);
+  emit('select', option.data);
   dropdownShown.value = false;
 };
 

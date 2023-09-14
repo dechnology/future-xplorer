@@ -2,12 +2,12 @@ import { Serialize } from 'nitropack';
 import type {
   Base,
   User,
-  Workshop,
   BaseIssue,
   Issue,
   Persona,
   Case,
   PoemsTemplate,
+  Story,
 } from '@/types';
 
 export const deserializerFactory =
@@ -33,15 +33,23 @@ export const deserializeBaseIssue = deserializerFactory<BaseIssue>();
 export const deserializePersona = deserializerFactory<Persona>();
 export const deserializeCase = deserializerFactory<Case>();
 export const deserializePoemsTemplate = deserializerFactory<PoemsTemplate>();
+export const deserializeStory = deserializerFactory<Story>();
 
 export const deserializeIssue = (serialized: Serialize<Issue>): Issue => {
-  const { users, personas, cases, poemsTemplates, ...serializedBaseIssue } =
-    serialized;
+  const {
+    users,
+    personas,
+    cases,
+    poemsTemplates,
+    stories,
+    ...serializedBaseIssue
+  } = serialized;
   return {
     ...deserializeBaseIssue(serializedBaseIssue),
     users: users && users.map((el) => deserializeUser(el)),
     personas: personas.map((el) => deserializePersona(el)),
     cases: cases.map((el) => deserializeCase(el)),
     poemsTemplates: poemsTemplates.map((el) => deserializePoemsTemplate(el)),
+    stories: stories.map((el) => deserializeStory(el)),
   };
 };
