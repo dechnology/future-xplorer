@@ -33,6 +33,7 @@ export default defineEventHandler(
         ],
       },
       { path: 'stories', populate: 'creator' },
+      { path: 'illustrations', populate: 'creator' },
     ]);
 
     if (!issue) {

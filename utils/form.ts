@@ -12,6 +12,7 @@ import {
   NewWorkshop,
   User,
 } from '~/types';
+import { NewIllustration } from '~/types/illustration';
 
 const formStatesCache: Record<string, FormState> = {};
 
@@ -146,4 +147,9 @@ export const getNewStory = (): NewStory => ({
     message: '',
     service: '',
   },
+});
+
+export const getNewIllustration = (): NewIllustration => ({
+  story: '',
+  prompt: '',
 });

@@ -13,7 +13,7 @@ const Tabs: Record<IssueTabKeys, ConcreteComponent | string> = {
   keywordVote: resolveComponent('KeywordVoteTab'),
   poemsTemplate: resolveComponent('PoemsTemplateTab'),
   story: resolveComponent('StoryTab'),
-  image: resolveComponent('ImageTab'),
+  illustration: resolveComponent('IllustrationTab'),
 } as const;
 
 const { getTokenSilently } = useAuth();

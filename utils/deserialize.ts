@@ -8,6 +8,7 @@ import type {
   Case,
   PoemsTemplate,
   Story,
+  Illustration,
 } from '@/types';
 
 export const deserializerFactory =
@@ -34,6 +35,7 @@ export const deserializePersona = deserializerFactory<Persona>();
 export const deserializeCase = deserializerFactory<Case>();
 export const deserializePoemsTemplate = deserializerFactory<PoemsTemplate>();
 export const deserializeStory = deserializerFactory<Story>();
+export const deserializeIllustration = deserializerFactory<Illustration>();
 
 export const deserializeIssue = (serialized: Serialize<Issue>): Issue => {
   const {
@@ -42,6 +44,7 @@ export const deserializeIssue = (serialized: Serialize<Issue>): Issue => {
     cases,
     poemsTemplates,
     stories,
+    illustrations,
     ...serializedBaseIssue
   } = serialized;
   return {
@@ -51,5 +54,6 @@ export const deserializeIssue = (serialized: Serialize<Issue>): Issue => {
     cases: cases.map((el) => deserializeCase(el)),
     poemsTemplates: poemsTemplates.map((el) => deserializePoemsTemplate(el)),
     stories: stories.map((el) => deserializeStory(el)),
+    illustrations: illustrations.map((el) => deserializeIllustration(el)),
   };
 };

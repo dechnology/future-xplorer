@@ -7,3 +7,4 @@ export { default as KeywordModel } from './keyword';
 export { default as VoteModel } from './vote';
 export { default as PoemsTemplateModel } from './poemsTemplate';
 export { default as StoryModel } from './story';
+export { default as IllustrationModel } from './illustration';
