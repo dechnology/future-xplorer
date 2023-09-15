@@ -73,12 +73,13 @@
               <NuxtImg
                 v-if="currentPersona.image"
                 :src="currentPersona.image"
+                placeholder="https://api.iconify.design/line-md:loading-alt-loop.svg"
                 alt=""
               />
               <NuxtImg
                 v-else-if="imageUrlBuffer"
                 :src="imageUrlBuffer"
-                placeholder="https://lordicon.com/icons/wired/gradient/306-avatar-icon-calm.gif"
+                placeholder="https://api.iconify.design/line-md:loading-alt-loop.svg"
                 alt="人物圖遺失"
               />
               <InputFileDropzone
@@ -102,6 +103,13 @@
               size="1.75rem"
               @click="() => (currentPersona = getRandomNewPersona())"
             />
+            <Icon
+              v-else
+              @click="openModel"
+              class="cursor-pointer text-blue-950"
+              name="material-symbols:open-in-full-rounded"
+              size="1.75rem"
+            />
           </template>
         </FormCard>
       </FormPanel>
@@ -123,7 +131,7 @@
           :key="p._id"
           :active="activeId === p._id"
           class="h-[350px]"
-          @dblclick="() => handleDblclick()"
+          @dblclick="() => openModel()"
           @click="() => stores.persona.changeActivePersona(p)"
         >
           <template #image>
@@ -148,11 +156,43 @@
       </CardGallery>
     </CardGalleryPanel>
   </NuxtLayout>
+  <PersonaModal v-if="activePersona">
+    <PersonaModalAvatar
+      :currentPersonaImage="activePersona.image"
+    />
+    <template #personaInfo>
+      <PersonaModalContent v-slot="slotProps">
+        <div v-for="(content, title) in slotProps.content">
+          <p>
+            <span class="text-base font-semibold text-gray-700 text-3xl"
+              >{{ title }}：</span
+            >
+            <span class="text-3xl">
+              {{ content }}
+            </span>
+          </p>
+        </div>
+      </PersonaModalContent>
+    </template>
+    <template #actions>
+      <PersonaModalActions />
+      <PersonaModalFootnote>
+        <p>
+          <span class="text-base font-regular text-gray-400">
+            <br/>{{ `建立者：${activePersona.creator.name}` }}
+            <br/>{{ `新增時間：${format(activePersona.createdAt, 'yyyy-MM-dd')}` }}
+            <br/>{{ `更新時間：${format(activePersona.updatedAt, 'yyyy-MM-dd')}` }}
+          </span>
+        </p>
+      </PersonaModalFootnote>
+    </template>
+  </PersonaModal>
 </template>
 
 <script setup lang="ts">
 import type { ConcreteComponent } from 'nuxt/dist/app/compat/capi';
 import type { FormStateKeys } from '~/types';
+import { format } from 'date-fns';
 
 const formPanelProps = {
   title: '人物清單',
@@ -168,6 +208,7 @@ const ActionsComponents: Record<FormStateKeys, ConcreteComponent | string> = {
 const { username } = useAuth();
 const stores = {
   persona: usePersonaStore(),
+  modal: useModalStore(),
 };
 
 const {
@@ -183,7 +224,7 @@ const {
   imgStatus,
 } = storeToRefs(stores.persona);
 
-const handleDblclick = () => {
-  // TODO open modal
+const openModel = () => {
+  stores.modal.show();
 };
 </script>

@@ -6,9 +6,15 @@
       </div>
       <div
         v-if="$slots.category"
-        class="w-fit rounded-2xl bg-black bg-opacity-40 px-3 py-1 text-sm font-medium leading-snug text-white"
+        class="w-fit rounded-2xl bg-black px-3 py-1 text-sm font-medium leading-snug text-white"
       >
         <slot name="category" />
+      </div>
+      <div
+        v-else
+        class="w-fit rounded-2xl bg-black bg-opacity-40 px-3 py-1 text-sm font-medium leading-snug text-white"
+      >
+        未分類
       </div>
       <div
         @dblclick="handleDblclick"

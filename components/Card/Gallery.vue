@@ -1,7 +1,10 @@
 <template>
   <div
     class="grid min-h-0 shrink grow basis-auto gap-4 overflow-y-auto rounded-2xl p-2"
-    :style="{ gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))` }"
+    :style="{
+      gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))`,
+      gridTemplateRows: 'repeat(auto-fill, 350px)'
+    }"
   >
     <slot />
   </div>
