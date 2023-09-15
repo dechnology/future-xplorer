@@ -22,7 +22,15 @@ export const readCurrentTab = (defaultTab: IssueTab = IssueTabs.persona) => {
       throw new Error('no cache');
     }
 
-    return IssueTabs[tabData as IssueTabKeys];
+    const currentTab = IssueTabs[tabData as IssueTabKeys];
+
+    if (!currentTab) {
+      throw new Error(`${tabData} tab does not exist`);
+    }
+
+    console.log(currentTab);
+
+    return currentTab;
   } catch (e) {
     console.error(e);
     return defaultTab;

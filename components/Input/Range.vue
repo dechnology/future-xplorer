@@ -1,39 +1,35 @@
 <template>
-  <div class="flex flex-col gap-2">
-    <InputLabel v-if="title">{{ title }}</InputLabel>
-    <div class="relative">
-      <input
-        type="range"
-        class="h-16"
-        :class="classes"
-        :disabled="disabled"
-        :value="modelValue"
-        :readonly="selectOnly || readOnly"
-        @input="
-          !selectOnly &&
-            $emit(
-              'update:modelValue',
-              ($event.target as HTMLInputElement).value
-            )
-        "
-      />
-    </div>
+  <div class="relative pb-3">
+    <input
+      type="range"
+      v-bind="inputProps"
+      list="markers"
+      @change="
+        (e) => $emit('update:modelValue', (e.target as HTMLInputElement).value)
+      "
+    />
+    <datalist
+      id="markers"
+      class="absolute bottom-0 flex w-full justify-between p-1"
+    >
+      <option
+        v-for="m in markers"
+        :key="m"
+        :value="m"
+        :label="m.toString()"
+        class="text-xs"
+      ></option>
+    </datalist>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ClassNameValue, twMerge } from 'tailwind-merge';
-
 interface Props {
-  modelValue: string | number;
-  placeholder?: string;
-
-  type?: 'text' | 'textarea';
-  title?: string;
+  modelValue: number;
+  min: number;
+  max: number;
+  step: number;
   disabled?: boolean;
-  selectOnly?: boolean;
-  readOnly?: boolean;
-  selectOptions?: string[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -45,35 +41,29 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'update:modelValue'): void;
-  (e: 'inputSelection', text: string): void;
+  (e: 'update:modelValue', num: number): void;
 }>();
 
-const dropdownShown = ref(false);
-
-const defaultClasses: ClassNameValue = [
-  'w-full',
-  'rounded',
-  'pl-4',
-  'pr-4',
-  'py-4',
-  'border',
-  'border-solid',
-  'border-gray-200',
-];
-
-const textareaClasses: ClassNameValue = ['resize-none', 'text-start'];
-
-const classes = computed(() => {
-  let resultClasses = twMerge(defaultClasses);
-  if (props.disabled) {
-    return twMerge(resultClasses, 'bg-slate-50');
+const markers = computed(() => {
+  const result: number[] = [];
+  for (let i = props.min; i <= props.max; i += props.step) {
+    result.push(i);
   }
+  return result;
+});
 
-  if (props.selectOptions) {
-    resultClasses = twMerge(resultClasses, 'pr-12');
-  }
-
-  return twMerge(resultClasses, ['border-gray-500', 'bg-transparent']);
+const inputProps = computed(() => {
+  return {
+    class: twMerge(
+      ['w-full', 'rounded', 'border', 'border-solid', 'border-black'],
+      props.type === 'textarea' && 'resize-none',
+      props.disabled ? ['bg-slate-50'] : ['border-opacity-40']
+    ),
+    disabled: props.disabled,
+    value: props.modelValue,
+    min: props.min,
+    max: props.max,
+    step: props.step,
+  };
 });
 </script>

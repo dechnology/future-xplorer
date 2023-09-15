@@ -10,6 +10,7 @@ export * from './case';
 export * from './keyword';
 export * from './poemsTemplate';
 export * from './story';
+export * from './illustration';
 
 export * from './errors';
 export * from './response';

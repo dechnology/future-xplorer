@@ -105,10 +105,10 @@
             />
             <Icon
               v-else
-              @click="openModel"
               class="cursor-pointer text-blue-950"
               name="material-symbols:open-in-full-rounded"
               size="1.75rem"
+              @click="() => openModel()"
             />
           </template>
         </FormCard>
@@ -157,14 +157,15 @@
     </CardGalleryPanel>
   </NuxtLayout>
   <PersonaModal v-if="activePersona">
-    <PersonaModalAvatar
-      :currentPersonaImage="activePersona.image"
-    />
+    <PersonaModalAvatar :current-persona-image="activePersona.image" />
     <template #personaInfo>
       <PersonaModalContent v-slot="slotProps">
-        <div v-for="(content, title) in slotProps.content">
+        <div
+          v-for="(content, title) in slotProps.content"
+          :key="`${content}_${title}`"
+        >
           <p>
-            <span class="text-base font-semibold text-gray-700 text-3xl"
+            <span class="text-3xl text-base font-semibold text-gray-700"
               >{{ title }}：</span
             >
             <span class="text-3xl">
@@ -178,10 +179,13 @@
       <PersonaModalActions />
       <PersonaModalFootnote>
         <p>
-          <span class="text-base font-regular text-gray-400">
-            <br/>{{ `建立者：${activePersona.creator.name}` }}
-            <br/>{{ `新增時間：${format(activePersona.createdAt, 'yyyy-MM-dd')}` }}
-            <br/>{{ `更新時間：${format(activePersona.updatedAt, 'yyyy-MM-dd')}` }}
+          <span class="font-regular text-base text-gray-400">
+            <br />{{ `建立者：${activePersona.creator.name}` }} <br />{{
+              `新增時間：${format(activePersona.createdAt, 'yyyy-MM-dd')}`
+            }}
+            <br />{{
+              `更新時間：${format(activePersona.updatedAt, 'yyyy-MM-dd')}`
+            }}
           </span>
         </p>
       </PersonaModalFootnote>
@@ -190,9 +194,9 @@
 </template>
 
 <script setup lang="ts">
+import { format } from 'date-fns';
 import type { ConcreteComponent } from 'nuxt/dist/app/compat/capi';
 import type { FormStateKeys } from '~/types';
-import { format } from 'date-fns';
 
 const formPanelProps = {
   title: '人物清單',

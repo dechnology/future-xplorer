@@ -19,22 +19,23 @@
       >
         <Icon
           ref="dropdownIcon"
-          @click="() => (dropdownShown = !dropdownShown)"
           class="cursor-pointer transition-all duration-300"
           :class="dropdownShown ? '-rotate-90' : 'rotate-90'"
           name="pepicons-pop:triangle-left-filled"
           size="1.25rem"
+          @click="() => (dropdownShown = !dropdownShown)"
         />
       </div>
       <div
-        ref="dropdownDiv"
         v-if="selectOptions"
+        ref="dropdownDiv"
         class="absolute right-0 top-full z-10 mt-3 w-full origin-top-right transition-all duration-300"
         :class="dropdownShown ? 'scale-100' : 'scale-0'"
       >
         <Dropdown>
           <DropdownItem
             v-for="opt in selectOptions"
+            :key="opt.name"
             @click="() => handleClick(opt)"
           >
             {{ opt.name }}

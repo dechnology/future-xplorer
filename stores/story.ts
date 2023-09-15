@@ -26,7 +26,7 @@ export const useStoryStore = definePiniaStore('story', () => {
     }
 
     const index = issueStore.issue?.stories.findIndex(
-      (persona) => persona._id === el._id
+      (story) => story._id === el._id
     );
 
     if (index === -1) {
@@ -42,7 +42,7 @@ export const useStoryStore = definePiniaStore('story', () => {
     }
 
     const index = issueStore.issue?.stories.findIndex(
-      (persona) => persona._id === id
+      (story) => story._id === id
     );
 
     if (index === -1) {
