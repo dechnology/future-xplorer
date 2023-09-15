@@ -12,7 +12,7 @@
               v-for="{ name, value } in categoryTabs"
               :key="`${name}_${value}`"
               :active="currentCategory === value"
-              @click="() => (currentCategory = value)"
+              @click="() => setCategory(value)"
             >
               {{ name }}
             </KeywordCategoryTab>
@@ -105,6 +105,8 @@
 <script setup lang="ts">
 import { Keyword, User, Vote } from '@/types';
 
+const stroageKey = 'vote category';
+
 const formPanelProps = {
   title: '關鍵字分享',
   description:
@@ -122,14 +124,28 @@ const {
   keywordUsers,
 } = storeToRefs(stores.keyword);
 
+const getCurrentCategory = () => {
+  try {
+    const categoryData = readLocalStorage(voteStorageKey);
+
+    if (!categoryData) {
+      throw new Error('no cache');
+    }
+
+    return categoryTabs.value.find((el) => el.name === categoryData)?.name;
+  } catch (e) {
+    console.error(e);
+  }
+};
+
 const categoryTabs = computed(() => [
   { name: '全部', value: null },
   { name: '未分類', value: undefined },
   ...elementsArray.value.map((el) => ({ name: el.name, value: el.name })),
 ]);
 
-const currentUser = ref(keywordUsers.value[0]);
-const currentCategory = ref<string | undefined | null>(null);
+const currentUser = ref<User | undefined>(keywordUsers.value.at(0));
+const currentCategory = ref<string | undefined | null>(getCurrentCategory());
 
 const filteredKeywords = computed(() =>
   currentCategory.value === null
@@ -140,7 +156,7 @@ const filteredKeywords = computed(() =>
 );
 const filteredUserKeywords = computed(() =>
   filteredKeywords.value.filter(
-    (kw) => kw.creator._id === currentUser.value._id
+    (kw) => currentUser.value && kw.creator._id === currentUser.value._id
   )
 );
 const filteredSelfKeywords = computed(() =>
@@ -193,6 +209,18 @@ const cancelVote = async (kw: Keyword) => {
     console.error(e);
   } finally {
     loading.value = false;
+  }
+};
+
+const setCategory = (cat: string | undefined | null) => {
+  currentCategory.value = cat;
+
+  if (cat === undefined) {
+    localStorage.removeItem(stroageKey);
+  } else if (cat === null) {
+    localStorage.setItem(stroageKey, 'null');
+  } else {
+    localStorage.setItem(stroageKey, cat);
   }
 };
 </script>
