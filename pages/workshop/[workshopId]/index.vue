@@ -11,17 +11,17 @@
         <FormCard v-bind="currentFormCardProps" :username="username">
           <template #body>
             <InputComponent
+              v-model="currentIssue.title"
               type="text"
               title="議題名稱"
               placeholder="議題名稱"
-              v-model="currentIssue.title"
               :disabled="formDisabled"
             />
             <InputComponent
+              v-model="currentIssue.description"
               type="textarea"
               title="議題描述"
               placeholder="議題描述"
-              v-model="currentIssue.description"
               input-classes="h-80"
               :disabled="formDisabled"
             />
@@ -36,8 +36,8 @@
       <CardGallery>
         <Card
           :active="!activeId"
-          @click="() => stores.workshop.changeActiveIssue()"
           class="h-[300px]"
+          @click="() => stores.workshop.changeActiveIssue()"
         >
           <CardIcon :icon="{ name: 'mdi:plus', size: '5rem' }">
             新增議題
@@ -46,10 +46,11 @@
         <!-- Should be async component -->
         <Card
           v-for="i in issues"
+          :key="i._id"
           :active="activeId === i._id"
+          class="h-[300px]"
           @dblclick="() => handleDblclick(i._id)"
           @click="() => stores.workshop.changeActiveIssue(i)"
-          class="h-[300px]"
         >
           <CardTitle>{{ i.title }} </CardTitle>
           <CardDescription>{{ i.description }} </CardDescription>

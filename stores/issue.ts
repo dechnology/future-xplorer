@@ -1,4 +1,4 @@
-import { Workshop, Issue, IssueTabs, IssueTab, WorkshopElement } from '@/types';
+import type { Workshop, Issue, IssueTab, WorkshopElement } from '@/types';
 
 export const useIssueStore = definePiniaStore('issue', () => {
   const workshop = ref<Workshop | null>(null);
@@ -46,7 +46,7 @@ export const useIssueStore = definePiniaStore('issue', () => {
 
   const issue = ref<Issue | null>(null);
   const issueId = computed(() => issue.value?._id);
-  const currentTab = ref<IssueTab>(IssueTabs.persona);
+  const currentTab = ref<IssueTab>(readCurrentTab());
 
   async function init(token: string, workshopId: string, issueId: string) {
     const [workshopResponse, issuesResponse] = await Promise.all([
@@ -60,6 +60,11 @@ export const useIssueStore = definePiniaStore('issue', () => {
     issue.value = issuesResponse.data;
   }
 
+  function setTab(t: IssueTab) {
+    currentTab.value = t;
+    localStorage.setItem('tab', t.name);
+  }
+
   return {
     workshop,
     elements,
@@ -70,5 +75,6 @@ export const useIssueStore = definePiniaStore('issue', () => {
     currentTab,
 
     init,
+    setTab,
   };
 });

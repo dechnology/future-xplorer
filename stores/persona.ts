@@ -13,7 +13,9 @@ export const usePersonaStore = definePiniaStore('persona', () => {
   const activeId = computed(() => activePersona.value?._id);
   const imageUrlBuffer = ref<string | null>(null);
   const imageFileBuffer = ref<File | null>(null);
-  const imgStatus = ref<'waitting' | 'prompt' | 'avatar' |  'uploading' | 'finished'>('waitting');
+  const imgStatus = ref<
+    'waitting' | 'prompt' | 'avatar' | 'uploading' | 'finished'
+  >('waitting');
 
   const state = ref<FormStateKeys>('NEW');
   const loading = ref(false);
@@ -24,8 +26,9 @@ export const usePersonaStore = definePiniaStore('persona', () => {
     const arr = Object.entries(currentPersona.value).map(([key, value]) => {
       return { key, value };
     });
-    console.log("arr =>", arr)
-    const optionalProps = ['other',
+    console.log('arr =>', arr);
+    const optionalProps = [
+      'other',
       'image',
       '_id',
       'creator',
@@ -33,7 +36,7 @@ export const usePersonaStore = definePiniaStore('persona', () => {
       'createdAt',
       'updatedAt',
       '__v',
-      'id'
+      'id',
     ];
     const requiredProps = arr.filter(
       (item) => !optionalProps.includes(item.key)
@@ -87,7 +90,7 @@ export const usePersonaStore = definePiniaStore('persona', () => {
     currentPersona.value = getNewPersona();
     imageFileBuffer.value = null;
     imageUrlBuffer.value = null;
-    imgStatus.value = 'waitting'
+    imgStatus.value = 'waitting';
   }
 
   function changeActivePersona(p?: Persona | null) {
@@ -105,19 +108,19 @@ export const usePersonaStore = definePiniaStore('persona', () => {
   }
 
   function aiPromptGeneration() {
-    console.log("imgStatus.value =>", imgStatus.value)
-    imgStatus.value = 'prompt'
-    console.log("imgStatus.value =>", imgStatus.value)
+    console.log('imgStatus.value =>', imgStatus.value);
+    imgStatus.value = 'prompt';
+    console.log('imgStatus.value =>', imgStatus.value);
   }
   function aiAvatarGeneration() {
-    console.log("imgStatus.value =>", imgStatus.value)
-    imgStatus.value = 'avatar'
-    console.log("imgStatus.value =>", imgStatus.value)
+    console.log('imgStatus.value =>', imgStatus.value);
+    imgStatus.value = 'avatar';
+    console.log('imgStatus.value =>', imgStatus.value);
   }
   function aiFinishedGeneration() {
-    console.log("imgStatus.value =>", imgStatus.value)
-    imgStatus.value = 'finished'
-    console.log("imgStatus.value =>", imgStatus.value)
+    console.log('imgStatus.value =>', imgStatus.value);
+    imgStatus.value = 'finished';
+    console.log('imgStatus.value =>', imgStatus.value);
   }
 
   return {

@@ -28,8 +28,8 @@
         <KeywordCategoryTab
           v-for="el in elementsArray"
           :key="`${el.type}_${el.name}`"
-          :active="currentElement.name === el.name"
-          @click="() => (currentElement = el)"
+          :active="currentElement && currentElement.name === el.name"
+          @click="() => setElement(el)"
         >
           {{ el.name }}
         </KeywordCategoryTab>
@@ -54,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import { Keyword } from '@/types';
+import { Keyword, WorkshopElement } from '@/types';
 
 const formPanelProps = {
   title: '關鍵字整理',
@@ -71,14 +71,33 @@ const stores = {
 };
 
 const { elementsArray } = storeToRefs(stores.issue);
+
+const getCurrentElement = (
+  defaultElement: WorkshopElement | undefined = elementsArray.value.at(0)
+) => {
+  try {
+    const elementData = readLocalStorage(sortStorageKey);
+
+    if (!elementData) {
+      throw new Error('no cache');
+    }
+
+    return elementsArray.value.find((el) => el.name === elementData);
+  } catch (e) {
+    console.error(e);
+    return defaultElement;
+  }
+};
+
 const { selfKeywords, loading } = storeToRefs(stores.keyword);
 
 const draggingKeyword = ref<Keyword | null>(null);
-const currentElement = ref(elementsArray.value[0]);
+const currentElement = ref<WorkshopElement | undefined>(getCurrentElement());
 const filteredKeywords = computed(() =>
   selfKeywords.value
     ? selfKeywords.value.filter(
-        (kw) => kw.category === currentElement.value.name
+        (kw) =>
+          currentElement.value && kw.category === currentElement.value.name
       )
     : []
 );
@@ -86,7 +105,7 @@ const filteredKeywords = computed(() =>
 const handleDrop = async () => {
   try {
     loading.value = true;
-    if (!draggingKeyword.value) {
+    if (!(draggingKeyword.value && currentElement.value)) {
       console.log('no dragging keywords');
       return;
     }
@@ -115,5 +134,11 @@ const handleDrop = async () => {
   } finally {
     loading.value = false;
   }
+};
+
+const setElement = (el: WorkshopElement) => {
+  currentElement.value = el;
+
+  localStorage.setItem(sortStorageKey, el.name);
 };
 </script>

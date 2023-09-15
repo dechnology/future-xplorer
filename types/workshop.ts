@@ -1,5 +1,5 @@
-import { Base } from '@/types/base';
 import { z } from 'zod';
+import type { Base } from '@/types/base';
 
 export const DataValueSchema = z.object({
   start: z.string().trim().nonempty(),

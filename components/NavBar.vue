@@ -5,16 +5,16 @@
     >
       <HomeLink>未來情境探索輔助工具</HomeLink>
       <div class="flex items-center gap-2">
-        <ul v-if="$route.params.issueId" class="flex items-center">
+        <IssueNav v-if="$route.params.issueId">
           <IssueNavItem
             v-for="(t, key) in IssueTabs"
             :key="`${key}_${t.title}`"
-            @click="() => (currentTab = t)"
             :active="key === currentTab.name"
+            @click="() => stores.issue.setTab(t)"
           >
             {{ t.title }}
           </IssueNavItem>
-        </ul>
+        </IssueNav>
         <Logout></Logout>
       </div>
     </div>
