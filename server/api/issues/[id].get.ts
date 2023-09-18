@@ -4,8 +4,8 @@ import { IssueModel } from '@/server/models';
 export default defineEventHandler(
   async (event): Promise<ResourceObject<Issue>> => {
     authenticate(event.context);
-    const _id = getRouterParam(event, 'issue');
-    const issue = await IssueModel.findById(_id).populate([
+    const id = getRouterParam(event, 'id');
+    const issue = await IssueModel.findById(id).populate([
       { path: 'personas', populate: 'creator' },
       {
         path: 'cases',

@@ -11,23 +11,23 @@
         <FormCard v-bind="currentFormCardProps" :username="username">
           <template #body>
             <InputComponent
+              v-model="currentWorkshop.name"
               type="text"
               title="工作坊名稱"
               placeholder="工作坊名稱"
-              v-model="currentWorkshop.name"
               :disabled="formDisabled"
             />
             <InputComponent
+              v-model="currentWorkshop.description"
               type="textarea"
               title="工作坊描述"
               placeholder="工作坊描述"
-              v-model="currentWorkshop.description"
               input-classes="h-28"
               :disabled="formDisabled"
             />
             <InputDatePicker
-              title="工作坊時間"
               v-model:date-value="currentWorkshop.dateValue"
+              title="工作坊時間"
               :disabled="formDisabled"
             />
             <div
@@ -36,20 +36,20 @@
               預先設定工作坊POEMS分類
             </div>
             <InputChips
-              title="Object - 物件 or 技術"
               v-model:chips="currentWorkshop.objects"
+              title="Object - 物件 or 技術"
             />
             <InputChips
-              title="Environment - 環境 or 場景"
               v-model:chips="currentWorkshop.environments"
+              title="Environment - 環境 or 場景"
             />
             <InputChips
-              title="Message - 訊息 or 目標"
               v-model:chips="currentWorkshop.messages"
+              title="Message - 訊息 or 目標"
             />
             <InputChips
-              title="Service - 服務、行動 or 經驗"
               v-model:chips="currentWorkshop.services"
+              title="Service - 服務、行動 or 經驗"
             />
           </template>
           <template #actions>
@@ -62,15 +62,18 @@
       <WorkshopTable>
         <WorkshopTableHead>
           <tr>
-            <WorkshopTableHeader v-for="tableHeader in tableHeaders">
+            <WorkshopTableHeader
+              v-for="tableHeader in tableHeaders"
+              :key="tableHeader"
+            >
               {{ tableHeader }}
             </WorkshopTableHeader>
           </tr>
         </WorkshopTableHead>
         <tbody>
           <WorkshopTableRow
-            @click="() => stores.workshops.changeActiveWorkshop()"
             :active="!activeId"
+            @click="() => stores.workshops.changeActiveWorkshop()"
           >
             <WorkshopTableData colspan="5">
               <Icon name="mdi:plus-circle-outline" size="2rem" />

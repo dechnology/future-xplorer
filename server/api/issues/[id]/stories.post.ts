@@ -4,7 +4,7 @@ import { ResourceObject, NewStory, Story } from '@/types';
 export default defineEventHandler(
   async (event): Promise<ResourceObject<Story>> => {
     const { id: creator } = authenticate(event.context);
-    const issue = getRouterParam(event, 'issue');
+    const issue = getRouterParam(event, 'id');
 
     const newStory: NewStory = await readBody(event);
     const story = await StoryModel.create({

@@ -4,8 +4,8 @@ import { CaseModel } from '@/server/models';
 export default defineEventHandler(
   async (event): Promise<ResourceObject<Case>> => {
     authenticate(event.context);
-    const caseId = getRouterParam(event, 'case');
-    const studyCase = await CaseModel.findByIdAndDelete(caseId);
+    const id = getRouterParam(event, 'id');
+    const studyCase = await CaseModel.findByIdAndDelete(id);
 
     if (!studyCase) {
       throw createError({

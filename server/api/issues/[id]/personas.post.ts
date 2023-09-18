@@ -4,7 +4,7 @@ import { ResourceObject, NewPersona, Persona } from '@/types';
 export default defineEventHandler(
   async (event): Promise<ResourceObject<Persona>> => {
     const { id: creator } = authenticate(event.context);
-    const issue = getRouterParam(event, 'issue');
+    const issue = getRouterParam(event, 'id');
 
     const newPersona: NewPersona = await readBody(event);
     const persona = await PersonaModel.create({

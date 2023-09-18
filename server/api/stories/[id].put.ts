@@ -4,9 +4,9 @@ import { StoryModel } from '@/server/models';
 export default defineEventHandler(
   async (event): Promise<ResourceObject<Story>> => {
     authenticate(event.context);
-    const storyId = getRouterParam(event, 'story');
+    const id = getRouterParam(event, 'id');
     const newStory: NewStory = await readBody(event);
-    const story = await StoryModel.findByIdAndUpdate(storyId, newStory, {
+    const story = await StoryModel.findByIdAndUpdate(id, newStory, {
       new: true,
     });
 

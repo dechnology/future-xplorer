@@ -4,8 +4,8 @@ import { PersonaModel } from '@/server/models';
 export default defineEventHandler(
   async (event): Promise<ResourceObject<Persona>> => {
     authenticate(event.context);
-    const personaId = getRouterParam(event, 'persona');
-    const persona = await PersonaModel.findByIdAndDelete(personaId);
+    const id = getRouterParam(event, 'id');
+    const persona = await PersonaModel.findByIdAndDelete(id);
 
     if (!persona) {
       throw createError({

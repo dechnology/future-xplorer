@@ -4,8 +4,8 @@ import { StoryModel } from '@/server/models';
 export default defineEventHandler(
   async (event): Promise<ResourceObject<Story>> => {
     authenticate(event.context);
-    const storyId = getRouterParam(event, 'story');
-    const story = await StoryModel.findByIdAndDelete(storyId);
+    const id = getRouterParam(event, 'id');
+    const story = await StoryModel.findByIdAndDelete(id);
 
     if (!story) {
       throw createError({

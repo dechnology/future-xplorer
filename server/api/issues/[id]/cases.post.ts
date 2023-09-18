@@ -4,7 +4,7 @@ import { ResourceObject, NewCase, Case } from '@/types';
 export default defineEventHandler(
   async (event): Promise<ResourceObject<Case>> => {
     const { id: creator } = authenticate(event.context);
-    const issue = getRouterParam(event, 'issue');
+    const issue = getRouterParam(event, 'id');
 
     const newCase: NewCase = await readBody(event);
 

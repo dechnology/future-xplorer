@@ -4,15 +4,11 @@ import { PersonaModel } from '@/server/models';
 export default defineEventHandler(
   async (event): Promise<ResourceObject<Persona>> => {
     authenticate(event.context);
-    const personaId = getRouterParam(event, 'persona');
+    const id = getRouterParam(event, 'id');
     const newPersona: NewPersona = await readBody(event);
-    const persona = await PersonaModel.findByIdAndUpdate(
-      personaId,
-      newPersona,
-      {
-        new: true,
-      }
-    );
+    const persona = await PersonaModel.findByIdAndUpdate(id, newPersona, {
+      new: true,
+    });
 
     if (!persona) {
       throw new Error('Persona update failed');

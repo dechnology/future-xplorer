@@ -4,14 +4,14 @@ import { CaseModel } from '@/server/models';
 export default defineEventHandler(
   async (event): Promise<ResourceObject<Case>> => {
     authenticate(event.context);
-    const caseId = getRouterParam(event, 'case');
+    const id = getRouterParam(event, 'id');
     const newCase: NewCase = await readBody(event);
-    const studyCase = await CaseModel.findByIdAndUpdate(caseId, newCase, {
+    const studyCase = await CaseModel.findByIdAndUpdate(id, newCase, {
       new: true,
     });
 
     if (!studyCase) {
-      throw Error('Case update failed');
+      throw new Error('Case update failed');
     }
     return { data: studyCase };
   }
