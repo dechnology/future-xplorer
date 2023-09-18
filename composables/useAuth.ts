@@ -46,7 +46,7 @@ export const useAuth = () => {
     }
 
     if (!accessToken.value) {
-      throw Error('Unable to get token');
+      throw new Error('Unable to get token');
     }
 
     return accessToken.value;
