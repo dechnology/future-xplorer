@@ -19,14 +19,16 @@
       <div class="flex justify-center gap-8">
         <CardButton
           class="w-48 rounded-lg bg-blue-500 py-3 text-2xl text-white"
-          body="開始"
           @click="handleStart"
-        />
+        >
+          開始
+        </CardButton>
         <CardButton
           class="w-48 rounded-lg bg-gray-400 py-3 text-2xl text-white"
-          body="自動產生 UID"
           @click="() => (uid = generateUid())"
-        />
+        >
+          自動產生 UID
+        </CardButton>
       </div>
     </div>
   </NuxtLayout>
