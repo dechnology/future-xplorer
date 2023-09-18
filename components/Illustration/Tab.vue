@@ -152,12 +152,15 @@ const imageGeneration = async () => {
 };
 
 const handleImageGenerations = async () => {
-  // Old-school whileloop lol: to be optimized
-  let i = 0;
-  while (i < numberToGenerate.value) {
-    await imageGeneration();
-    i++;
+  console.log(numberToGenerate.value);
+
+  const promises: Promise<void>[] = [];
+
+  for (let i = 0; i < numberToGenerate.value; i++) {
+    promises.push(imageGeneration());
   }
+
+  await Promise.all(promises);
 };
 
 const handleDblclick = () => {
