@@ -4,9 +4,8 @@ import { PoemsTemplateModel } from '@/server/models';
 export default defineEventHandler(
   async (event): Promise<ResourceObject<PoemsTemplate>> => {
     authenticate(event.context);
-    const poemsTemplateId = getRouterParam(event, 'poemsTemplate');
-    const poemsTemplate =
-      await PoemsTemplateModel.findByIdAndDelete(poemsTemplateId);
+    const id = getRouterParam(event, 'id');
+    const poemsTemplate = await PoemsTemplateModel.findByIdAndDelete(id);
 
     if (!poemsTemplate) {
       throw createError({

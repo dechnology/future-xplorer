@@ -4,8 +4,8 @@ import { WorkshopModel } from '@/server/models';
 export default defineEventHandler(
   async (event): Promise<ResourceObject<Workshop>> => {
     authenticate(event.context);
-    const workshopId = getRouterParam(event, 'workshop');
-    const workshop = await WorkshopModel.findById(workshopId);
+    const id = getRouterParam(event, 'id');
+    const workshop = await WorkshopModel.findById(id);
 
     if (!workshop) {
       throw createError({

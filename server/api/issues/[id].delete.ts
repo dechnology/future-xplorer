@@ -4,8 +4,8 @@ import { IssueModel } from '@/server/models';
 export default defineEventHandler(
   async (event): Promise<ResourceObject<BaseIssue>> => {
     authenticate(event.context);
-    const issueId = getRouterParam(event, 'issue');
-    const issue = await IssueModel.findByIdAndDelete(issueId);
+    const id = getRouterParam(event, 'id');
+    const issue = await IssueModel.findByIdAndDelete(id);
 
     if (!issue) {
       throw createError({

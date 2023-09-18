@@ -4,7 +4,7 @@ import { ResourceObject, NewKeyword, Keyword } from '@/types';
 export default defineEventHandler(
   async (event): Promise<ResourceObject<Keyword[]>> => {
     const { id: creator } = authenticate(event.context);
-    const caseId = getRouterParam(event, 'case');
+    const id = getRouterParam(event, 'id');
 
     const newKeywords = (await readBody<{ keywords: NewKeyword[] }>(event))
       .keywords;
@@ -12,13 +12,13 @@ export default defineEventHandler(
     const keywordDocuments = await KeywordModel.insertMany(
       newKeywords.map((newKeyword) => ({
         creator,
-        case: caseId,
+        case: id,
         ...newKeyword,
       }))
     );
 
     if (!keywordDocuments) {
-      throw Error('Keywords creation failed');
+      throw new Error('Keywords creation failed');
     }
 
     const keywords: Keyword[] = keywordDocuments.map((doc) => doc.toObject());

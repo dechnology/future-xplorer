@@ -18,14 +18,14 @@
       />
       <div class="flex justify-center gap-8">
         <CardButton
-          @click="handleStart"
           class="w-48 rounded-lg bg-blue-500 py-3 text-2xl text-white"
           body="開始"
+          @click="handleStart"
         />
         <CardButton
-          @click="() => (uid = generateUid())"
           class="w-48 rounded-lg bg-gray-400 py-3 text-2xl text-white"
           body="自動產生 UID"
+          @click="() => (uid = generateUid())"
         />
       </div>
     </div>

@@ -4,10 +4,10 @@ import { PoemsTemplateModel } from '@/server/models';
 export default defineEventHandler(
   async (event): Promise<ResourceObject<PoemsTemplate>> => {
     authenticate(event.context);
-    const poemsTemplateId = getRouterParam(event, 'poemsTemplate');
+    const id = getRouterParam(event, 'id');
     const newPoemsTemplate: NewPoemsTemplate = await readBody(event);
     const poemsTemplate = await PoemsTemplateModel.findByIdAndUpdate(
-      poemsTemplateId,
+      id,
       newPoemsTemplate,
       {
         new: true,
