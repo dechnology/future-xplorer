@@ -10,8 +10,8 @@
         type="file"
         class="hidden"
         :disabled="disabled"
-        @change.prevent="handleFileChange"
         :accept="accept"
+        @change.prevent="handleFileChange"
       />
     </label>
   </div>
@@ -52,64 +52,64 @@ const emit = defineEmits<{
 
 const iconChangeTo = ref(props.activeIcon);
 const iconNow = computed(() => {
-  console.log("get iconNow")
-  console.log("props.disabled =>", props.disabled)
-  console.log("props.status =>", props.status)
+  console.log('get iconNow');
+  console.log('props.disabled =>', props.disabled);
+  console.log('props.status =>', props.status);
   if (props.disabled) {
     return props.disabledIcon;
   }
-  if (props.status === "waiting") {
+  if (props.status === 'waiting') {
     iconChangeTo.value = {
       name: 'material-symbols:add-photo-alternate',
       size: '5rem',
-    }
-  } else if (props.status === "prompt") {
+    };
+  } else if (props.status === 'prompt') {
     iconChangeTo.value = {
       name: 'svg-spinners:dot-revolve',
       size: '5rem',
-    }
-  } else if (props.status === "avatar") {
+    };
+  } else if (props.status === 'avatar') {
     iconChangeTo.value = {
       name: 'svg-spinners:blocks-wave',
       size: '5rem',
-    }
-  } else if (props.status === "uploading") {
+    };
+  } else if (props.status === 'uploading') {
     iconChangeTo.value = {
       name: 'material-symbols:model-training',
       size: '5rem',
-    }
-  } else if (props.status === "finished") {
+    };
+  } else if (props.status === 'finished') {
     iconChangeTo.value = {
       name: 'material-symbols:how-to-reg',
       size: '5rem',
-    }
+    };
   }
 
-  console.log("new props.activeIcon =>", props.activeIcon.name)
-  console.log("new iconChangeTo =>", iconChangeTo)
+  console.log('new props.activeIcon =>', props.activeIcon.name);
+  console.log('new iconChangeTo =>', iconChangeTo);
   return iconChangeTo.value;
 });
 const textChangeTo = ref(props.text);
 const textNow = computed(() => {
-  console.log("get iconNow")
-  console.log("props.disabled =>", props.disabled)
-  console.log("props.status =>", props.status)
+  console.log('get iconNow');
+  console.log('props.disabled =>', props.disabled);
+  console.log('props.status =>', props.status);
   if (props.disabled) {
     return props.disabledIcon;
   }
-  if (props.status === "waiting") {
-    textChangeTo.value = "點擊上傳圖片";
-  } else if (props.status === "prompt") {
-    textChangeTo.value = "人物提示詞產生中...";
-  } else if (props.status === "avatar") {
-    textChangeTo.value = "人物圖片生成中...";
-  } else if (props.status === "uploading") {
-    textChangeTo.value = "圖片上傳中...";
-  } else if (props.status === "finished") {
-    textChangeTo.value = "圖片上傳完畢";
+  if (props.status === 'waiting') {
+    textChangeTo.value = '點擊上傳圖片';
+  } else if (props.status === 'prompt') {
+    textChangeTo.value = '人物提示詞產生中...';
+  } else if (props.status === 'avatar') {
+    textChangeTo.value = '人物圖片生成中...';
+  } else if (props.status === 'uploading') {
+    textChangeTo.value = '圖片上傳中...';
+  } else if (props.status === 'finished') {
+    textChangeTo.value = '圖片上傳完畢';
   }
 
-  console.log("new textChangeTo =>", textChangeTo)
+  console.log('new textChangeTo =>', textChangeTo);
   return textChangeTo.value;
 });
 

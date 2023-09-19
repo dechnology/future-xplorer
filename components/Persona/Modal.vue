@@ -2,7 +2,7 @@
   <dialog
     v-if="activePersona"
     ref="modal"
-    class="h-5/6 w-11/12 rounded-2xl border-gray-300 p-16 pb-0 focus:outline-slate-300"
+    class="h-5/6 w-11/12 gap-4 rounded-2xl border-gray-300 p-16 focus:outline-slate-300"
     @click="(e) => onBackdropClick(e, stores.modal.close)"
   >
     <div class="flex h-11/12">
