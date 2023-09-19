@@ -11,21 +11,18 @@
         <slot name="category" />
       </div>
       <div
-        v-else
-        class="w-fit rounded-2xl bg-black bg-opacity-40 px-3 py-1 text-sm font-medium leading-snug text-white"
-      >
-        未分類
-      </div>
-      <div
-        @dblclick="handleDblclick"
+        :contenteditable="editing"
+        class="grow basis-[90%] border-none bg-green-100 p-2 text-2xl font-bold text-lime-500"
         @keypress.enter.prevent="
           (e: KeyboardEvent) =>
             updateKeyword((e.target as HTMLDivElement).innerText)
         "
-        :contenteditable="editing"
-        class="basis-[90%] border-none bg-green-100 p-2 text-2xl font-bold text-lime-500"
+        @dblclick="handleDblclick"
       >
         <slot />
+      </div>
+      <div>
+        <slot name="removeIcon" />
       </div>
     </div>
   </div>

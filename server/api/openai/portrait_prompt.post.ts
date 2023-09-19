@@ -1,6 +1,6 @@
-import { NewPersona, PersonaContext, PortraitRequestBody } from '@/types';
+import { NewPersona, IssueContext, PortraitRequestBody } from '@/types';
 
-const getSystemMessage = (ctx: PersonaContext): string => {
+const getSystemMessage = (ctx: IssueContext): string => {
   return [
     'You are tasked as a portrait master. Your role is to craft an exquisite description in English that will guide the DALLE image generation model to create the perfect portrait.',
     '',

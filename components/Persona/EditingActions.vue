@@ -39,7 +39,6 @@ const {
   activeId,
   imageFileBuffer,
   imageUrlBuffer,
-  state,
   loading,
   aiDisabled,
 } = storeToRefs(stores.persona);

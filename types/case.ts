@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Base, Issue, Keyword } from '@/types';
+import { Base, Issue, IssueContext, Keyword } from '@/types';
 
 export const NewCaseContentSchema = z.object({
   background: z.string().trim().nonempty(),
@@ -23,4 +23,12 @@ export type NewCase = z.infer<typeof NewCaseSchema>;
 export interface Case extends Base, NewCase {
   issue: Issue | string;
   keywords: Keyword[];
+}
+
+export interface KeywordsRequestBody extends IssueContext {
+  _case: NewCase;
+}
+
+export interface KeywordsResponseBody {
+  keywords: string[];
 }
