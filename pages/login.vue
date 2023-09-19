@@ -47,7 +47,7 @@ const authStore = useAuthStore();
 const uid = ref('');
 const username = ref('');
 
-const handleStart = async (e: Event) => {
+const handleStart = async () => {
   const { data, error } = await useFetch<LoginResponse>('/api/login', {
     method: 'post',
     body: {
