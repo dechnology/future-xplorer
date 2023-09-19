@@ -173,9 +173,17 @@
             @update:keyword="(body) => (k.body = body)"
           >
             {{ k.body }}
+            <template #removeIcon>
+              <Icon
+                name="mdi:bin"
+                size="20px"
+                class="cursor-pointer text-red-400 transition-all hover:text-red-600"
+                @click="() => removeNewKeyword(idx)"
+              />
+            </template>
           </KeywordCard>
           <KeywordCard
-            v-for="k in currentKeywords"
+            v-for="(k, idx) in currentKeywords"
             :key="k._id"
             class="h-28"
             @update:keyword="(body) => (k.body = body)"
@@ -184,6 +192,14 @@
               {{ k.category }}
             </template>
             {{ k.body }}
+            <template #removeIcon>
+              <Icon
+                name="mdi:bin"
+                size="20px"
+                class="cursor-pointer text-red-400 transition-all hover:text-red-600"
+                @click="() => removeCurrentKeyword(idx)"
+              />
+            </template>
           </KeywordCard>
         </KeywordGallery>
       </KeywordGalleryPanel>
@@ -222,11 +238,38 @@ const {
   newKeywords,
   currentKeywords,
   state,
+  loading,
   formDisabled,
   formCardProps,
 } = storeToRefs(stores.case);
 
+const { ignoreNextClose } = storeToRefs(stores.modal);
+
 const handleDblclick = () => {
   stores.modal.show();
+};
+
+const removeNewKeyword = (idx: number) => {
+  ignoreNextClose.value = true;
+  try {
+    loading.value = true;
+    newKeywords.value.splice(idx, 1);
+  } catch (e) {
+    console.error(e);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const removeCurrentKeyword = (idx: number) => {
+  ignoreNextClose.value = true;
+  try {
+    loading.value = true;
+    currentKeywords.value.splice(idx, 1);
+  } catch (e) {
+    console.error(e);
+  } finally {
+    loading.value = false;
+  }
 };
 </script>

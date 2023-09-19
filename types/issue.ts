@@ -55,3 +55,8 @@ export const IssueTabs: Record<IssueTabKeys, IssueTab> = {
   story: { name: 'story', title: '情境故事' },
   illustration: { name: 'illustration', title: '圖片產製' },
 } as const;
+
+export interface IssueContext {
+  workshop: Pick<Workshop, '_id' | 'name' | 'description'>;
+  issue: Pick<Issue, '_id' | 'title' | 'description'>;
+}

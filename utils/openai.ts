@@ -1,4 +1,8 @@
-import type { PortraitRequestBody } from '@/types';
+import type {
+  KeywordsRequestBody,
+  KeywordsResponseBody,
+  PortraitRequestBody,
+} from '@/types';
 
 export const generatePrompt = async (
   token: string,
@@ -46,4 +50,27 @@ export const generateImage = async (
   const { image } = data.value;
 
   return { image };
+};
+
+export const generateKeywords = async (
+  token: string,
+  body: KeywordsRequestBody
+): Promise<KeywordsResponseBody> => {
+  const { data, error } = await useFetch(`/api/openai/keywords`, {
+    method: 'post',
+    headers: { Authorization: `Bearer ${token}` },
+    body,
+  });
+
+  if (error.value) {
+    throw error.value;
+  }
+
+  if (!data.value) {
+    throw new Error('data are null');
+  }
+
+  console.log('data.value', data.value);
+
+  return data.value;
 };

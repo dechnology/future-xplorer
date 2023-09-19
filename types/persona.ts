@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Base, Issue, Workshop } from '@/types';
+import { Base, Issue, IssueContext, Workshop } from '@/types';
 
 export const NewPersonaSchema = z.object({
   role: z.string().trim().nonempty(),
@@ -17,11 +17,11 @@ export interface Persona extends Base, NewPersona {
   issue: Issue | string;
 }
 
-export interface PersonaContext {
-  workshop: Pick<Workshop, '_id' | 'name' | 'description'>;
-  issue: Pick<Issue, '_id' | 'title' | 'description'>;
-}
+// export interface PersonaContext {
+//   workshop: Pick<Workshop, '_id' | 'name' | 'description'>;
+//   issue: Pick<Issue, '_id' | 'title' | 'description'>;
+// }
 
-export interface PortraitRequestBody extends PersonaContext {
+export interface PortraitRequestBody extends IssueContext {
   persona: NewPersona;
 }
