@@ -164,13 +164,11 @@
           v-for="(content, title) in slotProps.content"
           :key="`${content}_${title}`"
         >
-          <p>
-            <span class="text-3xl text-base font-semibold text-gray-700"
-              >{{ title }}：</span
-            >
-            <span class="text-3xl">
-              {{ content }}
-            </span>
+          <p
+            class="font-['Roboto'] text-2xl font-bold leading-10 text-neutral-600"
+          >
+            <span class="font-semibold">{{ title }}：</span>
+            <span>{{ content }}</span>
           </p>
         </div>
       </PersonaModalContent>

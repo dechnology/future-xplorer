@@ -1,10 +1,11 @@
 <template>
   <div class="flex flex-wrap items-center justify-center gap-6">
     <CardButton
-      @click="() => stores.modal.close()"
       class="h-12 rounded-lg bg-black bg-opacity-40 px-8 py-3 text-white hover:bg-opacity-50"
-      body="關閉"
-    />
+      @click="() => stores.modal.close()"
+    >
+      關閉
+    </CardButton>
   </div>
 </template>
 
@@ -12,5 +13,4 @@
 const stores = {
   modal: useModalStore(),
 };
-
 </script>

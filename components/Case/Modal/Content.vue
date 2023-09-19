@@ -1,10 +1,10 @@
 <template>
   <div
+    v-if="activeCase"
     ref="contentDiv"
     class="relative flex min-h-0 shrink grow basis-auto flex-col gap-6 overflow-y-auto"
-    v-if="activeCase"
   >
-    <div @mouseup.prevent="handleMouseup" class="flex flex-col gap-6">
+    <div class="flex flex-col gap-6" @mouseup.prevent="handleMouseup">
       <slot :content="activeCaseContent" />
     </div>
 
@@ -20,16 +20,17 @@
       :style="buttonDivStyle"
     >
       <CardButton
-        @click.prevent="handleButtonClick"
         class="h-12 rounded-lg bg-blue-400 px-3 text-white hover:bg-blue-500"
-        body="新增關鍵字"
-      />
+        @click.prevent="handleButtonClick"
+      >
+        新增關鍵字
+      </CardButton>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Keyword, NewKeywordSchema } from '@/types';
+import { NewKeywordSchema } from '@/types';
 
 interface CaseContent {
   背景介紹: string;
@@ -99,7 +100,7 @@ onClickOutside(buttonDiv, (e: PointerEvent) => {
   }
 });
 
-const handleMouseup = (e: Event) => {
+const handleMouseup = () => {
   if (!(textSelectionState.text.value && contentDiv.value)) {
     return;
   }
@@ -133,7 +134,7 @@ const handleMouseup = (e: Event) => {
   ignoreClick.value = true;
 };
 
-const handleButtonClick = async (e: Event) => {
+const handleButtonClick = () => {
   try {
     const k = NewKeywordSchema.parse({ body: selectedText.value });
     newKeywords.value.unshift(k);

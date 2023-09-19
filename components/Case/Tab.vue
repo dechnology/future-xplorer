@@ -153,9 +153,9 @@
         :key="`${content}_${title}`"
       >
         <p>
-          <span class="text-base font-semibold text-gray-700"
-            >{{ title }}：</span
-          >
+          <span class="text-base font-semibold text-gray-700">
+            {{ title }}：
+          </span>
           <span>
             {{ content }}
           </span>
@@ -193,7 +193,7 @@
 
 <script setup lang="ts">
 import type { ConcreteComponent } from 'nuxt/dist/app/compat/capi';
-import type { FormStateKeys, Keyword, NewKeyword } from '~/types';
+import type { FormStateKeys } from '~/types';
 
 const formPanelProps = {
   title: '案例列表',
@@ -219,7 +219,6 @@ const {
   activeCase,
   activeId,
   imageUrlBuffer,
-  imageFileBuffer,
   newKeywords,
   currentKeywords,
   state,
