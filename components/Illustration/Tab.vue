@@ -129,12 +129,13 @@ const imageGeneration = async () => {
     console.log('Creating: ', illustration);
     const { data: createdIllustration } = await fetchResource<Illustration>(
       token,
-      `/api/issues/${issueId.value}/illustrations`,
+      `/api/issues/${issueId.value}/illustrations?nochache=${Date.now()}`,
       {
         method: 'post',
         body: {
           ...illustration,
-          image: gojoImage, // Change this to generated image
+          image:
+            'https://www.meme-arsenal.com/memes/6b1d02f844bfb2b47a597083c9f63305.jpg', // Change this to generated image
         },
       }
     );
@@ -143,7 +144,6 @@ const imageGeneration = async () => {
 
     console.log('Created: ', createdIllustration);
     stores.illustration.upsertIllustration(createdIllustration);
-    stores.illustration.changeActiveIllustration(createdIllustration);
   } catch (e) {
     console.error(e);
   } finally {

@@ -1,7 +1,7 @@
 <template>
   <div
-    @click="handleLogout"
     class="cursor-pointer text-white transition-all hover:text-gray-300"
+    @click="handleLogout"
   >
     <Icon v-if="showIcon" size="1.75rem" name="mdi:logout" />
     <slot />
@@ -13,8 +13,8 @@ withDefaults(defineProps<{ showIcon?: boolean }>(), { showIcon: true });
 
 const handleLogout = async () => {
   const router = useRouter();
-  const { logout } = await useAuth();
-  logout();
+  const { logout } = useAuth();
+  await logout();
   router.push('/login');
 };
 </script>

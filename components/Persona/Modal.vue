@@ -1,20 +1,20 @@
 <template>
   <dialog
-    @click="handleBackdropClick"
     v-if="activePersona"
     ref="modal"
     class="h-5/6 w-11/12 rounded-2xl border-gray-300 p-16 pb-0 focus:outline-slate-300"
+    @click="(e) => onBackdropClick(e, stores.modal.close)"
   >
     <div class="flex h-11/12">
       <div class="flex h-full basis-1/2 flex-col gap-7">
         <slot />
       </div>
-      <div class="basis-1/2 p-16 h-full">
+      <div class="h-full basis-1/2 p-16">
         <slot name="personaInfo" />
       </div>
     </div>
-    <div class="flex h-1/12 flex-col justify-center items-center">
-        <slot name="actions" />
+    <div class="flex h-1/12 flex-col items-center justify-center">
+      <slot name="actions" />
     </div>
   </dialog>
 </template>
@@ -27,24 +27,6 @@ const stores = {
 };
 const { shown } = storeToRefs(stores.modal);
 const { activePersona } = storeToRefs(stores.persona);
-
-const handleBackdropClick = (e: MouseEvent) => {
-  const { x, y } = e;
-  const { left, right, top, bottom } = (
-    e.target as HTMLDialogElement
-  ).getBoundingClientRect();
-
-  // console.log('e.target: ', e.target);
-  // console.log(`(x, y) = (${x}, ${y})`);
-  // console.log(
-  //   `(left, right, top, bottom) = (${left}, ${right}, ${top}, ${bottom})`
-  // );
-  // console.log(x < left, x > right, y < top, y > bottom);
-
-  if (x < left || x > right || y < top || y > bottom) {
-    stores.modal.close();
-  }
-};
 
 watch(shown, (newShown) => {
   console.log('shown: ', shown.value);
