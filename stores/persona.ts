@@ -14,7 +14,8 @@ export const usePersonaStore = definePiniaStore('persona', () => {
   const imageUrlBuffer = ref<string | null>(null);
   const imageFileBuffer = ref<File | null>(null);
   const imgStatus = ref<
-    'waitting' | 'prompt' | 'avatar' | 'uploading' | 'finished'
+    'waitting' | 'prompt' | 'avatar' | 'uploading' | 'finished' |
+    'promptError' | 'avatarError' | 'uploadingError'
   >('waitting');
 
   const state = ref<FormStateKeys>('NEW');
@@ -112,9 +113,29 @@ export const usePersonaStore = definePiniaStore('persona', () => {
     imgStatus.value = 'prompt';
     console.log('imgStatus.value =>', imgStatus.value);
   }
+  function aiPromptFailed() {
+    console.log('imgStatus.value =>', imgStatus.value);
+    imgStatus.value = 'promptError';
+    console.log('imgStatus.value =>', imgStatus.value);
+  }
   function aiAvatarGeneration() {
     console.log('imgStatus.value =>', imgStatus.value);
     imgStatus.value = 'avatar';
+    console.log('imgStatus.value =>', imgStatus.value);
+  }
+  function aiAvatarFailed() {
+    console.log('imgStatus.value =>', imgStatus.value);
+    imgStatus.value = 'avatarError';
+    console.log('imgStatus.value =>', imgStatus.value);
+  }
+  function aiUploading() {
+    console.log('imgStatus.value =>', imgStatus.value);
+    imgStatus.value = 'uploading';
+    console.log('imgStatus.value =>', imgStatus.value);
+  }
+  function aiUploadingFailed() {
+    console.log('imgStatus.value =>', imgStatus.value);
+    imgStatus.value = 'uploadingError';
     console.log('imgStatus.value =>', imgStatus.value);
   }
   function aiFinishedGeneration() {
@@ -144,7 +165,11 @@ export const usePersonaStore = definePiniaStore('persona', () => {
     clearCurrentPersona,
     changeActivePersona,
     aiPromptGeneration,
+    aiPromptFailed,
     aiAvatarGeneration,
+    aiAvatarFailed,
+    aiUploading,
+    aiUploadingFailed,
     aiFinishedGeneration,
   };
 });

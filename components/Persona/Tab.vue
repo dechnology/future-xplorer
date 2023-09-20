@@ -96,20 +96,22 @@
             <component :is="ActionsComponents[state]" />
           </template>
           <template #icon-actions>
-            <Icon
-              v-if="state !== 'DETAILS'"
-              class="cursor-pointer text-blue-950"
-              name="game-icons:rolling-dices"
-              size="1.75rem"
-              @click="() => (currentPersona = getRandomNewPersona())"
-            />
-            <Icon
-              v-else
-              class="cursor-pointer text-blue-950"
-              name="material-symbols:open-in-full-rounded"
-              size="1.75rem"
-              @click="() => openModel()"
-            />
+            <ClientOnly>
+              <Icon
+                v-if="state !== 'DETAILS'"
+                class="cursor-pointer text-blue-950"
+                name="game-icons:rolling-dices"
+                size="1.75rem"
+                @click="() => (currentPersona = getRandomNewPersona())"
+              />
+              <Icon
+                v-if="state == 'DETAILS'"
+                class="cursor-pointer text-blue-950"
+                name="material-symbols:open-in-full-rounded"
+                size="1.75rem"
+                @click="() => openModel()"
+              />
+            </ClientOnly>
           </template>
         </FormCard>
       </FormPanel>

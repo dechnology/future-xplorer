@@ -58,16 +58,22 @@ const handlePortraitGeneration = async () => {
 
     stores.persona.aiPromptGeneration();
     console.log('generating portrait for persona: ', persona);
-    const { prompt } = await generatePrompt(token, {
+    const { err: errPrompt, prompt } = await generatePrompt(token, {
       workshop: workshop.value,
       issue: issue.value,
       persona,
     });
     console.log('prompt: ', prompt);
+    if (errPrompt) {
+      return stores.persona.aiPromptFailed();
+    }
 
     stores.persona.aiAvatarGeneration();
-    const { image } = await generateImage(token, { prompt });
+    const { err: errImage, image } = await generateImage(token, { prompt });
     console.log('image: ', image);
+    if (errImage) {
+      return stores.persona.aiAvatarFailed();
+    }
 
     imageFileBuffer.value = null;
     imageUrlBuffer.value = image;
