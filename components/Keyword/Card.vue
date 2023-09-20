@@ -5,10 +5,9 @@
         <slot name="favIcon" />
       </div>
       <div
-        v-if="$slots.category"
         class="w-fit rounded-2xl bg-black px-3 py-1 text-sm font-medium leading-snug text-white"
       >
-        <slot name="category" />
+        <slot name="category">未分類</slot>
       </div>
       <div
         :contenteditable="editing"
