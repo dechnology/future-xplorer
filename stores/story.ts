@@ -1,7 +1,14 @@
-import { FormStateKeys, Story, NewStory } from '@/types';
+import type {
+  FormStateKeys,
+  Story,
+  NewStory,
+  PoemsTemplate,
+  SelectOption,
+} from '@/types';
 
 export const useStoryStore = definePiniaStore('story', () => {
   const issueStore = useIssueStore();
+  const poemsTemplateStore = usePoemsTemplateStore();
 
   const stories = computed((): Story[] =>
     issueStore.issue ? issueStore.issue.stories : []
@@ -18,6 +25,13 @@ export const useStoryStore = definePiniaStore('story', () => {
   );
   const formCardProps = computed(() =>
     getCurrentFormCardProps('故事', currentStory.value as Story, state.value)
+  );
+
+  const poemsTemplateOptions = computed((): SelectOption<PoemsTemplate>[] =>
+    poemsTemplateStore.poemsTemplates.map((el) => ({
+      name: el.title,
+      data: el,
+    }))
   );
 
   function upsertStory(el: Story) {
@@ -78,6 +92,7 @@ export const useStoryStore = definePiniaStore('story', () => {
     loading,
     formDisabled,
     formCardProps,
+    poemsTemplateOptions,
 
     upsertStory,
     removeStory,

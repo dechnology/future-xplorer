@@ -19,20 +19,15 @@
                 :disabled="formDisabled"
               />
               <InputSelect
-                v-slot="slotProps"
                 v-model="currentPoemsTemplate"
                 title="模板選擇"
                 placeholder="模板套用"
                 :disabled="formDisabled"
-                :options="
-                  poemsTemplates.map((el) => ({
-                    name: el.title,
-                    data: el,
-                  }))
-                "
+                :options="poemsTemplateOptions"
+                @select="handleSelect"
               >
-                <span v-if="slotProps.selected">
-                  {{ slotProps.selected.name }}
+                <span v-if="currentPoemsTemplate">
+                  {{ currentPoemsTemplate.title }}
                 </span>
               </InputSelect>
             </div>
@@ -174,9 +169,7 @@ const stores = {
   poemsTemplate: usePoemsTemplateStore(),
   story: useStoryStore(),
 };
-const { poemsTemplates, personaOptions, keywordOptions } = storeToRefs(
-  stores.poemsTemplate
-);
+const { personaOptions, keywordOptions } = storeToRefs(stores.poemsTemplate);
 const {
   loading,
   stories,
@@ -186,9 +179,18 @@ const {
   state,
   formCardProps,
   formDisabled,
+  poemsTemplateOptions,
 } = storeToRefs(stores.story);
 
 const currentPoemsTemplate = ref<PoemsTemplate>();
+
+const handleSelect = (selected: PoemsTemplate | undefined) => {
+  if (!selected) {
+    return;
+  }
+  currentStory.value.context = { ...selected };
+  currentStory.value.title = `${selected.title} 故事`;
+};
 
 const handleStoryGeneration = async () => {};
 
