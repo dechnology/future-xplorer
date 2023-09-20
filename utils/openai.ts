@@ -2,6 +2,8 @@ import type {
   KeywordsRequestBody,
   KeywordsResponseBody,
   PortraitRequestBody,
+  StoryRequestBody,
+  StoryResponseBody,
 } from '@/types';
 
 export const generatePrompt = async (
@@ -60,7 +62,6 @@ export const generateImage = async (
       err: null,
       image,
     };
-
   } catch (e) {
     return { err: e, image: '' };
   }
@@ -87,4 +88,27 @@ export const generateKeywords = async (
   console.log('data.value', data.value);
 
   return data.value;
+};
+
+export const generateStory = async (
+  token: string,
+  body: StoryRequestBody
+): Promise<StoryResponseBody> => {
+  const { data, error } = await useFetch(`/api/openai/story`, {
+    method: 'post',
+    headers: { Authorization: `Bearer ${token}` },
+    body,
+  });
+
+  if (error.value) {
+    throw error.value;
+  }
+
+  if (!data.value) {
+    throw new Error('data are null');
+  }
+
+  const { story } = data.value;
+
+  return { story };
 };

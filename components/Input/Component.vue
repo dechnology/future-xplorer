@@ -14,7 +14,7 @@
         @input="handleInputChange"
       ></textarea>
       <div
-        v-if="selectOptions"
+        v-if="selectOptions && !disabled"
         class="absolute inset-y-0 right-2 flex items-center justify-center"
       >
         <Icon
@@ -27,7 +27,7 @@
         />
       </div>
       <div
-        v-if="selectOptions"
+        v-if="selectOptions && !disabled"
         ref="dropdownDiv"
         class="absolute right-0 top-full z-10 mt-3 w-full origin-top-right transition-all duration-300"
         :class="dropdownShown ? 'scale-100' : 'scale-0'"

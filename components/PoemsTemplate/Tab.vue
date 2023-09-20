@@ -107,7 +107,7 @@
           <CardDescription>
             {{
               [
-                `P: ${el.persona.trait}的${el.persona.role}`,
+                `P: ${el.persona && `${el.persona.trait}的${el.persona.role}`}`,
                 `O: ${el.object}`,
                 `E: ${el.environment}`,
                 `S: ${el.service}`,

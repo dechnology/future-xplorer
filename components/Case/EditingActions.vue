@@ -2,13 +2,13 @@
   <div class="flex items-center justify-around">
     <CardButton
       class="rounded-lg bg-red-400 px-8 py-3 text-white hover:bg-red-500"
-      @click="handleCancel"
+      @click.prevent="handleCancel"
     >
       取消
     </CardButton>
     <CardButton
       class="rounded-lg bg-indigo-500 px-8 py-3 text-white hover:bg-indigo-600"
-      @click="handleSaveEdit"
+      @click.prevent="handleSaveEdit"
     >
       儲存
     </CardButton>

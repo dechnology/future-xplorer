@@ -25,7 +25,7 @@
         <slot />
       </div>
     </div>
-    <div>
+    <div class="flex h-full flex-col justify-around">
       <slot name="removeIcon" />
     </div>
   </div>

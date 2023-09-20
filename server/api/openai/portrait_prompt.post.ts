@@ -29,13 +29,10 @@ const getSystemMessage = (ctx: IssueContext): string => {
 };
 
 const getUserMessage = (p: NewPersona): string => {
-  const ageDescription =
-    typeof p.age === 'number' ? `${p.age}-year-old` : p.age;
-
   const baseMessage = [
     'Persona details:',
     "'''",
-    `This individual is a ${ageDescription} ${p.gender} with the role of ${p.role}.`,
+    `This individual is a ${p.age} ${p.gender} with the role of ${p.role}.`,
     `They are characterized by the trait: ${p.trait}.`,
   ];
 

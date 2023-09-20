@@ -162,13 +162,14 @@ const formPanelProps = {
     '第五步從一張張的情境故事(poems)中選擇一張或彙整出一張形成最終的未來情境文字描述(一句話)',
 };
 
-const { username } = useAuth();
+const { username, getTokenSilently } = useAuth();
 const stores = {
   modal: useModalStore(),
   issue: useIssueStore(),
   poemsTemplate: usePoemsTemplateStore(),
   story: useStoryStore(),
 };
+const { workshop, issue } = storeToRefs(stores.issue);
 const { personaOptions, keywordOptions } = storeToRefs(stores.poemsTemplate);
 const {
   loading,
@@ -192,7 +193,32 @@ const handleSelect = (selected: PoemsTemplate | undefined) => {
   currentStory.value.title = `${selected.title} 故事`;
 };
 
-const handleStoryGeneration = async () => {};
+const handleStoryGeneration = async () => {
+  try {
+    if (!(workshop.value && issue.value)) {
+      throw new Error('no workshop or issue');
+    }
+
+    currentStory.value.title = currentStory.value.title.trim();
+    if (currentStory.value.title === '') {
+      throw new Error('no story title');
+    }
+
+    const token = await getTokenSilently();
+
+    console.log('Generating story...');
+    const { story } = await generateStory(token, {
+      title: currentStory.value.title,
+      workshop: workshop.value,
+      issue: issue.value,
+      ...currentStory.value.context,
+    });
+
+    currentStory.value.content = story;
+  } catch (e) {
+    console.error(e);
+  }
+};
 
 const handleDblclick = () => {
   stores.modal.show();

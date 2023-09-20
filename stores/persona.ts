@@ -102,7 +102,7 @@ export const usePersonaStore = definePiniaStore('persona', () => {
 
   function changeActivePersona(p?: Persona | null) {
     if (p) {
-      activePersona.value = { ...p };
+      activePersona.value = p;
       currentPersona.value = { ...p };
       state.value = 'DETAILS';
     } else {
