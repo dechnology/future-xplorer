@@ -5,7 +5,10 @@
         <slot name="favIcon" />
       </div>
       <div
-        class="w-fit rounded-2xl bg-black px-3 py-1 text-sm font-medium leading-snug text-white"
+        :class="[
+          'w-fit rounded-2xl bg-black px-3 py-1 text-sm font-medium leading-snug text-white',
+          $slots.category ? '' : 'bg-opacity-40 '
+        ]"
       >
         <slot name="category">未分類</slot>
       </div>
