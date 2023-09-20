@@ -13,6 +13,8 @@ export const usePoemsTemplateStore = definePiniaStore('poems template', () => {
   const personaStore = usePersonaStore();
   const keywordStore = useKeywordStore();
 
+  console.log(issueStore.issue?.poemsTemplates);
+
   const poemsTemplates = computed((): PoemsTemplate[] =>
     issueStore.issue ? issueStore.issue.poemsTemplates : []
   );

@@ -10,7 +10,10 @@
           <span v-else class="invisible">placeholder</span>
         </slot>
       </div>
-      <div class="absolute inset-y-0 right-2 flex items-center justify-center">
+      <div
+        v-if="!disabled"
+        class="absolute inset-y-0 right-2 flex items-center justify-center"
+      >
         <Icon
           ref="dropdownIcon"
           class="cursor-pointer transition-all duration-300"
@@ -21,6 +24,7 @@
         />
       </div>
       <div
+        v-if="!disabled"
         ref="dropdownDiv"
         class="absolute right-0 top-full z-10 mt-3 w-full origin-top-right transition-all duration-300"
         :class="dropdownShown ? 'scale-100' : 'scale-0'"

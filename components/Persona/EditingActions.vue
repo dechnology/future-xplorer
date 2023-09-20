@@ -116,6 +116,7 @@ const handleSaveEdit = async () => {
     console.log('Patched: ', editedPersona);
     activePersona.value = editedPersona;
     stores.persona.changeActivePersona(editedPersona);
+    stores.persona.upsertPersona(editedPersona);
   } catch (e) {
     console.error(e);
   } finally {
