@@ -28,9 +28,13 @@
 
 <script setup lang="ts">
 import { z } from 'zod';
-import type { DeleteResult } from 'mongodb';
 import type { Keyword } from '@/types';
 import { NewKeywordSchema } from '@/types';
+
+interface KeywordWithIndex {
+  kw: Keyword;
+  idx: number;
+}
 
 const { getTokenSilently } = useAuth();
 const stores = {
@@ -96,15 +100,17 @@ const createNewKeywords = async () => {
   return data;
 };
 
-const editKeywords = async (...editedKeywords: Keyword[]) => {
+const editKeywords = async (edited: KeywordWithIndex[]) => {
   try {
-    if (editedKeywords.length < 1) {
+    if (edited.length < 1) {
       console.log('no edited keywords');
       return;
     }
 
     const token = await getTokenSilently();
-    const kws = z.array(NewKeywordSchema.passthrough()).parse(editedKeywords);
+    const kws = z
+      .array(NewKeywordSchema.passthrough())
+      .parse(edited.map((el) => el.kw));
 
     console.log('Patching: ', kws);
     const { data, error } = await useFetch(`/api/keywords`, {
@@ -121,24 +127,31 @@ const editKeywords = async (...editedKeywords: Keyword[]) => {
       throw new Error('data are null');
     }
 
+    // optimistic update
+    edited.forEach((el) => {
+      if (!activeCase.value) {
+        return;
+      }
+      activeCase.value.keywords[el.idx] = { ...el.kw };
+    });
     console.log('Patched: ', data.value);
   } catch (e) {
     console.error(e);
   }
 };
 
-const removeKeywordByIds = async (...ids: string[]) => {
+const removeKeywords = async (removed: KeywordWithIndex[]) => {
   try {
-    if (ids.length < 1) {
+    if (removed.length < 1) {
       console.log('no removed keywords');
       return;
     }
 
     const token = await getTokenSilently();
 
-    console.log('Deleting: ', ids);
+    console.log('Deleting: ', removed);
     const { data, error } = await useFetch(`/api/keywords`, {
-      query: { ids: ids.join(',') },
+      query: { ids: removed.map((el) => el.kw._id).join(',') },
       method: 'delete',
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -151,6 +164,12 @@ const removeKeywordByIds = async (...ids: string[]) => {
       throw new Error('data are null');
     }
 
+    // splice from the highest index to avoid changing the rest
+    removed
+      .sort((a, b) => b.idx - a.idx)
+      .forEach((kw) => {
+        activeCase.value?.keywords.splice(kw.idx, 1);
+      });
     console.log('Deleted: ', data.value);
   } catch (e) {
     console.error(e);
@@ -161,29 +180,27 @@ const handleSaveClick = async () => {
   try {
     loading.value = true;
 
-    const editedKeywords: Keyword[] = [];
-    const removedKeywordIds: string[] = [];
+    const editedKeywords: KeywordWithIndex[] = [];
+    const removedKeywords: KeywordWithIndex[] = [];
 
-    for (const activeKeyword of activeKeywords.value) {
-      const currentKeyword = currentKeywords.value.find(
-        (kw) => kw._id === activeKeyword._id
+    // This loop syncs the states in currentKeywords with activeKeywords
+    activeKeywords.value.forEach((activeKw, idx) => {
+      const currentIdx = currentKeywords.value.findIndex(
+        (kw) => kw._id === activeKw._id
       );
 
-      console.log(currentKeyword?.body);
-      console.log(activeKeyword.body);
-
-      if (!currentKeyword) {
-        removedKeywordIds.push(activeKeyword._id);
-      } else if (activeKeyword.body !== currentKeyword.body) {
-        editedKeywords.push({ ...currentKeyword });
+      if (currentIdx === -1) {
+        removedKeywords.push({ kw: activeKw, idx });
+      } else if (activeKw.body !== currentKeywords.value[currentIdx].body) {
+        editedKeywords.push({ kw: currentKeywords.value[currentIdx], idx });
       }
-    }
+    });
 
-    // await Promise.all([
-    //   createNewKeywords(),
-    //   editKeywords(...editedKeywords),
-    //   removeKeywordByIds(...removedKeywordIds),
-    // ]);
+    await Promise.all([
+      createNewKeywords(),
+      editKeywords(editedKeywords),
+      removeKeywords(removedKeywords),
+    ]);
   } catch (e) {
     console.error(e);
   } finally {

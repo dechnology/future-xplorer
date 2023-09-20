@@ -63,9 +63,9 @@ export const useCaseStore = definePiniaStore('case', () => {
 
   function changeActiveCase(c?: Case | null) {
     if (c) {
-      activeCase.value = { ...c };
-      currentCase.value = { ...c };
-      currentKeywords.value = [...c.keywords];
+      activeCase.value = _.cloneDeep(c);
+      currentCase.value = _.cloneDeep(c);
+      currentKeywords.value = _.cloneDeep(c.keywords);
       state.value = 'DETAILS';
     } else {
       activeCase.value = null;
