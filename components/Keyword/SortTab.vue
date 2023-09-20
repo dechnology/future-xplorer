@@ -10,7 +10,7 @@
         </template>
         <KeywordGallery :n_cols="2">
           <KeywordCard
-            v-for="k in selfKeywords"
+            v-for="k in selfKeywords.filter((k) => !k.category)"
             :key="k._id"
             :draggable="true"
             class="h-40"

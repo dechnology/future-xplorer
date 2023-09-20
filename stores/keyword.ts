@@ -14,6 +14,7 @@ export const useKeywordStore = definePiniaStore('keywords', () => {
     keywords.value.filter((kw) => kw.votes.length > 0)
   );
 
+  // users can maybe be fetched from the database instead of computed out of keywords
   const keywordUsers = computed(() => {
     const users: User[] = [];
     const userIds: Set<string> = new Set(); // Assuming the ID is a string
@@ -57,21 +58,6 @@ export const useKeywordStore = definePiniaStore('keywords', () => {
     nonFavoriteKeywords.value.filter((kw) => kw.creator._id === user.value?._id)
   );
 
-  const categoriedVotedKeywords = computed(() => {
-    const result: Record<'O' | 'E' | 'M' | 'S', string[]> = {
-      O: [],
-      E: [],
-      M: [],
-      S: [],
-    };
-
-    for (const kw of votedKeywords.value) {
-      kw.type && result[kw.type].push(kw.body);
-    }
-
-    return result;
-  });
-
   return {
     loading,
     keywords,
@@ -83,6 +69,5 @@ export const useKeywordStore = definePiniaStore('keywords', () => {
     nonFavoriteKeywords,
     nonFavoriteSelfKeywords,
     keywordUsers,
-    categoriedVotedKeywords,
   };
 });

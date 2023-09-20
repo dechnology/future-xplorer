@@ -14,8 +14,14 @@ export const usePersonaStore = definePiniaStore('persona', () => {
   const imageUrlBuffer = ref<string | null>(null);
   const imageFileBuffer = ref<File | null>(null);
   const imgStatus = ref<
-    'waitting' | 'prompt' | 'avatar' | 'uploading' | 'finished' |
-    'promptError' | 'avatarError' | 'uploadingError'
+    | 'waitting'
+    | 'prompt'
+    | 'avatar'
+    | 'uploading'
+    | 'finished'
+    | 'promptError'
+    | 'avatarError'
+    | 'uploadingError'
   >('waitting');
 
   const state = ref<FormStateKeys>('NEW');

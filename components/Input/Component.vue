@@ -47,10 +47,8 @@
 </template>
 
 <script setup lang="ts">
-interface SelectOption {
-  name: string;
-  data: string;
-}
+import { SelectOption } from '~/types';
+
 interface Props {
   // Required
   type: 'text' | 'textarea' | 'select';
@@ -59,7 +57,7 @@ interface Props {
   // Optional
   title?: string;
   inputClasses?: string;
-  selectOptions?: SelectOption[];
+  selectOptions?: SelectOption<string>[];
 
   // Optional with defaults
   placeholder?: string;
@@ -114,7 +112,7 @@ const handleInputChange = (e: Event) => {
   }
 };
 
-const handleClick = (option: SelectOption) => {
+const handleClick = (option: SelectOption<string>) => {
   emit('update:modelValue', option.data);
   dropdownShown.value = false;
 };
