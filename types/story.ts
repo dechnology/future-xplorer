@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Base, Issue, NewPersonaSchema } from '@/types';
+import { Base, Issue, IssueContext, NewPersonaSchema } from '@/types';
 
 export const StoryContextSchema = z.object({
   persona: NewPersonaSchema.omit({ image: true }).optional(),
@@ -21,4 +21,12 @@ export type NewStory = z.infer<typeof NewStorySchema>;
 
 export interface Story extends Base, NewStory {
   issue: Issue | string;
+}
+
+export interface StoryRequestBody extends IssueContext, StoryContext {
+  title: string;
+}
+
+export interface StoryResponseBody {
+  story: string;
 }
