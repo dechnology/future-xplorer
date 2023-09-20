@@ -42,12 +42,7 @@
               title="使用者 (P)"
               placeholder="故事使用者"
               :disabled="formDisabled"
-              :options="
-                personaOptions.map((el) => ({
-                  name: `${el.trait}的${el.role} (${el.name})`,
-                  data: el,
-                }))
-              "
+              :options="personaOptions"
             >
               <span v-if="currentStory.context.persona">
                 {{ currentStory.context.persona.trait }}的{{
@@ -61,9 +56,7 @@
               title="物件 (O)"
               placeholder="故事物件"
               :disabled="formDisabled"
-              :select-options="
-                categoriedVotedKeywords.O.map((el) => ({ name: el, data: el }))
-              "
+              :select-options="keywordOptions.O"
               input-classes="h-[90px]"
             />
             <InputComponent
@@ -72,9 +65,7 @@
               title="環境 (E)"
               placeholder="故事環境"
               :disabled="formDisabled"
-              :select-options="
-                categoriedVotedKeywords.E.map((el) => ({ name: el, data: el }))
-              "
+              :select-options="keywordOptions.E"
               input-classes="h-[90px]"
             />
             <InputComponent
@@ -84,9 +75,7 @@
               placeholder="故事訊息"
               :disabled="formDisabled"
               input-classes="h-[90px]"
-              :select-options="
-                categoriedVotedKeywords.M.map((el) => ({ name: el, data: el }))
-              "
+              :select-options="keywordOptions.M"
             />
             <InputComponent
               v-model="currentStory.context.service"
@@ -95,9 +84,7 @@
               placeholder="故事服務"
               :disabled="formDisabled"
               input-classes="h-[90px]"
-              :select-options="
-                categoriedVotedKeywords.S.map((el) => ({ name: el, data: el }))
-              "
+              :select-options="keywordOptions.S"
             />
             <div class="flex flex-col items-center">
               <CardButton
@@ -130,7 +117,7 @@
               class="cursor-pointer text-blue-950"
               name="game-icons:rolling-dices"
               size="1.75rem"
-              @click="() => randomizeContext()"
+              @click="handleDiceClick"
             />
           </template>
         </FormCard>
@@ -165,9 +152,8 @@
 </template>
 
 <script setup lang="ts">
-import { fakerZH_TW } from '@faker-js/faker';
 import { ConcreteComponent } from 'nuxt/dist/app/compat/capi';
-import type { FormStateKeys, NewPersona, PoemsTemplate } from '@/types';
+import type { FormStateKeys, PoemsTemplate } from '@/types';
 
 const ActionsComponents: Record<FormStateKeys, ConcreteComponent | string> = {
   NEW: resolveComponent('StoryNewActions'),
@@ -181,18 +167,16 @@ const formPanelProps = {
     '第五步從一張張的情境故事(poems)中選擇一張或彙整出一張形成最終的未來情境文字描述(一句話)',
 };
 
-const { user, username, userId, getTokenSilently } = useAuth();
+const { username } = useAuth();
 const stores = {
   modal: useModalStore(),
   issue: useIssueStore(),
-  persona: usePersonaStore(),
-  keyword: useKeywordStore(),
   poemsTemplate: usePoemsTemplateStore(),
   story: useStoryStore(),
 };
-const { personas } = storeToRefs(stores.persona);
-const { categoriedVotedKeywords } = storeToRefs(stores.keyword);
-const { poemsTemplates } = storeToRefs(stores.poemsTemplate);
+const { poemsTemplates, personaOptions, keywordOptions } = storeToRefs(
+  stores.poemsTemplate
+);
 const {
   loading,
   stories,
@@ -206,35 +190,13 @@ const {
 
 const currentPoemsTemplate = ref<PoemsTemplate>();
 
-const personaOptions = computed(() =>
-  personas.value.map((el): Omit<NewPersona, 'image'> => {
-    const { name, age, gender, role, trait, other, ..._ } = el;
-    return {
-      name,
-      age,
-      gender,
-      role,
-      trait,
-      other,
-    };
-  })
-);
-
-const randomizeContext = () => {
-  currentStory.value.context = {
-    persona: fakerZH_TW.helpers.arrayElement(personaOptions.value),
-    object: fakerZH_TW.helpers.arrayElement(categoriedVotedKeywords.value.O),
-    environment: fakerZH_TW.helpers.arrayElement(
-      categoriedVotedKeywords.value.E
-    ),
-    message: fakerZH_TW.helpers.arrayElement(categoriedVotedKeywords.value.M),
-    service: fakerZH_TW.helpers.arrayElement(categoriedVotedKeywords.value.S),
-  };
-};
-
 const handleStoryGeneration = async () => {};
 
 const handleDblclick = () => {
   stores.modal.show();
+};
+
+const handleDiceClick = () => {
+  currentStory.value.context = stores.poemsTemplate.getRandomContext();
 };
 </script>

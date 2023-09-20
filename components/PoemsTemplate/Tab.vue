@@ -18,22 +18,16 @@
               :disabled="formDisabled"
             />
             <InputSelect
-              v-slot="slotProps"
               v-model="currentPoemsTemplate.persona"
               type="select"
               title="使用者 (P)"
               placeholder="模板使用者"
               :disabled="formDisabled"
-              :options="
-                personas.map((el) => ({
-                  name: `${el.trait}的${el.role}(${el.name})`,
-                  data: el,
-                }))
-              "
+              :options="personaOptions"
             >
-              <span v-if="slotProps.selected && slotProps.selected.data">
-                {{ slotProps.selected.data.trait }}的{{
-                  slotProps.selected.data.role
+              <span v-if="currentPoemsTemplate.persona">
+                {{ currentPoemsTemplate.persona.trait }}的{{
+                  currentPoemsTemplate.persona.role
                 }}
               </span>
             </InputSelect>
@@ -43,11 +37,7 @@
               title="物件 (O)"
               placeholder="模板物件"
               :disabled="formDisabled"
-              :select-options="
-                votedKeywords
-                  .filter((el) => el.type === 'O')
-                  .map((el) => ({ name: el.body, data: el.body }))
-              "
+              :select-options="keywordOptions.O"
               input-classes="h-[90px]"
             />
             <InputComponent
@@ -56,11 +46,7 @@
               title="環境 (E)"
               placeholder="模板環境"
               :disabled="formDisabled"
-              :select-options="
-                votedKeywords
-                  .filter((el) => el.type === 'E')
-                  .map((el) => ({ name: el.body, data: el.body }))
-              "
+              :select-options="keywordOptions.E"
               input-classes="h-[90px]"
             />
             <InputComponent
@@ -70,11 +56,7 @@
               placeholder="模板訊息"
               :disabled="formDisabled"
               input-classes="h-[90px]"
-              :select-options="
-                votedKeywords
-                  .filter((el) => el.type === 'M')
-                  .map((el) => ({ name: el.body, data: el.body }))
-              "
+              :select-options="keywordOptions.M"
             />
             <InputComponent
               v-model="currentPoemsTemplate.service"
@@ -83,15 +65,20 @@
               placeholder="模板服務"
               :disabled="formDisabled"
               input-classes="h-[90px]"
-              :select-options="
-                votedKeywords
-                  .filter((el) => el.type === 'S')
-                  .map((el) => ({ name: el.body, data: el.body }))
-              "
+              :select-options="keywordOptions.S"
             />
           </template>
           <template #actions>
             <component :is="ActionsComponents[state]" />
+          </template>
+          <template #icon-actions>
+            <Icon
+              v-if="state !== 'DETAILS'"
+              class="cursor-pointer text-blue-950"
+              name="game-icons:rolling-dices"
+              size="1.75rem"
+              @click="stores.poemsTemplate.randomizeContext"
+            />
           </template>
         </FormCard>
       </FormPanel>
@@ -152,7 +139,7 @@ const formPanelProps = {
   description: '第四步將前三步所得之資料組合成一張張的情境故事(poems)',
 };
 
-const { user, username, userId, getTokenSilently } = useAuth();
+const { username } = useAuth();
 const stores = {
   modal: useModalStore(),
   issue: useIssueStore(),
@@ -160,8 +147,6 @@ const stores = {
   keyword: useKeywordStore(),
   poemsTemplate: usePoemsTemplateStore(),
 };
-const { personas } = storeToRefs(stores.persona);
-const { votedKeywords } = storeToRefs(stores.keyword);
 const {
   loading,
   poemsTemplates,
@@ -171,6 +156,8 @@ const {
   state,
   formCardProps,
   formDisabled,
+  personaOptions,
+  keywordOptions,
 } = storeToRefs(stores.poemsTemplate);
 
 const handleDblclick = () => {

@@ -40,14 +40,12 @@
 </template>
 
 <script setup lang="ts" generic="T">
-interface Option {
-  name: string;
-  data: T;
-}
+import { SelectOption } from '~/types';
+
 interface Props {
   // Required
   modelValue: T;
-  options: Option[];
+  options: SelectOption<T>[];
 
   // Optional
   title?: string;
@@ -67,7 +65,7 @@ const emit = defineEmits<{
   (e: 'select', value: T): void;
 }>();
 
-const selected = shallowRef<Option>();
+const selected = shallowRef<SelectOption<T>>();
 const dropdownShown = ref(false);
 const dropdownIcon = ref<HTMLDivElement | null>(null);
 const dropdownDiv = ref<HTMLDivElement | null>(null);
@@ -95,7 +93,7 @@ const inputProps = computed(() => {
   };
 });
 
-const handleClick = (option: Option) => {
+const handleClick = (option: SelectOption<T>) => {
   selected.value = option;
   emit('update:modelValue', option.data);
   emit('select', option.data);

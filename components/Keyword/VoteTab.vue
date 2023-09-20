@@ -47,7 +47,11 @@
                 v-slot="slotProps"
                 v-model="currentUser"
                 class="px-2"
-                :options="keywordUsers.map((u) => ({ name: u.name, data: u }))"
+                :options="
+                  keywordUsers
+                    .filter((u) => u._id !== userId)
+                    .map((u) => ({ name: u.name, data: u }))
+                "
               >
                 {{ slotProps.selected.name }}的關鍵字
               </CustomSelect>
