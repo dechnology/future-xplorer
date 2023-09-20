@@ -67,18 +67,33 @@ const iconNow = computed(() => {
     iconChangeTo.value = {
       name: 'svg-spinners:dot-revolve',
       size: '5rem',
-    };
-  } else if (props.status === 'avatar') {
+    }
+  } else if (props.status === "promptError") {
+    iconChangeTo.value = {
+      name: 'line-md:alert-square',
+      size: '5rem',
+    }
+  } else if (props.status === "avatar") {
     iconChangeTo.value = {
       name: 'svg-spinners:blocks-wave',
       size: '5rem',
-    };
-  } else if (props.status === 'uploading') {
+    }
+  } else if (props.status === "avatarError") {
+    iconChangeTo.value = {
+      name: 'line-md:account-alert',
+      size: '5rem',
+    }
+  } else if (props.status === "uploading") {
     iconChangeTo.value = {
       name: 'material-symbols:model-training',
       size: '5rem',
-    };
-  } else if (props.status === 'finished') {
+    }
+  } else if (props.status === "uploadingError") {
+    iconChangeTo.value = {
+      name: 'line-md:upload-loop',
+      size: '5rem',
+    }
+  } else if (props.status === "finished") {
     iconChangeTo.value = {
       name: 'material-symbols:how-to-reg',
       size: '5rem',
@@ -97,16 +112,22 @@ const textNow = computed(() => {
   if (props.disabled) {
     return props.disabledIcon;
   }
-  if (props.status === 'waiting') {
-    textChangeTo.value = '點擊上傳圖片';
-  } else if (props.status === 'prompt') {
-    textChangeTo.value = '人物提示詞產生中...';
-  } else if (props.status === 'avatar') {
-    textChangeTo.value = '人物圖片生成中...';
-  } else if (props.status === 'uploading') {
-    textChangeTo.value = '圖片上傳中...';
-  } else if (props.status === 'finished') {
-    textChangeTo.value = '圖片上傳完畢';
+  if (props.status === "waiting") {
+    textChangeTo.value = "點擊上傳圖片";
+  } else if (props.status === "prompt") {
+    textChangeTo.value = "人物提示詞產生中...";
+  } else if (props.status === "promptError") {
+    textChangeTo.value = "暫時無法產生人物提示詞";
+  } else if (props.status === "avatar") {
+    textChangeTo.value = "人物圖片生成中...";
+  } else if (props.status === "prompt") {
+    textChangeTo.value = "暫時無法產生人物圖片";
+  } else if (props.status === "uploading") {
+    textChangeTo.value = "圖片上傳中...";
+  } else if (props.status === "prompt") {
+    textChangeTo.value = "暫時無法上傳圖片";
+  } else if (props.status === "finished") {
+    textChangeTo.value = "圖片上傳完畢";
   }
 
   console.log('new textChangeTo =>', textChangeTo);
