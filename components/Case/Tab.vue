@@ -78,15 +78,15 @@
               <NuxtImg
                 v-if="currentCase.image"
                 :src="currentCase.image"
-                alt=""
+                alt="案例圖遺失"
               />
               <NuxtImg
                 v-else-if="imageUrlBuffer"
                 :src="imageUrlBuffer"
-                alt=""
+                alt="新圖遺失"
               />
-              v-model:file="imageFileBuffer"
               <InputFileDropzone
+                v-else
                 :disabled="formDisabled"
                 class="h-72 shrink-0 grow"
                 @blob-url-created="(url) => (imageUrlBuffer = url)"
