@@ -1,5 +1,17 @@
 <template>
-  <p :class="classes">
+  <p
+    :class="classes"
+    :style="
+      lineClamp
+        ? {
+            display: '-webkit-box',
+            overflow: 'hidden',
+            WebkitBoxOrient: 'vertical',
+            WebkitLineClamp: lineClamp,
+          }
+        : {}
+    "
+  >
     <slot />
   </p>
 </template>
@@ -7,7 +19,7 @@
 <script setup lang="ts">
 import { twMerge } from 'tailwind-merge';
 
-const props = defineProps<{ inputClasses?: string }>();
+const props = defineProps<{ inputClasses?: string; lineClamp?: number }>();
 
 const classes = computed(() =>
   twMerge(

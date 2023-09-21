@@ -4,6 +4,7 @@ import {
   StoryResponseBody,
   StoryContext,
 } from '@/types';
+import { getIssueConextMessage } from '~/server/utils/openai';
 
 const getSystemMessage = (ctx: IssueContext): string => {
   return [
@@ -20,12 +21,7 @@ const getSystemMessage = (ctx: IssueContext): string => {
 
     "'''",
     'Additional information:',
-    `The scenario given is from a workshop called "Workshop: ${ctx.workshop.name}".`,
-    'Here are the details of the workshop:',
-    ctx.workshop.description,
-    `The current issue discussed in the workshop is called "${ctx.issue.title}".`,
-    'Here are the details of the issue:',
-    ctx.issue.description,
+    getIssueConextMessage(ctx),
     "'''",
   ].join('\n');
 };

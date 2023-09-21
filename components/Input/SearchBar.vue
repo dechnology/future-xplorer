@@ -28,6 +28,11 @@ interface Props {
   buttonText: string;
   modelValue: string;
 }
+
+defineEmits<{
+  (e: 'update:modelValue', value: string): void;
+}>();
+
 const {
   modelValue,
   placeholder = '',

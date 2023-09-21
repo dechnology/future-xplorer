@@ -3,44 +3,42 @@
     <InputLabel v-if="title">{{ title }}</InputLabel>
     <ul
       ref="ulRef"
-      @click="handleClick"
       :class="disabled ? 'border-gray-200 bg-gray-50' : 'border-gray-500'"
       class="flex min-h-[56px] items-center gap-2 rounded border border-solid p-3"
+      @click="handleClick"
     >
       <li
         v-for="(chip, idx) in chips"
         :key="`${idx}_${chip}`"
+        :contenteditable="!disabled && idx === focusIndex"
+        :class="idx === focusIndex ? 'bg-slate-300' : 'bg-slate-200'"
+        tabindex="-1"
+        class="flex w-fit items-center gap-2 whitespace-nowrap rounded-2xl px-3 py-1"
         @dblclick="(e) => handleDblClick(e, idx)"
         @keypress.enter.prevent="
           (e) => editChipsByIndex(idx, (e.target as HTMLLIElement).innerText)
         "
-        :contenteditable="!disabled && idx === focusIndex"
-        tabindex="-1"
-        class="flex w-fit items-center gap-2 whitespace-nowrap rounded-2xl px-3 py-1"
-        :class="idx === focusIndex ? 'bg-slate-300' : 'bg-slate-200'"
       >
         <span>
           {{ chip }}
         </span>
         <div v-if="!disabled">
           <Icon
-            @click="() => !disabled && deleteChipsByIndex(idx)"
             name="typcn:delete-outline"
             size="2rem"
+            @click="() => !disabled && deleteChipsByIndex(idx)"
           />
         </div>
       </li>
-      <!-- <div @click="handleClick" class="flex h-full w-full items-center"> -->
       <li
         ref="lastListItem"
         :contenteditable="!disabled && chips.length === focusIndex"
+        tabindex="0"
+        class="shrink grow basis-auto align-middle focus:outline-none"
         @keypress.enter.prevent="
           (e) => appendChip((e.target as HTMLLIElement).innerText)
         "
-        tabindex="0"
-        class="shrink grow basis-auto align-middle focus:outline-none"
       ></li>
-      <!-- </div> -->
     </ul>
   </div>
 </template>
