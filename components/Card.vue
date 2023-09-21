@@ -1,9 +1,7 @@
 <template>
   <div :class="cardClasses">
     <slot name="image" />
-    <div
-      class="flex shrink grow basis-auto flex-col items-center justify-center p-5"
-    >
+    <div class="flex shrink grow basis-auto flex-col items-center p-5">
       <slot />
     </div>
   </div>

@@ -12,7 +12,7 @@
           <template #body>
             <CardButton
               class="mx-auto w-fit rounded-lg bg-indigo-500 px-8 py-3 text-white transition-all hover:bg-indigo-600"
-              @click.prevent="handleImageGenerations"
+              @click.prevent="() => stores.modal.show()"
             >
               選擇故事
             </CardButton>
@@ -28,7 +28,7 @@
               <CardButton
                 class="rounded-lg bg-lime-600 px-8 py-3 text-white transition-all hover:bg-lime-700"
                 body="Prompt"
-                @click.prevent="handleImageGenerations"
+                @click.prevent="handlePromptGeneration"
               >
                 <span>PROMPT</span>
                 <Icon
@@ -40,10 +40,10 @@
             </div>
             <InputComponent
               v-model="currentIllustration.prompt"
+              :disabled="formDisabled"
               type="textarea"
               title="Prompt"
               placeholder="情境圖 prompt"
-              :disabled="formDisabled"
               input-classes="h-[200px]"
             />
             <div
@@ -89,13 +89,32 @@
       </CardGallery>
     </CardGalleryPanel>
   </NuxtLayout>
+  <IllustrationStoriesModal>
+    <CardGallery :grid-cols="5">
+      <Card
+        v-for="el in stories"
+        :key="el._id"
+        :active="selectedStory?._id === el._id"
+        class="h-[305px]"
+        @click="() => (selectedStory = el)"
+      >
+        <CardTitle>{{ el.title }}</CardTitle>
+        <CardDescription :line-clamp="10">
+          {{ el.content }}
+        </CardDescription>
+        <CardFootnote>
+          {{ `建立者：${el.creator.name}` }}
+        </CardFootnote>
+      </Card>
+    </CardGallery>
+    <template #actions>
+      <IllustrationStoriesModalActions @confirm="handelConfirm" />
+    </template>
+  </IllustrationStoriesModal>
 </template>
 
 <script setup lang="ts">
-import { Illustration, NewIllustrationSchema, type User } from '~/types';
-
-const gojoImage =
-  'https://fictionhorizon.com/wp-content/uploads/2023/06/Gojo1.jpg';
+import { Illustration, NewIllustrationSchema, Story, type User } from '~/types';
 
 const formPanelProps = {
   title: '情境圖',
@@ -110,12 +129,41 @@ const stores = {
   persona: usePersonaStore(),
   keyword: useKeywordStore(),
   illustration: useIllustrationStore(),
+  story: useStoryStore(),
 };
+const { workshop, issue, issueId } = storeToRefs(stores.issue);
 const { loading, illustrations, activeId, currentIllustration, formDisabled } =
   storeToRefs(stores.illustration);
-const { issueId } = storeToRefs(stores.issue);
+const { stories } = storeToRefs(stores.story);
+
+const selectedStory = ref<Story>();
 
 const numberToGenerate = ref(1);
+
+const handlePromptGeneration = async () => {
+  try {
+    loading.value = true;
+
+    if (!workshop.value || !issue.value || !currentIllustration.value.story) {
+      throw new Error('Invalid workshop, issue or story');
+    }
+
+    const token = await getTokenSilently();
+    const { prompt } = await generateIllustrationPrompt(token, {
+      workshop: workshop.value,
+      issue: issue.value,
+      story: currentIllustration.value.story,
+    });
+
+    console.log('Illustration prompt: ', prompt);
+
+    currentIllustration.value.prompt = prompt;
+  } catch (e) {
+    console.error(e);
+  } finally {
+    loading.value = false;
+  }
+};
 
 const imageGeneration = async () => {
   try {
@@ -161,6 +209,13 @@ const handleImageGenerations = async () => {
   }
 
   await Promise.all(promises);
+};
+
+const handelConfirm = () => {
+  if (selectedStory.value) {
+    currentIllustration.value.story = selectedStory.value.content;
+    stores.modal.close();
+  }
 };
 
 const handleDblclick = () => {

@@ -23,8 +23,15 @@ export interface Story extends Base, NewStory {
   issue: Issue | string;
 }
 
-export interface StoryRequestBody extends IssueContext, StoryContext {
-  title: string;
+export type StoryRequestBody = IssueContext &
+  StoryContext &
+  Pick<Story, 'title'>;
+
+export type StoryRemakeRequestBody = IssueContext &
+  Pick<Story, 'title' | 'content'>;
+
+export interface StoryCombineRequestBody extends IssueContext {
+  stories: Pick<Story, 'title' | 'content'>[];
 }
 
 export interface StoryResponseBody {
