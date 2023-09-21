@@ -58,7 +58,7 @@ const handlePortraitGeneration = async () => {
 
     stores.persona.aiPromptGeneration();
     console.log('generating portrait for persona: ', persona);
-    const { err: errPrompt, prompt } = await generatePrompt(token, {
+    const { err: errPrompt, prompt } = await generatePortraitPrompt(token, {
       workshop: workshop.value,
       issue: issue.value,
       persona,
@@ -116,6 +116,7 @@ const handleSaveEdit = async () => {
     console.log('Patched: ', editedPersona);
     activePersona.value = editedPersona;
     stores.persona.changeActivePersona(editedPersona);
+    stores.persona.upsertPersona(editedPersona);
   } catch (e) {
     console.error(e);
   } finally {

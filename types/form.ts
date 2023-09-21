@@ -8,3 +8,8 @@ export interface FormPanelProps {
   title: string;
   description: string;
 }
+
+export interface SelectOption<T> {
+  name: string;
+  data: T;
+}

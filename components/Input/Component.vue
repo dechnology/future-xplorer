@@ -14,7 +14,7 @@
         @input="handleInputChange"
       ></textarea>
       <div
-        v-if="selectOptions"
+        v-if="selectOptions && !disabled"
         class="absolute inset-y-0 right-2 flex items-center justify-center"
       >
         <Icon
@@ -27,7 +27,7 @@
         />
       </div>
       <div
-        v-if="selectOptions"
+        v-if="selectOptions && !disabled"
         ref="dropdownDiv"
         class="absolute right-0 top-full z-10 mt-3 w-full origin-top-right transition-all duration-300"
         :class="dropdownShown ? 'scale-100' : 'scale-0'"
@@ -47,10 +47,8 @@
 </template>
 
 <script setup lang="ts">
-interface SelectOption {
-  name: string;
-  data: string;
-}
+import { SelectOption } from '~/types';
+
 interface Props {
   // Required
   type: 'text' | 'textarea' | 'select';
@@ -59,7 +57,7 @@ interface Props {
   // Optional
   title?: string;
   inputClasses?: string;
-  selectOptions?: SelectOption[];
+  selectOptions?: SelectOption<string>[];
 
   // Optional with defaults
   placeholder?: string;
@@ -114,7 +112,7 @@ const handleInputChange = (e: Event) => {
   }
 };
 
-const handleClick = (option: SelectOption) => {
+const handleClick = (option: SelectOption<string>) => {
   emit('update:modelValue', option.data);
   dropdownShown.value = false;
 };

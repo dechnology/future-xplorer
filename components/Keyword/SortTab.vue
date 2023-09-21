@@ -10,7 +10,7 @@
         </template>
         <KeywordGallery :n_cols="2">
           <KeywordCard
-            v-for="k in selfKeywords"
+            v-for="k in selfKeywords.filter((k) => !k.category)"
             :key="k._id"
             :draggable="true"
             class="h-40"
@@ -47,6 +47,21 @@
         >
           <template #category>{{ k.category }}</template>
           {{ k.body }}
+          <template #removeIcon>
+            <Icon
+              name="tabler:arrow-back-up"
+              size="24px"
+              class="cursor-pointer text-neutral-400 transition-all hover:text-neutral-600"
+              @click="() => (k.category = undefined)"
+            />
+            <!-- TODO -->
+            <!-- <Icon
+              name="mdi:bin"
+              size="24px"
+              class="cursor-pointer text-red-400 transition-all hover:text-red-600"
+              @click="() => removeNewKeyword(idx)"
+            /> -->
+          </template>
         </KeywordCard>
       </KeywordGallery>
     </KeywordGalleryPanel>
