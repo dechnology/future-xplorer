@@ -22,7 +22,14 @@ const getSystemMessage = (ctx: IssueContext): string =>
   ].join('\n');
 
 const getUserMessage = (story: string): string => {
-  return ["'''", 'Story content:', story, "'''"].join('\n');
+  return [
+    "'''",
+    'Story content:',
+    story,
+    "'''",
+    'Remeber to keep your respose under 1000 CHARACTERS, and follow the order of the elements.',
+    'Description:',
+  ].join('\n');
 };
 
 export default defineEventHandler(

@@ -87,11 +87,14 @@ export const uploadImageUrl = async (
   const ext = url.split('?')[0].split('.').pop();
   const filepath = `${baseFilepath}/${uuidv4()}.${ext}`;
 
-  const { data, error } = await useFetch('/api/s3/images/urls', {
-    method: 'post',
-    headers: { Authorization: `Bearer ${token}` },
-    body: { url, key: filepath },
-  });
+  const { data, error } = await useFetch(
+    `/api/s3/images/urls?nocache=${Date.now()}`,
+    {
+      method: 'post',
+      headers: { Authorization: `Bearer ${token}` },
+      body: { url, key: filepath },
+    }
+  );
 
   if (error.value) {
     throw error.value;

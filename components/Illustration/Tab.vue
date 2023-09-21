@@ -169,21 +169,26 @@ const imageGeneration = async () => {
   try {
     loading.value = true;
 
-    console.log(currentIllustration.value);
-
+    const illustration = NewIllustrationSchema.passthrough().parse(
+      currentIllustration.value
+    );
     const token = await getTokenSilently();
-    const illustration = NewIllustrationSchema.parse(currentIllustration.value);
+    const { image } = await generateImage(token, {
+      prompt: illustration.prompt,
+    });
 
-    console.log('Creating: ', illustration);
+    const { data: imageUrl } = await uploadImageUrl(token, image);
+
+    console.log('Image url: ', imageUrl);
+
     const { data: createdIllustration } = await fetchResource<Illustration>(
       token,
-      `/api/issues/${issueId.value}/illustrations?nochache=${Date.now()}`,
+      `/api/issues/${issueId.value}/illustrations`,
       {
         method: 'post',
         body: {
           ...illustration,
-          image:
-            'https://www.meme-arsenal.com/memes/6b1d02f844bfb2b47a597083c9f63305.jpg', // Change this to generated image
+          image: imageUrl,
         },
       }
     );
@@ -200,9 +205,17 @@ const imageGeneration = async () => {
 };
 
 const handleImageGenerations = async () => {
-  console.log(numberToGenerate.value);
+  if (currentIllustration.value.prompt.trim() === '') {
+    console.error('no prompt');
+    return;
+  }
 
   const promises: Promise<void>[] = [];
+
+  console.log(
+    `Creating ${numberToGenerate.value} illustration with prompt: `,
+    currentIllustration.value.prompt
+  );
 
   for (let i = 0; i < numberToGenerate.value; i++) {
     promises.push(imageGeneration());
@@ -214,6 +227,7 @@ const handleImageGenerations = async () => {
 const handelConfirm = () => {
   if (selectedStory.value) {
     currentIllustration.value.story = selectedStory.value.content;
+    selectedStory.value = undefined;
     stores.modal.close();
   }
 };
