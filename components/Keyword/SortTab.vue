@@ -8,7 +8,7 @@
             <template #description>{{ formPanelProps.description }}</template>
           </PanelHeader>
         </template>
-        <KeywordGallery :n_cols="2">
+        <KeywordGallery :grid-cols="2">
           <KeywordCard
             v-for="k in selfKeywords.filter((k) => !k.category)"
             :key="k._id"
@@ -91,11 +91,8 @@ const getCurrentElement = (
   defaultElement: WorkshopElement | undefined = elementsArray.value.at(0)
 ) => {
   try {
-    const elementData = readLocalStorage(sortStorageKey);
-
-    if (!elementData) {
-      throw new Error('no cache');
-    }
+    const elementData =
+      readLocalStorage(sortStorageKey) || defaultElement?.name;
 
     return elementsArray.value.find((el) => el.name === elementData);
   } catch (e) {

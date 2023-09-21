@@ -1,19 +1,16 @@
 <template>
   <div
+    v-if="activePersona"
     ref="contentDiv"
     class="relative flex min-h-0 shrink grow basis-auto flex-col gap-6"
-    v-if="activePersona"
   >
     <div class="flex flex-col gap-6">
       <slot :content="activePersonaContent" />
     </div>
-
   </div>
 </template>
 
 <script setup lang="ts">
-import { Keyword, NewKeywordSchema } from '@/types';
-
 interface PersonaContent {
   角色: string;
   姓名: string;

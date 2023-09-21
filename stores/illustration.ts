@@ -1,4 +1,4 @@
-import { FormStateKeys, Illustration, NewIllustration } from '@/types';
+import type { Illustration, NewIllustration } from '@/types';
 
 export const useIllustrationStore = definePiniaStore('illustration', () => {
   const issueStore = useIssueStore();

@@ -104,7 +104,7 @@ const handleClick = (option: SelectOption<T>) => {
   dropdownShown.value = false;
 };
 
-onClickOutside(dropdownIcon, (e: PointerEvent) => {
+onClickOutside(dropdownIcon, () => {
   dropdownShown.value = false;
 });
 </script>

@@ -1,6 +1,4 @@
 import { Base } from '@/types/base';
-import { BaseIssue } from '@/types/issue';
-import { Schema } from 'mongoose';
 
 export const Roles = {
   admin: 1,

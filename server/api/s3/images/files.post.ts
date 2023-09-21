@@ -17,10 +17,10 @@ export default defineEventHandler(
 
     for (const datum of rawFormData) {
       if (datum.name === 'key') {
-        formData['key'] = datum.data.toString('utf-8');
+        formData.key = datum.data.toString('utf-8');
       } else if (datum.name === 'image') {
-        formData['image'] = datum.data;
-        formData['contentType'] = datum.type;
+        formData.image = datum.data;
+        formData.contentType = datum.type;
       }
     }
     console.log(formData);

@@ -6,7 +6,10 @@
     @dblclick="() => handleDblclick(w._id)"
     @click="() => stores.workshops.changeActiveWorkshop(w)"
   >
-    <WorkshopTableData v-for="datum in getWorkshopData(w)">
+    <WorkshopTableData
+      v-for="(datum, idx) in getWorkshopData(w)"
+      :key="`${idx}_${datum}`"
+    >
       {{ datum }}
     </WorkshopTableData>
   </WorkshopTableRow>
