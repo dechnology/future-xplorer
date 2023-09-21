@@ -2,6 +2,7 @@ import type {
   KeywordsRequestBody,
   KeywordsResponseBody,
   PortraitRequestBody,
+  StoryRemakeRequestBody,
   StoryRequestBody,
   StoryResponseBody,
 } from '@/types';
@@ -94,7 +95,30 @@ export const generateStory = async (
   token: string,
   body: StoryRequestBody
 ): Promise<StoryResponseBody> => {
-  const { data, error } = await useFetch(`/api/openai/story`, {
+  const { data, error } = await useFetch(`/api/openai/story/generation`, {
+    method: 'post',
+    headers: { Authorization: `Bearer ${token}` },
+    body,
+  });
+
+  if (error.value) {
+    throw error.value;
+  }
+
+  if (!data.value) {
+    throw new Error('data are null');
+  }
+
+  const { story } = data.value;
+
+  return { story };
+};
+
+export const generateStoryRemake = async (
+  token: string,
+  body: StoryRemakeRequestBody
+): Promise<StoryResponseBody> => {
+  const { data, error } = await useFetch(`/api/openai/story/remake`, {
     method: 'post',
     headers: { Authorization: `Bearer ${token}` },
     body,
