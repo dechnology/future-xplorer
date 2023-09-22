@@ -16,11 +16,7 @@ export const readLocalStorage = (key: string) => {
 
 export const readCurrentTab = (defaultTab: IssueTab = IssueTabs.persona) => {
   try {
-    const tabData = readLocalStorage(tabStorgeKey);
-
-    if (!tabData) {
-      throw new Error('no cache');
-    }
+    const tabData = readLocalStorage(tabStorgeKey) || defaultTab;
 
     const currentTab = IssueTabs[tabData as IssueTabKeys];
 

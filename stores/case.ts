@@ -1,3 +1,4 @@
+import cloneDeep from 'lodash/cloneDeep';
 import { getNewCase } from '~/utils';
 import { FormStateKeys, Case, NewCase, Keyword, NewKeyword } from '@/types';
 
@@ -65,8 +66,8 @@ export const useCaseStore = definePiniaStore('case', () => {
   function changeActiveCase(c?: Case | null) {
     if (c) {
       activeCase.value = c;
-      currentCase.value = _.cloneDeep(c);
-      currentKeywords.value = _.cloneDeep(c.keywords);
+      currentCase.value = cloneDeep(c);
+      currentKeywords.value = cloneDeep(c.keywords);
       state.value = 'DETAILS';
     } else {
       activeCase.value = null;

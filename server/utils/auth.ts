@@ -10,7 +10,7 @@ export const authenticate = (ctx: H3EventContext) => {
       throw error;
     }
 
-    let code = error instanceof errors.JWTClaimValidationFailed ? 400 : 401;
+    const code = error instanceof errors.JWTClaimValidationFailed ? 400 : 401;
     throw createError({
       statusCode: code,
       statusMessage: error.code,

@@ -165,7 +165,7 @@
     <CaseModalActions />
     <template #keywords>
       <KeywordGalleryPanel>
-        <KeywordGallery :n_cols="2">
+        <KeywordGallery :grid-cols="2">
           <KeywordCard
             v-for="(k, idx) in newKeywords"
             :key="`${idx}_${k.body}`"

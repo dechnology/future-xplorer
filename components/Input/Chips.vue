@@ -60,7 +60,7 @@ const ulRef = ref<HTMLUListElement | null>(null);
 const lastListItem = ref<HTMLLIElement | null>(null);
 const focusIndex = ref<number | null>(null);
 
-const handleClick = (e: MouseEvent) => {
+const handleClick = () => {
   if (!lastListItem.value) {
     return;
   }

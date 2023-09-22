@@ -23,8 +23,8 @@
         class="absolute inset-y-0 right-2 flex items-center justify-center"
       >
         <div
-          @click="() => (dropdownShown = !dropdownShown)"
           class="cursor-pointer"
+          @click="() => (dropdownShown = !dropdownShown)"
         >
           <Icon
             class="transition-all duration-300"
@@ -38,6 +38,8 @@
         v-if="selectOptions"
         class="origin-top-right transition-all duration-300"
         :class="dropdownShown ? 'scale-100' : 'scale-0'"
+        :items="selectOptions"
+        :shown="dropdownShown"
         @item-click="
           (item) => {
             dropdownShown = false;
@@ -45,8 +47,6 @@
           }
         "
         @close-menu="() => (dropdownShown = false)"
-        :items="selectOptions"
-        :shown="dropdownShown"
       />
     </div>
   </div>
@@ -75,7 +75,7 @@ const props = withDefaults(defineProps<Props>(), {
   readOnly: false,
 });
 
-const emit = defineEmits<{
+defineEmits<{
   (e: 'update:modelValue'): void;
   (e: 'inputSelection', text: string): void;
 }>();
@@ -92,8 +92,6 @@ const defaultClasses: ClassNameValue = [
   'border-solid',
   'border-gray-200',
 ];
-
-const textareaClasses: ClassNameValue = ['resize-none', 'text-start'];
 
 const classes = computed(() => {
   let resultClasses = twMerge(defaultClasses);

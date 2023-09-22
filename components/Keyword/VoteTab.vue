@@ -132,11 +132,10 @@ const getCurrentCategory = () => {
   try {
     const categoryData = readLocalStorage(voteStorageKey);
 
-    if (!categoryData) {
-      throw new Error('no cache');
-    }
-
-    return categoryTabs.value.find((el) => el.name === categoryData)?.name;
+    return (
+      categoryData &&
+      categoryTabs.value.find((el) => el.name === categoryData)?.name
+    );
   } catch (e) {
     console.error(e);
   }

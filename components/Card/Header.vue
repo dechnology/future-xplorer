@@ -17,5 +17,5 @@ interface Props {
   title: string;
   creatorName?: string;
 }
-const props = defineProps<Props>();
+defineProps<Props>();
 </script>
