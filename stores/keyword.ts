@@ -23,7 +23,7 @@ export const useKeywordStore = definePiniaStore('keywords', () => {
   // users can maybe be fetched from the database instead of computed out of keywords
   const keywordUsers = computed(() => {
     const users: User[] = [];
-    const userIds: Set<string> = new Set(); // Assuming the ID is a string
+    const userIds: Set<string> = new Set();
 
     for (const kw of keywords.value) {
       if (!userIds.has(kw.creator._id)) {
