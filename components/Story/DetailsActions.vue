@@ -22,14 +22,14 @@
 </template>
 
 <script setup lang="ts">
-import { Story } from '@/types';
+import { Story, User } from '@/types';
 
-const { getTokenSilently } = useAuth();
+const { user, getTokenSilently } = useAuth();
 const stores = {
   issue: useIssueStore(),
   story: useStoryStore(),
 };
-const { workshop, issue } = storeToRefs(stores.issue);
+const { workshop, issue, issueId } = storeToRefs(stores.issue);
 const { currentStory, activeId, state, loading } = storeToRefs(stores.story);
 
 const handleRemove = async () => {
@@ -69,17 +69,38 @@ const handleRemakeStory = async () => {
       throw new Error('no story title');
     }
 
+    const newTitle = `${currentStory.value.title} AI編輯`;
+
     const token = await getTokenSilently();
 
     console.log('Remaking story...');
-    const { story } = await generateStoryRemake(token, {
-      title: currentStory.value.title,
+    const { story: newStoryContent } = await generateStoryRemake(token, {
+      title: newTitle,
       workshop: workshop.value,
       issue: issue.value,
       content: currentStory.value.content,
     });
 
-    currentStory.value.content = story;
+    console.log('Creating: ', newStoryContent);
+    const { context } = currentStory.value;
+    const { data: createdStory } = await fetchResource<Story>(
+      token,
+      `/api/issues/${issueId.value}/stories`,
+      {
+        method: 'post',
+        body: {
+          title: newTitle,
+          context,
+          content: newStoryContent,
+        },
+      }
+    );
+
+    createdStory.creator = user.value as User;
+
+    console.log('Created: ', createdStory);
+    stores.story.upsertStory(createdStory);
+    stores.story.changeActiveStory(createdStory);
   } catch (e) {
     console.error(e);
   }

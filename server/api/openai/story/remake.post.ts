@@ -23,7 +23,15 @@ const getSystemMessage = (ctx: IssueContext): string =>
   ].join('\n');
 
 const getUserMessage = (content: string): string => {
-  return ["'''", 'Story content:', content, "'''"].join('\n');
+  return [
+    "'''",
+    'Story content:',
+    content,
+    "'''",
+    'You only need to respond the revised story content.',
+    'The new story MUST BE a completely original story, not a copy of the original story.',
+    'Revised story content:',
+  ].join('\n');
 };
 
 export default defineEventHandler(async (event): Promise<StoryResponseBody> => {
