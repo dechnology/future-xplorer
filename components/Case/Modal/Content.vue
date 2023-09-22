@@ -6,6 +6,8 @@
   >
     <div class="flex flex-col gap-6" @mouseup.prevent="handleMouseup">
       <slot :content="activeCaseContent" />
+      <span ref="selectedTextMeasure" style="position: absolute; visibility: hidden; white-space: nowrap;">{{ selectedText }}</span>
+      <span ref="selectedMaxTextMeasure" style="position: absolute; top: 0; left: -9999px; white-space: nowrap;">題與挑戰題與挑戰題與挑戰題與挑戰題與</span>
     </div>
 
     <div>
@@ -21,9 +23,11 @@
     >
       <CardButton
         class="h-12 rounded-lg bg-blue-400 px-3 text-white hover:bg-blue-500"
+        :class="buttonClass"
+        :disabled="isTextTooLong"
         @click.prevent="handleButtonClick"
       >
-        新增關鍵字
+        {{ buttonText }}
       </CardButton>
     </div>
   </div>
@@ -31,6 +35,7 @@
 
 <script setup lang="ts">
 import { NewKeywordSchema } from '@/types';
+import { nextTick } from 'vue';
 
 interface CaseContent {
   背景介紹: string;
@@ -78,12 +83,39 @@ const contentDiv = ref<HTMLDivElement | null>(null);
 const buttonDiv = ref<HTMLDivElement | null>(null);
 const selectedText = ref<string | null>(null);
 const ignoreClick = ref(false);
+const selectedTextMeasure = ref<HTMLSpanElement | null>(null);
+const selectedMaxTextMeasure = ref<HTMLSpanElement | null>(null);
 
 const buttonDivPosition = ref({ top: 0, left: 0 });
 const buttonDivStyle = computed(() => ({
   top: `${buttonDivPosition.value.top}px`,
   left: `${buttonDivPosition.value.left}px`,
 }));
+
+const isTextTooLong = ref(false);
+const checkTextInvalid = () => {
+  nextTick(() => {
+    const MAX_TEXT_PIXELS = selectedMaxTextMeasure.value?.offsetWidth ?? 0;
+    const width = selectedTextMeasure.value?.offsetWidth ?? 0;
+    if (width > MAX_TEXT_PIXELS) {
+      console.log(`字寬大於 ${MAX_TEXT_PIXELS} 個像素`);
+      isTextTooLong.value = true;
+      return true;
+    } else {
+      console.log(`字寬小於等於 ${MAX_TEXT_PIXELS} 個像素`);
+      isTextTooLong.value = false;
+      return false;
+    }
+  });
+};
+const buttonText = computed(() => 
+  isTextTooLong.value ? `關鍵字太長了，放不進卡牌內(大約18個中文字)` : '新增關鍵字'
+);
+
+const buttonClass = computed(() => 
+  isTextTooLong.value ? 'bg-gray-400 hover:bg-gray-400' : 'bg-blue-400 hover:bg-blue-500'
+);
+
 
 onClickOutside(buttonDiv, (e: PointerEvent) => {
   if (ignoreClick.value) {
@@ -132,12 +164,16 @@ const handleMouseup = () => {
 
   selectedText.value = textSelectionState.text.value;
   ignoreClick.value = true;
+  checkTextInvalid()
 };
 
 const handleButtonClick = () => {
   try {
-    const k = NewKeywordSchema.parse({ body: selectedText.value });
-    newKeywords.value.unshift(k);
+    if (!isTextTooLong.value) {
+      console.log("newKeywords accepted")
+      const k = NewKeywordSchema.parse({ body: selectedText.value });
+      newKeywords.value.unshift(k);
+    }
   } catch (e) {
     console.error(e);
   }

@@ -60,6 +60,7 @@ export const useCaseStore = definePiniaStore('case', () => {
 
   function clearCurrentCase() {
     currentCase.value = getNewCase();
+    imageUrlBuffer.value = null;
   }
 
   function changeActiveCase(c?: Case | null) {
