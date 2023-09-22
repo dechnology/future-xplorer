@@ -121,6 +121,7 @@
                 `P: ${el.persona && `${el.persona.trait}的${el.persona.role}`}`,
                 `O: ${el.object}`,
                 `E: ${el.environment}`,
+                `M: ${el.message}`,
                 `S: ${el.service}`,
               ].join('\n\n')
             }}

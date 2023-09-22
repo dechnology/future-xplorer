@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 import { z } from 'zod';
-import type { Keyword } from '@/types';
+import type { Keyword, User } from '@/types';
 import { NewKeywordSchema } from '@/types';
 
 interface KeywordWithIndex {
@@ -36,7 +36,7 @@ interface KeywordWithIndex {
   idx: number;
 }
 
-const { getTokenSilently } = useAuth();
+const { user, getTokenSilently } = useAuth();
 const stores = {
   issue: useIssueStore(),
   case: useCaseStore(),
@@ -93,9 +93,15 @@ const createNewKeywords = async () => {
     }
   );
 
+  const createdKeywords = data.map((kw) => ({
+    ...kw,
+    creator: user.value as User,
+    votes: [],
+  }));
+
   console.log('Created: ', data);
-  currentKeywords.value.unshift(...data);
-  activeCase.value?.keywords.unshift(...data);
+  currentKeywords.value.unshift(...createdKeywords);
+  activeCase.value?.keywords.unshift(...createdKeywords);
   newKeywords.value = [];
   return data;
 };
