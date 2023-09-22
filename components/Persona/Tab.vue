@@ -116,7 +116,7 @@
         </FormCard>
       </FormPanel>
     </template>
-    <CardGalleryPanel>
+    <CardGalleryPanel v-slot="slotProps">
       <CardGallery>
         <Card
           :active="!activePersona"
@@ -129,7 +129,11 @@
         </Card>
         <!-- Should be async component -->
         <Card
-          v-for="p in personas"
+          v-for="p in personas.filter((p) =>
+            [p.name, p.role, p.age, p.gender, p.trait, p.other]
+              .join()
+              .includes(slotProps.searchQuery)
+          )"
           :key="p._id"
           :active="activeId === p._id"
           class="h-[350px]"

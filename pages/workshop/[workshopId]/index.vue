@@ -32,7 +32,7 @@
         </FormCard>
       </FormPanel>
     </template>
-    <CardGalleryPanel>
+    <CardGalleryPanel v-slot="slopProps">
       <CardGallery>
         <Card
           :active="!activeId"
@@ -45,7 +45,9 @@
         </Card>
         <!-- Should be async component -->
         <Card
-          v-for="i in issues"
+          v-for="i in issues.filter((i) =>
+            i.title.includes(slopProps.searchQuery)
+          )"
           :key="i._id"
           :active="activeId === i._id"
           class="h-[300px]"

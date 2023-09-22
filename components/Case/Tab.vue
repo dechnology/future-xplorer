@@ -100,7 +100,7 @@
         </FormCard>
       </FormPanel>
     </template>
-    <CardGalleryPanel>
+    <CardGalleryPanel v-slot="slopProps">
       <CardGallery>
         <Card
           :active="!activeCase"
@@ -113,7 +113,18 @@
         </Card>
         <!-- Should be async component -->
         <Card
-          v-for="el in cases"
+          v-for="el in cases.filter((el) =>
+            [
+              el.title,
+              el.background,
+              el.method,
+              el.goal,
+              el.challenge,
+              el.other,
+            ]
+              .join()
+              .includes(slopProps.searchQuery)
+          )"
           :key="el._id"
           :active="activeId === el._id"
           class="h-[350px]"
@@ -164,40 +175,28 @@
     </CaseModalContent>
     <CaseModalActions />
     <template #keywords>
-      <KeywordGalleryPanel>
+      <KeywordGalleryPanel v-slot="slotProps" :include-search-bar="true">
         <KeywordGallery :grid-cols="2">
           <KeywordCard
-            v-for="(k, idx) in newKeywords"
-            :key="`${idx}_${k.body}`"
-            class="h-24"
-            @update:keyword="(body) => (k.body = body)"
-          >
-            {{ k.body }}
-            <template #removeIcon>
-              <Icon
-                name="mdi:bin"
-                size="20px"
-                class="cursor-pointer text-red-400 transition-all hover:text-red-600"
-                @click="() => removeNewKeyword(idx)"
-              />
-            </template>
-          </KeywordCard>
-          <KeywordCard
-            v-for="(k, idx) in currentKeywords"
-            :key="k._id"
+            v-for="(el, idx) in allKeywords.filter((el) =>
+              el.body.includes(slotProps.searchQuery)
+            )"
+            :key="`${idx}_${el.body}`"
             class="h-28"
-            @update:keyword="(body) => (k.body = body)"
+            @update:keyword="(body) => (el.body = body)"
           >
-            <template v-if="k.category" #category>
-              {{ k.category }}
+            <template #category>
+              <span v-if="'category' in el && el.category">
+                {{ el.category }}
+              </span>
             </template>
-            {{ k.body }}
+            {{ el.body }}
             <template #removeIcon>
               <Icon
                 name="mdi:bin"
                 size="20px"
                 class="cursor-pointer text-red-400 transition-all hover:text-red-600"
-                @click="() => removeCurrentKeyword(idx)"
+                @click="() => removeKeyword(el)"
               />
             </template>
           </KeywordCard>
@@ -209,7 +208,7 @@
 
 <script setup lang="ts">
 import type { ConcreteComponent } from 'nuxt/dist/app/compat/capi';
-import type { FormStateKeys } from '~/types';
+import type { FormStateKeys, Keyword, NewKeyword } from '~/types';
 
 const formPanelProps = {
   title: '案例列表',
@@ -245,8 +244,29 @@ const {
 
 const { ignoreNextClose } = storeToRefs(stores.modal);
 
+const allKeywords = computed((): (Keyword | NewKeyword)[] => [
+  ...newKeywords.value,
+  ...currentKeywords.value,
+]);
+
 const handleDblclick = () => {
   stores.modal.show();
+};
+
+const removeKeyword = (kw: Keyword | NewKeyword) => {
+  ignoreNextClose.value = true;
+  try {
+    loading.value = true;
+    if ('_id' in kw) {
+      currentKeywords.value.splice(currentKeywords.value.indexOf(kw), 1);
+    } else {
+      newKeywords.value.splice(newKeywords.value.indexOf(kw), 1);
+    }
+  } catch (e) {
+    console.error(e);
+  } finally {
+    loading.value = false;
+  }
 };
 
 const removeNewKeyword = (idx: number) => {

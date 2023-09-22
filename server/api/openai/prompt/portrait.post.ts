@@ -35,7 +35,10 @@ const getUserMessage = (p: NewPersona): string => {
     baseMessage.push(`Additional information: ${p.other}`);
   }
 
-  baseMessage.push("'''");
+  baseMessage.push(
+    "'''",
+    'Remeber to keep your respose under 1000 CHARACTERS:'
+  );
 
   return baseMessage.join('\n');
 };

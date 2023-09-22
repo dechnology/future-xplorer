@@ -118,7 +118,7 @@
         </FormCard>
       </FormPanel>
     </template>
-    <CardGalleryPanel>
+    <CardGalleryPanel v-slot="slotProps">
       <CardGallery :grid-cols="3">
         <Card
           :active="!activeStory"
@@ -130,7 +130,9 @@
           </CardIcon>
         </Card>
         <Card
-          v-for="el in stories"
+          v-for="el in stories.filter((el) =>
+            [el.title, el.content].join().includes(slotProps.searchQuery)
+          )"
           :key="el._id"
           class="h-[350px]"
           :active="activeId === el._id"

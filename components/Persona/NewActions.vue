@@ -60,11 +60,11 @@ const handlePortraitGeneration = async () => {
     }
 
     stores.persona.aiAvatarGeneration();
-    const { err: errImage, image } = await generateImage(token, { prompt });
+    const { image } = await generateImage(token, { prompt });
     console.log('image: ', image);
-    if (errImage) {
-      return stores.persona.aiAvatarFailed();
-    }
+    // if (errImage) {
+    //   return stores.persona.aiAvatarFailed();
+    // }
 
     imageFileBuffer.value = null;
     imageUrlBuffer.value = image;

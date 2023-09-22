@@ -83,7 +83,7 @@
         </FormCard>
       </FormPanel>
     </template>
-    <CardGalleryPanel>
+    <CardGalleryPanel v-slot="slopProps">
       <CardGallery :grid-cols="3">
         <Card
           class="h-[350px]"
@@ -96,7 +96,18 @@
         </Card>
         <!-- Should be async component -->
         <Card
-          v-for="el in poemsTemplates"
+          v-for="el in poemsTemplates.filter((el) =>
+            [
+              el.title,
+              el.persona?.role,
+              el.persona?.trait,
+              el.object,
+              el.environment,
+              el.service,
+            ]
+              .join()
+              .includes(slopProps.searchQuery)
+          )"
           :key="el._id"
           class="h-[350px]"
           :active="activeId === el._id"

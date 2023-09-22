@@ -81,11 +81,13 @@
         </template>
       </FormPanel>
     </template>
-    <KeywordGalleryPanel>
+    <KeywordGalleryPanel v-slot="slotProps" :include-search-bar="true">
       <KeywordHeader> 我的最愛 </KeywordHeader>
       <KeywordGallery>
         <KeywordCard
-          v-for="kw in favoriteKeywords"
+          v-for="kw in favoriteKeywords.filter((kw) =>
+            kw.body.includes(slotProps.searchQuery)
+          )"
           :key="kw._id"
           class="h-32"
           @update:keyword="(body) => (kw.body = body)"

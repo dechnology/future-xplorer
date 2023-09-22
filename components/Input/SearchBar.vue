@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-14 gap-5">
+  <div class="flex h-14 shrink-0 grow-0 gap-5">
     <div class="relative grow">
       <div
         class="absolute inset-y-0 left-3 flex h-full items-center justify-center"
