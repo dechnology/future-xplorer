@@ -38,7 +38,7 @@ const emit = defineEmits<{
 
 const editing = ref(false);
 
-const handleDblclick = (e: MouseEvent) => {
+const handleDblclick = () => {
   editing.value = true;
 };
 

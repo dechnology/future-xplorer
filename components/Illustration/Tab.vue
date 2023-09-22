@@ -122,7 +122,7 @@ const formPanelProps = {
     '第五步從一張張的情境故事(poems)中選擇一張或彙整出一張形成最終的未來情境文字描述(一句話)',
 };
 
-const { user, username, userId, getTokenSilently } = useAuth();
+const { user, getTokenSilently } = useAuth();
 const stores = {
   modal: useModalStore(),
   issue: useIssueStore(),
@@ -132,7 +132,7 @@ const stores = {
   story: useStoryStore(),
 };
 const { workshop, issue, issueId } = storeToRefs(stores.issue);
-const { loading, illustrations, activeId, currentIllustration, formDisabled } =
+const { loading, illustrations, currentIllustration, formDisabled } =
   storeToRefs(stores.illustration);
 const { stories } = storeToRefs(stores.story);
 

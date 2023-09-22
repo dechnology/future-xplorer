@@ -8,7 +8,5 @@
 </template>
 
 <script setup lang="ts">
-const props = withDefaults(defineProps<{ active?: boolean }>(), {
-  active: false,
-});
+withDefaults(defineProps<{ active?: boolean }>(), { active: false });
 </script>

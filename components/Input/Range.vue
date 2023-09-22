@@ -40,7 +40,7 @@ const props = withDefaults(defineProps<Props>(), {
   readOnly: false,
 });
 
-const emit = defineEmits<{
+defineEmits<{
   (e: 'update:modelValue', num: number): void;
 }>();
 

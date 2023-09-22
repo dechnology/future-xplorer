@@ -17,8 +17,8 @@
         class="absolute inset-y-0 right-2 flex items-center justify-center"
       >
         <div
-          @click="() => (dropdownShown = !dropdownShown)"
           class="cursor-pointer"
+          @click="() => (dropdownShown = !dropdownShown)"
         >
           <Icon
             class="transition-all duration-300"
@@ -33,6 +33,7 @@
         class="origin-top-right transition-all duration-300"
         :class="dropdownShown ? 'scale-100' : 'scale-0'"
         :shown="dropdownShown"
+        :items="selectOptions"
         @item-click="
           (item) => {
             dropdownShown = false;
@@ -40,7 +41,6 @@
           }
         "
         @close-menu="() => (dropdownShown = false)"
-        :items="selectOptions"
       />
     </div>
   </div>
@@ -69,7 +69,7 @@ const props = withDefaults(defineProps<Props>(), {
   readOnly: false,
 });
 
-const emit = defineEmits<{
+defineEmits<{
   (e: 'update:modelValue'): void;
   (e: 'inputSelection', text: string): void;
 }>();

@@ -10,6 +10,7 @@ module.exports = {
   },
   extends: ['@nuxtjs/eslint-config-typescript', 'plugin:prettier/recommended'],
   rules: {
+    'prettier/prettier': ['error', { endOfLine: 'auto' }],
     camelcase: ['error', { allow: ['fakerZH_TW'] }],
     'no-console': 'off',
     'no-unused-vars': 'off',
