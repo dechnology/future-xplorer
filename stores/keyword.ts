@@ -7,7 +7,13 @@ export const useKeywordStore = definePiniaStore('keywords', () => {
   const loading = ref(false);
 
   const keywords = computed(() =>
-    caseStore.cases.flatMap((c) => [...c.keywords])
+    caseStore.cases
+      .flatMap((c) => [...c.keywords])
+      .sort((a, b) => {
+        if (!a.category) return -1;
+        if (!b.category) return 1;
+        return 0;
+      })
   );
 
   const votedKeywords = computed(() =>

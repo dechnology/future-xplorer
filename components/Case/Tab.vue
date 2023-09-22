@@ -185,8 +185,10 @@
             class="h-28"
             @update:keyword="(body) => (el.body = body)"
           >
-            <template v-if="'category' in el && el.category" #category>
-              {{ el.category }}
+            <template #category>
+              <span v-if="'category' in el && el.category">
+                {{ el.category }}
+              </span>
             </template>
             {{ el.body }}
             <template #removeIcon>
@@ -198,27 +200,6 @@
               />
             </template>
           </KeywordCard>
-          <!-- <KeywordCard
-            v-for="(k, idx) in currentKeywords.filter((k) =>
-              k.body.includes(slotProps.searchQuery)
-            )"
-            :key="k._id"
-            class="h-28"
-            @update:keyword="(body) => (k.body = body)"
-          >
-            <template v-if="k.category" #category>
-              {{ k.category }}
-            </template>
-            {{ k.body }}
-            <template #removeIcon>
-              <Icon
-                name="mdi:bin"
-                size="20px"
-                class="cursor-pointer text-red-400 transition-all hover:text-red-600"
-                @click="() => removeCurrentKeyword(idx)"
-              />
-            </template>
-          </KeywordCard> -->
         </KeywordGallery>
       </KeywordGalleryPanel>
     </template>
@@ -265,11 +246,7 @@ const { ignoreNextClose } = storeToRefs(stores.modal);
 
 const allKeywords = computed((): (Keyword | NewKeyword)[] => [
   ...newKeywords.value,
-  ...currentKeywords.value.sort((a, b) => {
-    if (!a.category) return -1;
-    if (!b.category) return 1;
-    return 0;
-  }),
+  ...currentKeywords.value,
 ]);
 
 const handleDblclick = () => {
