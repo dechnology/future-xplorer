@@ -68,10 +68,12 @@
         </FormCard>
       </FormPanel>
     </template>
-    <CardGalleryPanel>
+    <CardGalleryPanel v-slot="slotProps">
       <CardGallery :grid-cols="4">
         <Card
-          v-for="el in illustrations"
+          v-for="el in illustrations.filter((el) =>
+            [el.prompt, el.story].join().includes(slotProps.searchQuery)
+          )"
           :key="el._id"
           class="h-[350px]"
           @dblclick="() => handleDblclick()"
@@ -82,7 +84,7 @@
           </template>
           <CardDescription classes="text-sm font-medium">
             {{
-              [`Prompt：${el.prompt}`, `建立者：${el.creator.name}`].join('\n')
+              [`Prompt: ${el.prompt}`, `建立者：${el.creator.name}`].join('\n')
             }}
           </CardDescription>
         </Card>

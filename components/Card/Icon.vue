@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-col items-center text-center text-2xl font-semibold text-neutral-500"
+    class="flex h-full flex-col items-center justify-center text-center text-2xl font-semibold text-neutral-500"
   >
     <Icon v-bind="icon" />
     <slot />
