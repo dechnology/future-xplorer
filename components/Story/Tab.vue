@@ -12,6 +12,7 @@
           <template #body>
             <StoryTemplateFormBody v-if="state === 'NEW'" />
             <StoryDetailsFormBody v-else />
+            <!-- <StoryTemplateFormBody /> -->
             <InputComponent
               v-model="currentStory.content"
               type="textarea"
