@@ -49,7 +49,7 @@ const handleRemove = async () => {
     console.log(message);
 
     stores.story.removeStory(activeId.value);
-    stores.story.changeActiveStory();
+    stores.story.clearActiveStories();
     console.log('story removed');
   } catch (e) {
     console.error(e);
@@ -100,7 +100,7 @@ const handleRemakeStory = async () => {
 
     console.log('Created: ', createdStory);
     stores.story.upsertStory(createdStory);
-    stores.story.changeActiveStory(createdStory);
+    stores.story.toggleActiveStory(createdStory);
   } catch (e) {
     console.error(e);
   }

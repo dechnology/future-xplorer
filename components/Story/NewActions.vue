@@ -2,7 +2,7 @@
   <div class="flex items-center justify-around">
     <CardButton
       class="rounded-lg bg-red-400 px-8 py-3 text-white hover:bg-red-500"
-      @click.prevent="() => stores.story.clearCurrentStory()"
+      @click.prevent="() => stores.story.clearCurrentStories()"
     >
       清除
     </CardButton>
@@ -50,7 +50,7 @@ const handleCreate = async () => {
 
     console.log('Created: ', createdStory);
     stores.story.upsertStory(createdStory);
-    stores.story.changeActiveStory(createdStory);
+    stores.story.toggleActiveStory(createdStory);
   } catch (e) {
     console.error(e);
   } finally {

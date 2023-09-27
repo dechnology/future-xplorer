@@ -6,6 +6,14 @@
     placeholder="故事標題"
     :disabled="formDisabled"
   />
+  <InputComponent
+    v-model="currentStory.content"
+    type="textarea"
+    title="故事內容"
+    placeholder="故事內容"
+    :disabled="formDisabled"
+    input-classes="h-[200px]"
+  />
 </template>
 
 <script setup lang="ts">

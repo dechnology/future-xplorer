@@ -28,6 +28,9 @@ export const FormStates = (resourceName: string) => {
       EDITING: {
         formTitle: `${resourceName}編輯`,
       },
+      MULTIPLE: {
+        formTitle: `${resourceName}多選`,
+      },
     } as const;
   }
 

@@ -83,6 +83,14 @@
       class="rotate-90 text-stone-500"
     />
   </div>
+  <InputComponent
+    v-model="currentStory.content"
+    type="textarea"
+    title="故事內容"
+    placeholder="故事內容"
+    :disabled="formDisabled"
+    input-classes="h-[200px]"
+  />
 </template>
 
 <script setup lang="ts">
