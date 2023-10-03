@@ -28,8 +28,8 @@
             <InputComponent
               v-model="currentCase.method"
               type="textarea"
-              title="做法"
-              placeholder="案例做法"
+              title="作法"
+              placeholder="案例作法"
               input-classes="h-[100px]"
               :disabled="formDisabled"
             />

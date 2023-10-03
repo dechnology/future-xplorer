@@ -111,22 +111,14 @@ export const getRandomNewPersona = (): NewPersona => ({
 });
 
 export const getNewCase = (): NewCase => ({
-  title: 'testing title',
-  background: 'some bg...',
-  method: 'some methods',
-  goal: 'goals and stuffs',
-  challenge: 'some challenges',
-  result: 'some results',
-  reference: 'https://www.google.com',
+  title: '',
+  background: '',
+  method: '',
+  goal: '',
+  challenge: '',
+  result: '',
+  reference: '',
   other: '',
-  // title: '',
-  // background: '',
-  // method: '',
-  // goal: '',
-  // challenge: '',
-  // result: '',
-  // reference: '',
-  // other: '',
   image: null,
 });
 
