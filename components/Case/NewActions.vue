@@ -46,6 +46,8 @@ const handleCreate = async () => {
     const token = await getTokenSilently();
     const c = NewCaseSchema.parse(currentCase.value);
 
+    console.log(imageFileBuffer.value);
+
     if (imageUrlBuffer.value) {
       c.image = imageFileBuffer.value
         ? (await uploadImageFile(token, imageFileBuffer.value)).data

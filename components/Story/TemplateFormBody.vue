@@ -21,21 +21,19 @@
     </InputSelect>
   </div>
   <InputSelect
-    v-model="currentStory.context.persona"
+    v-model="currentContext.persona"
     type="select"
     title="使用者 (P)"
     placeholder="故事使用者"
     :disabled="formDisabled"
     :options="personaOptions"
   >
-    <span v-if="currentStory.context.persona">
-      {{ currentStory.context.persona.trait }}的{{
-        currentStory.context.persona.role
-      }}
+    <span v-if="currentContext.persona">
+      {{ currentContext.persona.trait }}的{{ currentContext.persona.role }}
     </span>
   </InputSelect>
   <InputComponent
-    v-model="currentStory.context.object"
+    v-model="currentContext.object"
     type="textarea"
     title="物件 (O)"
     placeholder="故事物件"
@@ -44,7 +42,7 @@
     input-classes="h-[90px]"
   />
   <InputComponent
-    v-model="currentStory.context.environment"
+    v-model="currentContext.environment"
     type="textarea"
     title="環境 (E)"
     placeholder="故事環境"
@@ -53,7 +51,7 @@
     input-classes="h-[90px]"
   />
   <InputComponent
-    v-model="currentStory.context.message"
+    v-model="currentContext.message"
     type="textarea"
     title="訊息 (M)"
     placeholder="故事訊息"
@@ -62,7 +60,7 @@
     :select-options="keywordOptions.M"
   />
   <InputComponent
-    v-model="currentStory.context.service"
+    v-model="currentContext.service"
     type="textarea"
     title="服務 (S)"
     placeholder="故事服務"
@@ -105,9 +103,8 @@ const stores = {
 };
 const { workshop, issue } = storeToRefs(stores.issue);
 const { personaOptions, keywordOptions } = storeToRefs(stores.poemsTemplate);
-const { currentStory, formDisabled, poemsTemplateOptions } = storeToRefs(
-  stores.story
-);
+const { currentStory, currentContext, formDisabled, poemsTemplateOptions } =
+  storeToRefs(stores.story);
 
 const currentPoemsTemplate = ref<PoemsTemplate>();
 
@@ -115,7 +112,7 @@ const handleSelect = (selected: PoemsTemplate | undefined) => {
   if (!selected) {
     return;
   }
-  currentStory.value.context = { ...selected };
+  currentContext.value = { ...selected };
   currentStory.value.title = `${selected.title} 故事`;
 };
 
@@ -125,11 +122,6 @@ const handleStoryGeneration = async () => {
       throw new Error('no workshop or issue');
     }
 
-    currentStory.value.title = currentStory.value.title.trim();
-    if (currentStory.value.title === '') {
-      throw new Error('no story title');
-    }
-
     const token = await getTokenSilently();
 
     console.log('Generating story...');
@@ -137,10 +129,13 @@ const handleStoryGeneration = async () => {
       title: currentStory.value.title,
       workshop: workshop.value,
       issue: issue.value,
-      ...currentStory.value.context,
+      ...currentContext.value,
     });
 
-    currentStory.value.content = story;
+    console.log('Generated: ', story);
+
+    currentStory.value.content = story.content;
+    currentStory.value.title = story.title;
   } catch (e) {
     console.error(e);
   }

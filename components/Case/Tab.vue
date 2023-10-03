@@ -87,6 +87,7 @@
               />
               <InputFileDropzone
                 v-else
+                v-model:file="imageFileBuffer"
                 :disabled="formDisabled"
                 class="h-72 shrink-0 grow"
                 @blob-url-created="(url) => (imageUrlBuffer = url)"
@@ -234,6 +235,7 @@ const {
   activeCase,
   activeId,
   imageUrlBuffer,
+  imageFileBuffer,
   newKeywords,
   currentKeywords,
   state,

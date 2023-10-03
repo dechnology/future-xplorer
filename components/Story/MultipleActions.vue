@@ -18,7 +18,7 @@ const stores = {
   story: useStoryStore(),
 };
 const { workshop, issue, issueId } = storeToRefs(stores.issue);
-const { currentStories, state } = storeToRefs(stores.story);
+const { activeStories, state } = storeToRefs(stores.story);
 
 const handleCombineStory = async () => {
   try {
@@ -26,35 +26,26 @@ const handleCombineStory = async () => {
       throw new Error('no workshop or issue');
     }
 
-    const newTitle = `AI組合故事: ${currentStories.value
-      .map((story) => story.title)
-      .join(' ')}`;
-
     const token = await getTokenSilently();
 
-    console.log('Remaking story...');
-    const { story: newStoryContent } = await generateStoryCombine(token, {
+    console.log('Combining story...');
+    const { story: newStory } = await generateStoryCombine(token, {
       workshop: workshop.value,
       issue: issue.value,
-      stories: currentStories.value.map((story) => ({
+      stories: activeStories.value.map((story) => ({
         title: story.title,
         content: story.content,
       })),
     });
 
     // Use function call to generate context for the AI generated story
-    console.log('Creating: ', newStoryContent);
-    // const { context } = currentStories.value;
+    console.log('Creating: ', newStory);
     const { data: createdStory } = await fetchResource<Story>(
       token,
       `/api/issues/${issueId.value}/stories`,
       {
         method: 'post',
-        body: {
-          title: newTitle,
-          // context,
-          content: newStoryContent,
-        },
+        body: newStory,
       }
     );
 

@@ -74,25 +74,20 @@ const handleRemakeStory = async () => {
     const token = await getTokenSilently();
 
     console.log('Remaking story...');
-    const { story: newStoryContent } = await generateStoryRemake(token, {
+    const { story: newStory } = await generateStoryRemake(token, {
       title: newTitle,
       workshop: workshop.value,
       issue: issue.value,
       content: currentStory.value.content,
     });
 
-    console.log('Creating: ', newStoryContent);
-    const { context } = currentStory.value;
+    console.log('Creating: ', newStory);
     const { data: createdStory } = await fetchResource<Story>(
       token,
       `/api/issues/${issueId.value}/stories`,
       {
         method: 'post',
-        body: {
-          title: newTitle,
-          context,
-          content: newStoryContent,
-        },
+        body: newStory,
       }
     );
 

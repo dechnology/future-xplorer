@@ -14,7 +14,7 @@ export type StoryContext = z.infer<typeof StoryContextSchema>;
 export const NewStorySchema = z.object({
   title: z.string().trim().nonempty(),
   content: z.string().trim().nonempty(),
-  context: StoryContextSchema,
+  // context: StoryContextSchema,
 });
 
 export type NewStory = z.infer<typeof NewStorySchema>;
@@ -35,5 +35,5 @@ export interface StoryCombineRequestBody extends IssueContext {
 }
 
 export interface StoryResponseBody {
-  story: string;
+  story: { title: string; content: string };
 }

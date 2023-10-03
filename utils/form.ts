@@ -10,6 +10,7 @@ import {
   NewPoemsTemplate,
   NewStory,
   NewWorkshop,
+  StoryContext,
   User,
 } from '~/types';
 import { NewIllustration } from '~/types/illustration';
@@ -144,12 +145,13 @@ export const getNewPoemsTemplate = (): NewPoemsTemplate => ({
 export const getNewStory = (): NewStory => ({
   title: '',
   content: '',
-  context: {
-    object: '',
-    environment: '',
-    message: '',
-    service: '',
-  },
+});
+
+export const getNewStoryContext = (): StoryContext => ({
+  object: '',
+  environment: '',
+  message: '',
+  service: '',
 });
 
 export const getNewIllustration = (): NewIllustration => ({

@@ -23,16 +23,38 @@ const getSystemMessage = (ctx: IssueContext): string =>
   ].join('\n');
 
 const getUserMessage = (content: string): string => {
-  return [
-    "'''",
-    'Story content:',
-    content,
-    "'''",
-    'You only need to respond the revised story content.',
-    'The new story MUST BE a completely original story, not a copy of the original story.',
-    'Revised story content:',
-  ].join('\n');
+  return ["'''", 'Story content:', content, "'''"].join('\n');
 };
+
+const functions = [
+  {
+    name: 'remake_story',
+    description: 'recompose a story from the given story.',
+    parameters: {
+      type: 'object',
+      properties: {
+        story: {
+          type: 'object',
+          description:
+            'The reamke story from the given story. The new story MUST BE a completely original story, not a copy of the original story.',
+          properties: {
+            title: {
+              type: 'string',
+              description:
+                'title of the story. This should be based on the content of the story. DO NOT use the issue or workshop title as the title of the story.',
+            },
+            content: {
+              type: 'string',
+              description:
+                'content of the story. This should be at least 400 characters long, preferbly over 250 characters.',
+            },
+          },
+        },
+      },
+      required: ['story'],
+    },
+  },
+];
 
 export default defineEventHandler(async (event): Promise<StoryResponseBody> => {
   const { workshop, issue, content }: StoryRemakeRequestBody =
@@ -44,15 +66,18 @@ export default defineEventHandler(async (event): Promise<StoryResponseBody> => {
       { role: 'system', content: getSystemMessage({ workshop, issue }) },
       { role: 'user', content: getUserMessage(content) },
     ],
+    functions,
   });
 
-  if (!completions.choices[0].message) {
-    throw new Error(`OpenAI error: ${completions}`);
+  const message = completions.choices[0].message;
+
+  if (!message.function_call) {
+    throw new Error('no function call');
   }
 
-  if (!completions.choices[0].message.content) {
-    throw new Error(`OpenAI error: ${completions}`);
-  }
+  const parsedArguments = JSON.parse(message.function_call.arguments);
 
-  return { story: completions.choices[0].message.content };
+  console.log(parsedArguments);
+
+  return parsedArguments as StoryResponseBody;
 });

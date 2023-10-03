@@ -1,12 +1,13 @@
 <template>
   <InputComponent
-    v-for="(story, idx) in currentStories"
-    :key="`${'_id' in story ? story._id : story.title}-${idx}`"
-    v-model="story.title"
+    v-for="(story, idx) in activeStories"
+    :key="story._id"
+    v-model="story.content"
     type="textarea"
     :title="`故事 #${idx}: ${story.title}`"
     placeholder="故事內容"
     input-classes="h-[200px]"
+    disabled
   />
 </template>
 
@@ -16,5 +17,5 @@ const stores = {
   issue: useIssueStore(),
   story: useStoryStore(),
 };
-const { currentStories } = storeToRefs(stores.story);
+const { activeStories } = storeToRefs(stores.story);
 </script>

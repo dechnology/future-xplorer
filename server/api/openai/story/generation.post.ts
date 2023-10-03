@@ -16,7 +16,12 @@ const getSystemMessage = (ctx: IssueContext): string => {
     'The environment is the environment that the persona is in.',
     'The message is the message that the persona is trying to convey.',
     'The service is the service that the persona is trying to use.',
-    'Compose a short story describing the scenario.',
+    'Compose a short story describing the scenario with the given function call.',
+    'The story should be written in the language of the given context.',
+    'The length of the story content is preferbly 400 characters long.',
+    'But it should be at least 250 characters long.',
+    'The title of the story should be based on the content of the story.',
+    '',
     "'''",
 
     "'''",
@@ -31,13 +36,13 @@ const getUserMessage = (ctx: StoryContext): string => {
     throw new Error('no persona');
   }
 
-  let personaDesc = `persona: This individual is a ${ctx.persona.age} ${ctx.persona.gender} with the role of ${ctx.persona.role}. This persona is characterized by the trait: ${ctx.persona.trait}.`;
+  let personaDesc = `persona: ${ctx.persona.name} is a ${ctx.persona.age} ${ctx.persona.gender} with the role of ${ctx.persona.role}. This persona is characterized by the trait: ${ctx.persona.trait}.`;
 
   if (ctx.persona.other && ctx.persona.other.trim() !== '') {
     personaDesc += ` Additional information: ${ctx.persona.other}`;
   }
 
-  return [
+  const userMessage = [
     "'''",
     'Story context:',
     `persona: ${personaDesc}`,
@@ -47,7 +52,40 @@ const getUserMessage = (ctx: StoryContext): string => {
     `service: ${ctx.service}`,
     "'''",
   ].join('\n');
+
+  console.log(userMessage);
+
+  return userMessage;
 };
+
+const functions = [
+  {
+    name: 'generate_story',
+    description: 'generate a story from the context of the scenario.',
+    parameters: {
+      type: 'object',
+      properties: {
+        story: {
+          type: 'object',
+          description: 'The generated story from the context of the scenario.',
+          properties: {
+            title: {
+              type: 'string',
+              description:
+                'title of the story. This should be based on the content of the story. DO NOT use the issue or workshop title as the title of the story.',
+            },
+            content: {
+              type: 'string',
+              description:
+                'content of the story. This should be at least 400 characters long, preferbly over 250 characters.',
+            },
+          },
+        },
+      },
+      required: ['story'],
+    },
+  },
+];
 
 export default defineEventHandler(async (event): Promise<StoryResponseBody> => {
   const { workshop, issue, ...storyCtx }: StoryRequestBody =
@@ -59,15 +97,18 @@ export default defineEventHandler(async (event): Promise<StoryResponseBody> => {
       { role: 'system', content: getSystemMessage({ workshop, issue }) },
       { role: 'user', content: getUserMessage(storyCtx) },
     ],
+    functions,
   });
 
-  if (!completions.choices[0].message) {
-    throw new Error(`OpenAI error: ${completions}`);
+  const message = completions.choices[0].message;
+
+  if (!message.function_call) {
+    throw new Error('no function call');
   }
 
-  if (!completions.choices[0].message.content) {
-    throw new Error(`OpenAI error: ${completions}`);
-  }
+  const parsedArguments = JSON.parse(message.function_call.arguments);
 
-  return { story: completions.choices[0].message.content };
+  console.log(parsedArguments);
+
+  return parsedArguments as StoryResponseBody;
 });

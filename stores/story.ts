@@ -5,11 +5,10 @@ import type {
   NewStory,
   PoemsTemplate,
   SelectOption,
-  User,
+  StoryContext,
 } from '@/types';
 
 export const useStoryStore = definePiniaStore('story', () => {
-  const authStore = useAuthStore();
   const issueStore = useIssueStore();
   const poemsTemplateStore = usePoemsTemplateStore();
 
@@ -17,10 +16,8 @@ export const useStoryStore = definePiniaStore('story', () => {
     issueStore.issue ? issueStore.issue.stories : []
   );
 
-  const currentStories = ref<(Story | NewStory)[]>([getNewStory()]);
-  const currentStory = computed(
-    (): Story | NewStory => currentStories.value[0]
-  );
+  const currentStory = ref<Story | NewStory>(getNewStory());
+  const currentContext = ref<StoryContext>(getNewStoryContext());
   const activeStories = ref<Story[]>([]);
   const activeIds = computed(() => activeStories.value.map((el) => el._id));
   const activeId = computed(() => activeIds.value[0]);
@@ -31,13 +28,7 @@ export const useStoryStore = definePiniaStore('story', () => {
     () => state.value === 'DETAILS' || loading.value
   );
   const formCardProps = computed(() =>
-    getCurrentFormCardProps(
-      '故事',
-      activeStories.value.length === 1
-        ? (currentStories.value[0] as Story)
-        : { creator: authStore.user as User },
-      state.value
-    )
+    getCurrentFormCardProps('故事', currentStory.value as Story, state.value)
   );
 
   const poemsTemplateOptions = computed((): SelectOption<PoemsTemplate>[] =>
@@ -79,8 +70,9 @@ export const useStoryStore = definePiniaStore('story', () => {
     }
   }
 
-  function clearCurrentStories() {
-    currentStories.value = [getNewStory()];
+  function clearCurrent() {
+    currentStory.value = getNewStory();
+    currentContext.value = getNewStoryContext();
   }
 
   function toggleActiveStory(story: Story) {
@@ -102,20 +94,19 @@ export const useStoryStore = definePiniaStore('story', () => {
   watchDeep(activeStories, (newActiveStories) => {
     if (newActiveStories.length === 0) {
       state.value = 'NEW';
-      clearCurrentStories();
+      clearCurrent();
     } else if (newActiveStories.length === 1) {
       state.value = 'DETAILS';
-      currentStories.value = [cloneDeep(newActiveStories[0])];
+      currentStory.value = cloneDeep(newActiveStories[0]);
     } else {
       state.value = 'MULTIPLE';
-      currentStories.value = cloneDeep(newActiveStories);
     }
   });
 
   return {
     stories,
-    currentStories,
     currentStory,
+    currentContext,
     activeStories,
     activeIds,
     activeId,
@@ -128,7 +119,7 @@ export const useStoryStore = definePiniaStore('story', () => {
 
     upsertStory,
     removeStory,
-    clearCurrentStories,
+    clearCurrent,
     clearActiveStories,
     toggleActiveStory,
   };
