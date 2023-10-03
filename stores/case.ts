@@ -18,7 +18,6 @@ export const useCaseStore = definePiniaStore('case', () => {
   const imageUrlBuffer = ref<string | null>(null);
   const imageFileBuffer = ref<File | null>(null);
 
-  const newKeywords = ref<NewKeyword[]>([]);
   const currentKeywords = ref<Keyword[]>([]);
 
   const state = ref<FormStateKeys>('NEW');
@@ -87,7 +86,6 @@ export const useCaseStore = definePiniaStore('case', () => {
     imageUrlBuffer,
     imageFileBuffer,
 
-    newKeywords,
     currentKeywords,
 
     state,

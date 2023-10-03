@@ -179,12 +179,12 @@
       <KeywordGalleryPanel v-slot="slotProps" :include-search-bar="true">
         <KeywordGallery :grid-cols="2">
           <KeywordCard
-            v-for="(el, idx) in allKeywords.filter((el) =>
+            v-for="(el, idx) in currentKeywords.filter((el) =>
               el.body.includes(slotProps.searchQuery)
             )"
             :key="`${idx}_${el.body}`"
             class="h-28"
-            @update:keyword="(body) => (el.body = body)"
+            @update:keyword="(body) => updateKeyword({ ...el, body })"
           >
             <template #category>
               <span v-if="'category' in el && el.category">
@@ -209,7 +209,7 @@
 
 <script setup lang="ts">
 import type { ConcreteComponent } from 'nuxt/dist/app/compat/capi';
-import type { FormStateKeys, Keyword, NewKeyword } from '~/types';
+import type { FormStateKeys, Keyword } from '~/types';
 
 const formPanelProps = {
   title: '案例列表',
@@ -217,13 +217,15 @@ const formPanelProps = {
     '第三步需自行在網路平台查詢收集可能的產品與服務案例資料，彙整成獨立的牌卡。',
 };
 
-const ActionsComponents: Record<FormStateKeys, ConcreteComponent | string> = {
+const ActionsComponents: Partial<
+  Record<FormStateKeys, ConcreteComponent | string>
+> = {
   NEW: resolveComponent('CaseNewActions'),
   DETAILS: resolveComponent('CaseDetailsActions'),
   EDITING: resolveComponent('CaseEditingActions'),
 } as const;
 
-const { username } = useAuth();
+const { username, getTokenSilently } = useAuth();
 const stores = {
   case: useCaseStore(),
   modal: useModalStore(),
@@ -236,7 +238,6 @@ const {
   activeId,
   imageUrlBuffer,
   imageFileBuffer,
-  newKeywords,
   currentKeywords,
   state,
   loading,
@@ -246,24 +247,24 @@ const {
 
 const { ignoreNextClose } = storeToRefs(stores.modal);
 
-const allKeywords = computed((): (Keyword | NewKeyword)[] => [
-  ...newKeywords.value,
-  ...currentKeywords.value,
-]);
-
 const handleDblclick = () => {
   stores.modal.show();
 };
 
-const removeKeyword = (kw: Keyword | NewKeyword) => {
+const removeKeyword = async (kw: Keyword) => {
   ignoreNextClose.value = true;
+
   try {
     loading.value = true;
-    if ('_id' in kw) {
-      currentKeywords.value.splice(currentKeywords.value.indexOf(kw), 1);
-    } else {
-      newKeywords.value.splice(newKeywords.value.indexOf(kw), 1);
-    }
+    const token = await getTokenSilently();
+    const { data } = await fetchResource<Keyword>(
+      token,
+      `/api/keywords/${kw._id}`,
+      {
+        method: 'delete',
+      }
+    );
+    console.log('Deleted: ', data);
   } catch (e) {
     console.error(e);
   } finally {
@@ -271,23 +272,21 @@ const removeKeyword = (kw: Keyword | NewKeyword) => {
   }
 };
 
-const removeNewKeyword = (idx: number) => {
+const updateKeyword = async (kw: Keyword) => {
   ignoreNextClose.value = true;
-  try {
-    loading.value = true;
-    newKeywords.value.splice(idx, 1);
-  } catch (e) {
-    console.error(e);
-  } finally {
-    loading.value = false;
-  }
-};
 
-const removeCurrentKeyword = (idx: number) => {
-  ignoreNextClose.value = true;
   try {
     loading.value = true;
-    currentKeywords.value.splice(idx, 1);
+    const token = await getTokenSilently();
+    const { data } = await fetchResource<Keyword>(
+      token,
+      `/api/keywords/${kw._id}`,
+      {
+        method: 'put',
+        body: kw,
+      }
+    );
+    console.log('Updated: ', data);
   } catch (e) {
     console.error(e);
   } finally {
