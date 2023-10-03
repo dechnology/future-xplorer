@@ -6,8 +6,17 @@
   >
     <div class="flex flex-col gap-6" @mouseup.prevent="handleMouseup">
       <slot :content="activeCaseContent" />
-      <span ref="selectedTextMeasure" style="position: absolute; visibility: hidden; white-space: nowrap;">{{ selectedText }}</span>
-      <span ref="selectedMaxTextMeasure" style="position: absolute; top: 0; left: -9999px; white-space: nowrap;">題與挑戰題與挑戰題與挑戰題與挑戰題與</span>
+      <span
+        ref="selectedTextMeasure"
+        style="position: absolute; visibility: hidden; white-space: nowrap"
+        >{{ selectedText }}</span
+      >
+      <span
+        ref="selectedMaxTextMeasure"
+        style="position: absolute; top: 0; left: -9999px; white-space: nowrap"
+      >
+        題與挑戰題與挑戰題與挑戰題與挑戰題與
+      </span>
     </div>
 
     <div>
@@ -34,8 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { NewKeywordSchema } from '@/types';
-import { nextTick } from 'vue';
+import { Keyword, NewKeywordSchema } from '@/types';
 
 interface CaseContent {
   背景介紹: string;
@@ -47,11 +55,13 @@ interface CaseContent {
   參考資料: string;
 }
 
+const { getTokenSilently } = useAuth();
+
 const stores = {
   case: useCaseStore(),
   modal: useModalStore(),
 };
-const { activeCase, newKeywords } = storeToRefs(stores.case);
+const { activeCase, activeId, currentKeywords } = storeToRefs(stores.case);
 const { ignoreNextClose } = storeToRefs(stores.modal);
 
 const textSelectionState = useTextSelection();
@@ -108,14 +118,17 @@ const checkTextInvalid = () => {
     }
   });
 };
-const buttonText = computed(() => 
-  isTextTooLong.value ? `關鍵字太長了，放不進卡牌內(大約18個中文字)` : '新增關鍵字'
+const buttonText = computed(() =>
+  isTextTooLong.value
+    ? `關鍵字太長了，放不進卡牌內(大約18個中文字)`
+    : '新增關鍵字'
 );
 
-const buttonClass = computed(() => 
-  isTextTooLong.value ? 'bg-gray-400 hover:bg-gray-400' : 'bg-blue-400 hover:bg-blue-500'
+const buttonClass = computed(() =>
+  isTextTooLong.value
+    ? 'bg-gray-400 hover:bg-gray-400'
+    : 'bg-blue-400 hover:bg-blue-500'
 );
-
 
 onClickOutside(buttonDiv, (e: PointerEvent) => {
   if (ignoreClick.value) {
@@ -164,15 +177,28 @@ const handleMouseup = () => {
 
   selectedText.value = textSelectionState.text.value;
   ignoreClick.value = true;
-  checkTextInvalid()
+  checkTextInvalid();
 };
 
-const handleButtonClick = () => {
+const handleButtonClick = async () => {
   try {
     if (!isTextTooLong.value) {
-      console.log("newKeywords accepted")
-      const k = NewKeywordSchema.parse({ body: selectedText.value });
-      newKeywords.value.unshift(k);
+      console.log('newKeywords accepted');
+      const kw = NewKeywordSchema.parse({ body: selectedText.value });
+      // newKeywords.value.unshift(k);
+
+      const token = await getTokenSilently();
+      const { data } = await fetchResources<Keyword>(
+        token,
+        `/api/cases/${activeId.value}/keywords`,
+        {
+          method: 'post',
+          body: { keywords: [kw] },
+        }
+      );
+
+      console.log('Created: ', data);
+      currentKeywords.value = [...currentKeywords.value, ...data];
     }
   } catch (e) {
     console.error(e);
