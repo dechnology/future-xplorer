@@ -50,7 +50,7 @@ const handleCreate = async () => {
 
     console.log('Created: ', createdStory);
     stores.story.upsertStory(createdStory);
-    stores.story.changeActiveStory(createdStory);
+    stores.story.toggleActiveStory(createdStory);
   } catch (e) {
     console.error(e);
   } finally {

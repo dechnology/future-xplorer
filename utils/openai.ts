@@ -4,6 +4,7 @@ import type {
   KeywordsRequestBody,
   KeywordsResponseBody,
   PortraitRequestBody,
+  StoryCombineRequestBody,
   StoryRemakeRequestBody,
   StoryRequestBody,
   StoryResponseBody,
@@ -115,6 +116,29 @@ export const generateStoryRemake = async (
   body: StoryRemakeRequestBody
 ): Promise<StoryResponseBody> => {
   const { data, error } = await useFetch(`/api/openai/story/remake`, {
+    method: 'post',
+    headers: { Authorization: `Bearer ${token}` },
+    body,
+  });
+
+  if (error.value) {
+    throw error.value;
+  }
+
+  if (!data.value) {
+    throw new Error('data are null');
+  }
+
+  const { story } = data.value;
+
+  return { story };
+};
+
+export const generateStoryCombine = async (
+  token: string,
+  body: StoryCombineRequestBody
+): Promise<StoryResponseBody> => {
+  const { data, error } = await useFetch(`/api/openai/story/combine`, {
     method: 'post',
     headers: { Authorization: `Bearer ${token}` },
     body,

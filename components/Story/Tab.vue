@@ -11,22 +11,17 @@
         <FormCard v-bind="formCardProps" :username="username">
           <template #body>
             <StoryTemplateFormBody v-if="state === 'NEW'" />
-            <StoryDetailsFormBody v-else />
-            <InputComponent
-              v-model="currentStory.content"
-              type="textarea"
-              title="故事內容"
-              placeholder="故事內容"
-              :disabled="formDisabled"
-              input-classes="h-[200px]"
+            <StoryDetailsFormBody
+              v-else-if="state === 'DETAILS' || state === 'EDITING'"
             />
+            <StoryMultipleFormBody v-else />
           </template>
           <template #actions>
             <component :is="ActionsComponents[state]" />
           </template>
           <template #icon-actions>
             <Icon
-              v-if="state !== 'DETAILS'"
+              v-if="state === 'NEW' || state === 'EDITING'"
               class="cursor-pointer text-blue-950"
               name="game-icons:rolling-dices"
               size="1.75rem"
@@ -39,9 +34,9 @@
     <CardGalleryPanel v-slot="slotProps">
       <CardGallery :grid-cols="3">
         <Card
-          :active="!activeStory"
+          :active="!activeStories"
           class="h-[350px]"
-          @click="() => stores.story.changeActiveStory()"
+          @click="() => stores.story.clearActiveStories()"
         >
           <CardIcon :icon="{ name: 'mdi:plus', size: '5rem' }">
             新增故事
@@ -53,9 +48,9 @@
           )"
           :key="el._id"
           class="h-[350px]"
-          :active="activeId === el._id"
+          :active="activeIds.includes(el._id)"
           @dblclick="() => handleDblclick()"
-          @click="() => stores.story.changeActiveStory(el)"
+          @click="() => stores.story.toggleActiveStory(el)"
         >
           <CardTitle>{{ el.title }}</CardTitle>
           <CardDescription>{{ el.content }}</CardDescription>
@@ -70,10 +65,13 @@
 import { ConcreteComponent } from 'nuxt/dist/app/compat/capi';
 import type { FormStateKeys } from '@/types';
 
-const ActionsComponents: Record<FormStateKeys, ConcreteComponent | string> = {
+const ActionsComponents: Partial<
+  Record<FormStateKeys, ConcreteComponent | string>
+> = {
   NEW: resolveComponent('StoryNewActions'),
   DETAILS: resolveComponent('StoryDetailsActions'),
   EDITING: resolveComponent('StoryEditingActions'),
+  MULTIPLE: resolveComponent('StoryMultipleActions'),
 } as const;
 
 const formPanelProps = {
@@ -90,12 +88,11 @@ const stores = {
 };
 const {
   stories,
-  activeStory,
-  activeId,
   currentStory,
+  activeStories,
+  activeIds,
   state,
   formCardProps,
-  formDisabled,
 } = storeToRefs(stores.story);
 
 const handleDblclick = () => {

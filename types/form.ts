@@ -1,4 +1,4 @@
-export type FormStateKeys = 'NEW' | 'DETAILS' | 'EDITING';
+export type FormStateKeys = 'NEW' | 'DETAILS' | 'EDITING' | 'MULTIPLE';
 
 export type FormState = {
   [K in FormStateKeys]: { formTitle: string };

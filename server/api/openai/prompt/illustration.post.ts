@@ -28,9 +28,26 @@ const getUserMessage = (story: string): string => {
     story,
     "'''",
     'Remeber to keep your respose under 1000 CHARACTERS, and follow the order of the elements.',
-    'Description:',
   ].join('\n');
 };
+
+const functions = [
+  {
+    name: 'generate_illustration_prompt',
+    description: 'generate an illustration prompt from the story.',
+    parameters: {
+      type: 'object',
+      properties: {
+        prompt: {
+          type: 'string',
+          description:
+            "The prompt of the illustration. The order of the elements is place, decoration, lighting, the person. When describing the person, describe the person's whereabout, pose, expression, and clothing. The prompt should be under 1000 CHARACTERS. This prompt should be wriiten in English.",
+        },
+      },
+      required: ['prompt'],
+    },
+  },
+];
 
 export default defineEventHandler(
   async (event): Promise<IllustrationPromptResponseBody> => {
@@ -43,16 +60,19 @@ export default defineEventHandler(
         { role: 'system', content: getSystemMessage(ctx) },
         { role: 'user', content: getUserMessage(story) },
       ],
+      functions,
     });
 
-    if (!completions.choices[0].message) {
-      throw new Error(`OpenAI error: ${completions}`);
+    const message = completions.choices[0].message;
+
+    if (!message.function_call) {
+      throw new Error('no function call');
     }
 
-    if (!completions.choices[0].message.content) {
-      throw new Error(`OpenAI error: ${completions}`);
-    }
+    const parsedArguments = JSON.parse(message.function_call.arguments);
 
-    return { prompt: completions.choices[0].message.content };
+    console.log(parsedArguments);
+
+    return parsedArguments as IllustrationPromptResponseBody;
   }
 );

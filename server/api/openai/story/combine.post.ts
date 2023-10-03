@@ -38,9 +38,38 @@ const getUserMessage = (stories: Pick<Story, 'title' | 'content'>[]): string =>
       "'''",
       `Story ${idx} - ${title}`,
       content,
-      ',,,',
+      "'''",
     ])
     .join('\n');
+
+const functions = [
+  {
+    name: 'combine_story',
+    description: 'compose a new story from multiple given stories.',
+    parameters: {
+      type: 'object',
+      properties: {
+        story: {
+          type: 'object',
+          description: 'The combined story from multiple given stories.',
+          properties: {
+            title: {
+              type: 'string',
+              description:
+                'title of the story. This should be based on the content of the story. DO NOT use the issue or workshop title as the title of the story.',
+            },
+            content: {
+              type: 'string',
+              description:
+                'content of the story. This should be at least 400 characters long, preferbly over 250 characters.',
+            },
+          },
+        },
+      },
+      required: ['story'],
+    },
+  },
+];
 
 export default defineEventHandler(async (event): Promise<StoryResponseBody> => {
   const { workshop, issue, stories }: StoryCombineRequestBody =
@@ -52,15 +81,18 @@ export default defineEventHandler(async (event): Promise<StoryResponseBody> => {
       { role: 'system', content: getSystemMessage({ workshop, issue }) },
       { role: 'user', content: getUserMessage(stories) },
     ],
+    functions,
   });
 
-  if (!completions.choices[0].message) {
-    throw new Error(`OpenAI error: ${completions}`);
+  const message = completions.choices[0].message;
+
+  if (!message.function_call) {
+    throw new Error('no function call');
   }
 
-  if (!completions.choices[0].message.content) {
-    throw new Error(`OpenAI error: ${completions}`);
-  }
+  const parsedArguments = JSON.parse(message.function_call.arguments);
 
-  return { story: completions.choices[0].message.content };
+  console.log(parsedArguments);
+
+  return parsedArguments as StoryResponseBody;
 });
