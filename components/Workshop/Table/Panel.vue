@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="h-full overflow-y-auto rounded-t-xl border border-solid border-slate-200"
-  >
+  <div class="flex h-full flex-col">
     <slot />
   </div>
 </template>

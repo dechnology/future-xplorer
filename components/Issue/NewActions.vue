@@ -16,14 +16,14 @@
 </template>
 
 <script setup lang="ts">
-import { NewIssueSchema, User, Issue } from '@/types';
+import { NewIssueSchema, Issue } from '@/types';
 
-const { user, getTokenSilently } = useAuth();
-const store = useWorkshopStore();
-const { workshopId, currentIssue, loading } = storeToRefs(store);
+const { getTokenSilently } = useAuth();
+const stores = { workshop: useWorkshopStore() };
+const { workshopId, currentIssue, loading } = storeToRefs(stores.workshop);
 
 const handleClear = () => {
-  store.clearCurrentIssue();
+  stores.workshop.clearCurrentIssue();
 };
 
 const handleCreate = async () => {
@@ -34,22 +34,22 @@ const handleCreate = async () => {
       throw new Error('workshop id undefined');
     }
 
-    const token = await getTokenSilently();
-    const i = NewIssueSchema.parse(currentIssue.value);
+    let token = await getTokenSilently();
+    const el = NewIssueSchema.parse(currentIssue.value);
 
-    console.log('Creating: ', i);
+    console.log('Creating: ', el);
     const { data: createdIssue } = await fetchResource<Issue>(
       token,
       `/api/workshops/${workshopId.value}/issues`,
       {
         method: 'post',
-        body: i,
+        body: el,
       }
     );
-    createdIssue.creator = user.value as User;
-
     console.log('Created: ', createdIssue);
-    store.upsert(createdIssue);
+
+    token = await getTokenSilently();
+    await stores.workshop.updateIssues(token);
   } catch (e) {
     console.error(e);
   } finally {

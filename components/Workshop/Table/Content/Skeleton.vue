@@ -1,9 +1,7 @@
 <template>
-  <WorkshopTableRow>
-    <WorkshopTableData> </WorkshopTableData>
-  </WorkshopTableRow>
+  <WorkshopTableRow v-for="i in nRows" :key="i"> </WorkshopTableRow>
 </template>
 
 <script setup lang="ts">
-const { nRows = 5 } = defineProps<{ nRows: number }>();
+withDefaults(defineProps<{ nRows: number }>(), { nRows: 5 });
 </script>

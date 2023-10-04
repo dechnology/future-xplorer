@@ -24,10 +24,10 @@
 <script setup lang="ts">
 import { Issue } from '@/types';
 
-const { getTokenSilently } = await useAuth();
+const { getTokenSilently } = useAuth();
 const router = useRouter();
-const store = useWorkshopStore();
-const { workshopId, activeId, state, loading } = storeToRefs(store);
+const stores = { workshop: useWorkshopStore() };
+const { workshopId, activeId, state, loading } = storeToRefs(stores.workshop);
 
 const handleRemove = async () => {
   try {
@@ -44,9 +44,8 @@ const handleRemove = async () => {
     );
     console.log(message);
 
-    store.remove(activeId.value);
+    await stores.workshop.updateIssues(token);
     state.value = 'NEW';
-    console.log('issue removed');
   } catch (e) {
     console.error(e);
   } finally {

@@ -4,7 +4,7 @@ import { Workshop, ResourceObject } from '@/types';
 export default defineEventHandler(
   async (event): Promise<ResourceObject<Workshop>> => {
     authenticate(event.context);
-    const id = getRouterParam(event, 'workshop');
+    const id = getRouterParam(event, 'id');
     const workshop = await WorkshopModel.findByIdAndDelete(id);
 
     if (!workshop) {

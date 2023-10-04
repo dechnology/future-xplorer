@@ -16,41 +16,41 @@
 </template>
 
 <script setup lang="ts">
-// import { isEqual } from 'lodash';
-import { NewIssueSchema, User, Issue } from '@/types';
+import isEqual from 'lodash/isEqual';
+import { NewIssueSchema, Issue } from '@/types';
 
-const { user, getTokenSilently } = await useAuth();
-const store = useWorkshopStore();
-const { currentIssue, activeId, activeIssue, state, loading } =
-  storeToRefs(store);
+const { getTokenSilently } = useAuth();
+const stores = { workshop: useWorkshopStore() };
+const { currentIssue, activeId, activeIssue, state, loading } = storeToRefs(
+  stores.workshop
+);
 
 const handleCancel = () => {
-  store.changeActiveIssue(activeIssue.value);
+  stores.workshop.changeActiveIssue(activeIssue.value);
 };
 
 const handleSaveEdit = async () => {
   try {
     loading.value = true;
 
-    // if (isEqual(currentIssue.value, activeIssue.value)) {
-    //   state.value = 'DETAILS';
-    //   return;
-    // }
+    if (isEqual(currentIssue.value, activeIssue.value)) {
+      state.value = 'DETAILS';
+      return;
+    }
 
-    const token = await getTokenSilently();
-    const i = NewIssueSchema.parse(currentIssue.value);
+    let token = await getTokenSilently();
+    const el = NewIssueSchema.parse(currentIssue.value);
 
-    console.log('Patching: ', i);
+    console.log('Patching: ', el);
     const { data: editedIssue } = await fetchResource<Issue>(
       token,
       `/api/issues/${activeId.value}`,
-      { method: 'put', body: i }
+      { method: 'put', body: el }
     );
-
-    editedIssue.creator = user.value as User;
     console.log('Patched: ', editedIssue);
-    store.upsert(editedIssue);
-    store.changeActiveIssue(editedIssue);
+
+    token = await getTokenSilently();
+    await stores.workshop.updateIssues(token);
   } catch (e) {
     console.error(e);
   } finally {

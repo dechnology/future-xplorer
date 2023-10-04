@@ -1,3 +1,4 @@
+import cloneDeep from 'lodash/cloneDeep';
 import { Workshop, BaseIssue, NewIssue, FormStateKeys } from '@/types';
 
 export const useWorkshopStore = definePiniaStore('workshop', () => {
@@ -22,6 +23,19 @@ export const useWorkshopStore = definePiniaStore('workshop', () => {
     )
   );
 
+  async function updateIssues(token: string) {
+    if (!workshopId.value) {
+      throw new Error('no workshop id');
+    }
+
+    const { data } = await fetchResources<BaseIssue>(
+      token,
+      `/api/workshops/${workshopId.value}/issues`
+    );
+
+    issues.value = data;
+  }
+
   async function init(token: string, workshopId: string) {
     const [workshopResponse, issuesResponse] = await Promise.all([
       fetchResource<Workshop>(token, `/api/workshops/${workshopId}`),
@@ -32,33 +46,14 @@ export const useWorkshopStore = definePiniaStore('workshop', () => {
     issues.value = issuesResponse.data;
   }
 
-  function upsert(i: BaseIssue) {
-    const index = issues.value.findIndex((issue) => issue._id === i._id);
-    if (index === -1) {
-      issues.value.push(i);
-    } else {
-      issues.value[index] = i;
-    }
-  }
-
-  function remove(id: string) {
-    const index = issues.value.findIndex((issue) => issue._id === id);
-
-    if (index === -1) {
-      throw new Error('no issue match given id');
-    } else {
-      issues.value.splice(index, 1);
-    }
-  }
-
   function clearCurrentIssue() {
     currentIssue.value = getNewIssue();
   }
 
-  function changeActiveIssue(i?: BaseIssue | null) {
-    if (i) {
-      activeIssue.value = { ...i };
-      currentIssue.value = { ...i };
+  function changeActiveIssue(el?: BaseIssue | null) {
+    if (el) {
+      activeIssue.value = el;
+      currentIssue.value = cloneDeep(el);
       state.value = 'DETAILS';
     } else {
       activeIssue.value = null;
@@ -82,8 +77,7 @@ export const useWorkshopStore = definePiniaStore('workshop', () => {
     currentFormCardProps,
 
     init,
-    upsert,
-    remove,
+    updateIssues,
 
     clearCurrentIssue,
     changeActiveIssue,

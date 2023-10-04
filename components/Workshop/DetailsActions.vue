@@ -26,8 +26,8 @@ import { Workshop } from '@/types';
 
 const { getTokenSilently } = useAuth();
 const router = useRouter();
-const store = useWorkshopsStore();
-const { activeId, state, loading } = storeToRefs(store);
+const stores = { workshops: useWorkshopsStore() };
+const { activeId, state, loading } = storeToRefs(stores.workshops);
 
 const handleRemove = async () => {
   try {
@@ -36,17 +36,17 @@ const handleRemove = async () => {
     }
 
     loading.value = true;
-    const token = await getTokenSilently();
-    const { message } = await fetchResource<Workshop>(
+    let token = await getTokenSilently();
+    const data = await fetchResource<Workshop>(
       token,
       `/api/workshops/${activeId.value}`,
       { method: 'delete' }
     );
-    console.log(message);
+    console.log(data);
 
-    store.remove(activeId.value);
+    token = await getTokenSilently();
+    await stores.workshops.update(token);
     state.value = 'NEW';
-    console.log('workshop removed');
   } catch (e) {
     console.error(e);
   } finally {

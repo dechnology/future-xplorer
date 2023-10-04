@@ -16,20 +16,20 @@
 </template>
 
 <script setup lang="ts">
-import { NewWorkshopSchema, User, Workshop } from '@/types';
+import { NewWorkshopSchema, Workshop } from '@/types';
 
-const { user, getTokenSilently } = useAuth();
-const store = useWorkshopsStore();
-const { currentWorkshop, loading } = storeToRefs(store);
+const { getTokenSilently } = useAuth();
+const stores = { workshops: useWorkshopsStore() };
+const { currentWorkshop, loading } = storeToRefs(stores.workshops);
 
 const handleClear = () => {
-  store.clearCurrentWorkshop();
+  stores.workshops.clearCurrentWorkshop();
 };
 
 const handleCreate = async () => {
   try {
     loading.value = true;
-    const token = await getTokenSilently();
+    let token = await getTokenSilently();
     const w = NewWorkshopSchema.parse(currentWorkshop.value);
 
     console.log('Creating: ', w);
@@ -41,10 +41,10 @@ const handleCreate = async () => {
         body: w,
       }
     );
-    createdWorkshop.creator = user.value as User;
-
     console.log('Created: ', createdWorkshop);
-    store.upsert(createdWorkshop);
+
+    token = await getTokenSilently();
+    await stores.workshops.update(token);
   } catch (e) {
     console.error(e);
   } finally {

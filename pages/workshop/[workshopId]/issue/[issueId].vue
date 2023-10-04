@@ -27,13 +27,10 @@ const stores = {
 };
 const { workshop, issue, currentTab } = storeToRefs(stores.issue);
 
-// This block is NOT in onMounted since we need it here to make this component async
 const token = await getTokenSilently();
 await stores.issue.init(token, workshopId, issueId);
-// init finishes
 
 onMounted(() => {
-  // stores.issue.setTab(readCurrentTab());
   stores.breadcrumbs.setWorkshop(
     workshop.value ? workshop.value.name : 'error',
     `/workshop/${workshopId}`
