@@ -1,9 +1,8 @@
 <template>
-  <WorkshopTableRow>
-    <WorkshopTableData> </WorkshopTableData>
+  <WorkshopTableRow v-for="i in nRows" :key="i" classes="animate-pulse" active>
   </WorkshopTableRow>
 </template>
 
 <script setup lang="ts">
-const { nRows = 5 } = defineProps<{ nRows: number }>();
+withDefaults(defineProps<{ nRows: number }>(), { nRows: 5 });
 </script>

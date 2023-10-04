@@ -1,13 +1,17 @@
 <template>
   <div class="flex items-center justify-around">
     <CardButton
-      class="rounded-lg bg-red-400 px-8 py-3 text-white hover:bg-red-500"
+      class="rounded-lg bg-red-400 px-8 py-3 text-white"
+      :class="!loading && 'transition-all hover:bg-red-500'"
+      :disabled="loading"
       @click.prevent="handleClear"
     >
       清除
     </CardButton>
     <CardButton
-      class="rounded-lg bg-indigo-500 px-8 py-3 text-white hover:bg-indigo-600"
+      class="rounded-lg bg-indigo-500 px-8 py-3 text-white"
+      :class="!loading && 'transition-all hover:bg-indigo-600'"
+      :disabled="loading"
       @click.prevent="handleCreate"
     >
       新增
@@ -16,35 +20,35 @@
 </template>
 
 <script setup lang="ts">
-import { NewWorkshopSchema, User, Workshop } from '@/types';
+import { NewWorkshopSchema, Workshop } from '@/types';
 
-const { user, getTokenSilently } = useAuth();
-const store = useWorkshopsStore();
-const { currentWorkshop, loading } = storeToRefs(store);
+const { getTokenSilently } = useAuth();
+const stores = { workshops: useWorkshopsStore() };
+const { currentWorkshop, loading } = storeToRefs(stores.workshops);
 
 const handleClear = () => {
-  store.clearCurrentWorkshop();
+  stores.workshops.clearCurrentWorkshop();
 };
 
 const handleCreate = async () => {
   try {
     loading.value = true;
-    const token = await getTokenSilently();
-    const w = NewWorkshopSchema.parse(currentWorkshop.value);
+    let token = await getTokenSilently();
+    const el = NewWorkshopSchema.parse(currentWorkshop.value);
 
-    console.log('Creating: ', w);
+    console.log('Creating: ', el);
     const { data: createdWorkshop } = await fetchResource<Workshop>(
       token,
       `/api/workshops`,
       {
         method: 'post',
-        body: w,
+        body: el,
       }
     );
-    createdWorkshop.creator = user.value as User;
-
     console.log('Created: ', createdWorkshop);
-    store.upsert(createdWorkshop);
+
+    token = await getTokenSilently();
+    await stores.workshops.update(token);
   } catch (e) {
     console.error(e);
   } finally {

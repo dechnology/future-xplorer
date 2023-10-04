@@ -7,13 +7,17 @@
       刪除
     </CardButton>
     <CardButton
-      class="rounded-lg bg-indigo-500 px-8 py-3 text-white transition-all hover:bg-indigo-600"
+      class="rounded-lg bg-indigo-500 px-8 py-3 text-white"
+      :class="!loading && 'transition-all hover:bg-indigo-600'"
+      :disabled="loading"
       @click.prevent="handleStart"
     >
       開始
     </CardButton>
     <CardButton
-      class="rounded-lg bg-black bg-opacity-40 px-8 py-3 text-white transition-all hover:bg-opacity-50"
+      class="rounded-lg bg-black bg-opacity-40 px-8 py-3 text-white"
+      :class="!loading && 'transition-all hover:bg-opacity-50'"
+      :disabled="loading"
       @click.prevent="handleEdit"
     >
       編輯
@@ -26,8 +30,8 @@ import { Workshop } from '@/types';
 
 const { getTokenSilently } = useAuth();
 const router = useRouter();
-const store = useWorkshopsStore();
-const { activeId, state, loading } = storeToRefs(store);
+const stores = { workshops: useWorkshopsStore() };
+const { activeId, state, loading } = storeToRefs(stores.workshops);
 
 const handleRemove = async () => {
   try {
@@ -36,17 +40,17 @@ const handleRemove = async () => {
     }
 
     loading.value = true;
-    const token = await getTokenSilently();
-    const { message } = await fetchResource<Workshop>(
+    let token = await getTokenSilently();
+    const data = await fetchResource<Workshop>(
       token,
       `/api/workshops/${activeId.value}`,
       { method: 'delete' }
     );
-    console.log(message);
+    console.log(data);
 
-    store.remove(activeId.value);
+    token = await getTokenSilently();
+    await stores.workshops.update(token);
     state.value = 'NEW';
-    console.log('workshop removed');
   } catch (e) {
     console.error(e);
   } finally {

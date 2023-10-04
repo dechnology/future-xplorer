@@ -1,3 +1,4 @@
+import cloneDeep from 'lodash/cloneDeep';
 import { FormStateKeys } from '@/types';
 import type { NewWorkshop, Workshop } from '@/types';
 import { getCurrentFormCardProps, getNewWorkshop } from '~/utils/form';
@@ -22,40 +23,23 @@ export const useWorkshopsStore = definePiniaStore('workshops', () => {
     )
   );
 
-  async function init(token: string) {
+  async function update(token: string) {
     const { data } = await fetchResources<Workshop>(token, '/api/workshops');
     workshops.value = data;
   }
 
-  function upsert(w: Workshop) {
-    const index = workshops.value.findIndex(
-      (workshop) => workshop._id === w._id
-    );
-    if (index === -1) {
-      workshops.value.push(w);
-    } else {
-      workshops.value[index] = w;
-    }
-  }
-
-  function remove(id: string) {
-    const index = workshops.value.findIndex((workshop) => workshop._id === id);
-
-    if (index === -1) {
-      throw new Error('no workshop match given id');
-    } else {
-      workshops.value.splice(index, 1);
-    }
+  async function init(token: string) {
+    await update(token);
   }
 
   function clearCurrentWorkshop() {
     currentWorkshop.value = getNewWorkshop();
   }
 
-  function changeActiveWorkshop(w?: Workshop | null) {
-    if (w) {
-      activeWorkshop.value = { ...w };
-      currentWorkshop.value = { ...w };
+  function changeActiveWorkshop(el?: Workshop | null) {
+    if (el) {
+      activeWorkshop.value = el;
+      currentWorkshop.value = cloneDeep(el);
       state.value = 'DETAILS';
     } else {
       activeWorkshop.value = null;
@@ -75,9 +59,8 @@ export const useWorkshopsStore = definePiniaStore('workshops', () => {
     formDisabled,
     currentFormCardProps,
 
+    update,
     init,
-    upsert,
-    remove,
 
     clearCurrentWorkshop,
     changeActiveWorkshop,

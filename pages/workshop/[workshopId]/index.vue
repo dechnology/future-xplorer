@@ -43,39 +43,43 @@
             新增議題
           </CardIcon>
         </Card>
-        <!-- Should be async component -->
-        <Card
-          v-for="i in issues.filter((i) =>
-            i.title.includes(slopProps.searchQuery)
-          )"
-          :key="i._id"
-          :active="activeId === i._id"
-          class="h-[300px]"
-          @dblclick="() => handleDblclick(i._id)"
-          @click="() => stores.workshop.changeActiveIssue(i)"
-        >
-          <CardTitle>{{ i.title }} </CardTitle>
-          <CardDescription>{{ i.description }} </CardDescription>
-          <CardFootnote>
-            {{
-              [
-                `建立者：${i.creator.name}`,
-                `新增日期：${formatDate(i.createdAt)}`,
-                `更新日期：${formatDate(i.updatedAt)}`,
-              ].join('\n')
-            }}
-          </CardFootnote>
-        </Card>
-        <!-- Should be async component (end) -->
+        <ClientOnly>
+          <Card
+            v-for="i in issues.filter((i) =>
+              i.title.includes(slopProps.searchQuery)
+            )"
+            :key="i._id"
+            :active="activeId === i._id"
+            class="h-[300px]"
+            @dblclick="() => handleDblclick(i._id)"
+            @click="() => stores.workshop.changeActiveIssue(i)"
+          >
+            <CardTitle>{{ i.title }}</CardTitle>
+            <CardDescription>{{ i.description }}</CardDescription>
+            <CardFootnote>
+              {{
+                [
+                  `建立者：${i.creator.name}`,
+                  `新增日期：${formatDate(i.createdAt)}`,
+                  `更新日期：${formatDate(i.updatedAt)}`,
+                ].join('\n')
+              }}
+            </CardFootnote>
+          </Card>
+          <template #fallback> loading... </template>
+        </ClientOnly>
       </CardGallery>
     </CardGalleryPanel>
   </NuxtLayout>
 </template>
 
 <script setup lang="ts">
-import { FormPanelProps } from '~/types';
+import { ConcreteComponent } from 'nuxt/dist/app/compat/capi';
+import type { FormPanelProps, FormStateKeys } from '~/types';
 
-const ActionsComponents = {
+const ActionsComponents: Partial<
+  Record<FormStateKeys, string | ConcreteComponent>
+> = {
   NEW: resolveComponent('IssueNewActions'),
   DETAILS: resolveComponent('IssueDetailsActions'),
   EDITING: resolveComponent('IssueEditingActions'),
@@ -87,7 +91,7 @@ const formPanelProps: FormPanelProps = {
     '第一步需先決定整體研究的核心主題為何，後續的所有情境都會需在這個主題架構下。',
 };
 
-const { username, getTokenSilently } = await useAuth();
+const { username, getTokenSilently } = useAuth();
 const route = useRoute();
 const router = useRouter();
 

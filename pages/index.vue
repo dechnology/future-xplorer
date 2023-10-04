@@ -79,10 +79,12 @@
               <Icon name="mdi:plus-circle-outline" size="2rem" />
             </WorkshopTableData>
           </WorkshopTableRow>
-          <Suspense>
+          <ClientOnly>
             <WorkshopTableConent />
-            <template #fallback> loading... </template>
-          </Suspense>
+            <template #fallback>
+              <WorkshopTableContentSkeleton :n-rows="5" />
+            </template>
+          </ClientOnly>
         </tbody>
       </WorkshopTable>
     </WorkshopTablePanel>
@@ -90,9 +92,12 @@
 </template>
 
 <script setup lang="ts">
-import { FormPanelProps } from '~/types';
+import { ConcreteComponent } from 'nuxt/dist/app/compat/capi';
+import { FormPanelProps, FormStateKeys } from '~/types';
 
-const ActionsComponents = {
+const ActionsComponents: Partial<
+  Record<FormStateKeys, ConcreteComponent | string>
+> = {
   NEW: resolveComponent('WorkshopNewActions'),
   DETAILS: resolveComponent('WorkshopDetailsActions'),
   EDITING: resolveComponent('WorkshopEditingActions'),
@@ -112,6 +117,8 @@ const stores = {
 };
 const { currentWorkshop, activeId, state, formDisabled, currentFormCardProps } =
   storeToRefs(stores.workshops);
+
+const searchQuery = ref('');
 
 onMounted(() => {
   stores.breadcrumbs.clearAll();

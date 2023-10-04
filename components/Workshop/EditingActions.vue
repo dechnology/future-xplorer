@@ -1,13 +1,17 @@
 <template>
   <div class="flex items-center justify-around">
     <CardButton
-      class="rounded-lg bg-red-400 px-8 py-3 text-white hover:bg-red-500"
+      class="rounded-lg bg-red-400 px-8 py-3 text-white"
+      :class="!loading && 'transition-all hover:bg-red-500'"
+      :disabled="loading"
       @click.prevent="handleCancel"
     >
       取消
     </CardButton>
     <CardButton
-      class="rounded-lg bg-indigo-500 px-8 py-3 text-white hover:bg-indigo-600"
+      class="rounded-lg bg-indigo-500 px-8 py-3 text-white"
+      :class="!loading && 'transition-all hover:bg-indigo-600'"
+      :disabled="loading"
       @click.prevent="handleSaveEdit"
     >
       儲存
@@ -16,41 +20,41 @@
 </template>
 
 <script setup lang="ts">
-import { NewWorkshopSchema, User, Workshop } from '@/types';
-// import { isEqual } from 'lodash';
+import isEqual from 'lodash/isEqual';
+import { NewWorkshopSchema, Workshop } from '@/types';
 
-const { user, getTokenSilently } = useAuth();
-const store = useWorkshopsStore();
+const { getTokenSilently } = useAuth();
+const stores = { workshops: useWorkshopsStore() };
 const { currentWorkshop, activeId, activeWorkshop, state, loading } =
-  storeToRefs(store);
+  storeToRefs(stores.workshops);
 
 const handleCancel = () => {
-  store.changeActiveWorkshop(activeWorkshop.value);
+  stores.workshops.changeActiveWorkshop(activeWorkshop.value);
 };
 
 const handleSaveEdit = async () => {
   try {
     loading.value = true;
 
-    // if (isEqual(currentWorkshop.value, activeWorkshop.value)) {
-    //   state.value = 'DETAILS';
-    //   return;
-    // }
+    if (isEqual(currentWorkshop.value, activeWorkshop.value)) {
+      state.value = 'DETAILS';
+      return;
+    }
 
-    const token = await getTokenSilently();
-    const w = NewWorkshopSchema.parse(currentWorkshop.value);
+    let token = await getTokenSilently();
+    const parsedEditedWorkshop = NewWorkshopSchema.parse(currentWorkshop.value);
 
-    console.log('Patching: ', w);
+    console.log('Patching: ', parsedEditedWorkshop);
     const { data: editedWorkshop } = await fetchResource<Workshop>(
       token,
       `/api/workshops/${activeId.value}`,
-      { method: 'put', body: w }
+      { method: 'put', body: parsedEditedWorkshop }
     );
 
-    editedWorkshop.creator = user.value as User;
     console.log('Patched: ', editedWorkshop);
-    store.upsert(editedWorkshop);
-    store.changeActiveWorkshop(editedWorkshop);
+
+    token = await getTokenSilently();
+    await stores.workshops.update(token);
   } catch (e) {
     console.error(e);
   } finally {

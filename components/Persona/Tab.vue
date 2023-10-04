@@ -207,7 +207,9 @@ const formPanelProps = {
   description: '第二步需決定此情境可能的使用人物會有哪些。',
 };
 
-const ActionsComponents: Record<FormStateKeys, ConcreteComponent | string> = {
+const ActionsComponents: Partial<
+  Record<FormStateKeys, ConcreteComponent | string>
+> = {
   NEW: resolveComponent('PersonaNewActions'),
   DETAILS: resolveComponent('PersonaDetailsActions'),
   EDITING: resolveComponent('PersonaEditingActions'),
