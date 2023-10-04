@@ -1,5 +1,6 @@
 <template>
-  <WorkshopTableRow v-for="i in nRows" :key="i"> </WorkshopTableRow>
+  <WorkshopTableRow v-for="i in nRows" :key="i" classes="animate-pulse" active>
+  </WorkshopTableRow>
 </template>
 
 <script setup lang="ts">

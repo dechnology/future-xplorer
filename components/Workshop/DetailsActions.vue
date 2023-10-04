@@ -7,13 +7,17 @@
       刪除
     </CardButton>
     <CardButton
-      class="rounded-lg bg-indigo-500 px-8 py-3 text-white transition-all hover:bg-indigo-600"
+      class="rounded-lg bg-indigo-500 px-8 py-3 text-white"
+      :class="!loading && 'transition-all hover:bg-indigo-600'"
+      :disabled="loading"
       @click.prevent="handleStart"
     >
       開始
     </CardButton>
     <CardButton
-      class="rounded-lg bg-black bg-opacity-40 px-8 py-3 text-white transition-all hover:bg-opacity-50"
+      class="rounded-lg bg-black bg-opacity-40 px-8 py-3 text-white"
+      :class="!loading && 'transition-all hover:bg-opacity-50'"
+      :disabled="loading"
       @click.prevent="handleEdit"
     >
       編輯

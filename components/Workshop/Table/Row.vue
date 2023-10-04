@@ -11,6 +11,7 @@ interface Props {
 }
 const props = withDefaults(defineProps<Props>(), {
   active: false,
+  classes: '',
 });
 const trClasses = computed(() =>
   twMerge(
