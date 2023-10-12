@@ -37,17 +37,13 @@ const stores = {
   persona: usePersonaStore(),
 };
 const { workshop, issue, issueId } = storeToRefs(stores.issue);
-const {
-  currentPersona,
-  imageState,
-  imageFile,
-  imageUrl,
-  loading,
-  formDisabled,
-} = storeToRefs(stores.persona);
+const { currentPersona, imageState, imageFile, imageUrl, loading } =
+  storeToRefs(stores.persona);
 
 const handlePortraitGeneration = async () => {
   try {
+    loading.value = true;
+
     if (!(workshop.value && issue.value)) {
       throw new Error('no workshop or issue');
     }
@@ -76,6 +72,8 @@ const handlePortraitGeneration = async () => {
   } catch (e) {
     imageState.value = 'ERROR';
     console.error(e);
+  } finally {
+    loading.value = false;
   }
 };
 

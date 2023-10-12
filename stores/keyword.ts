@@ -1,4 +1,4 @@
-import { User } from '@/types';
+import { Keyword, User } from '@/types';
 
 export const useKeywordStore = definePiniaStore('keywords', () => {
   const { user } = useAuth();
@@ -6,7 +6,7 @@ export const useKeywordStore = definePiniaStore('keywords', () => {
 
   const loading = ref(false);
 
-  const keywords = computed(() =>
+  const keywords = computed<Keyword[]>(() =>
     caseStore.cases
       .flatMap((c) => [...c.keywords])
       .sort((a, b) => {

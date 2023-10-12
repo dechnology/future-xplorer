@@ -52,7 +52,7 @@
               name="tabler:arrow-back-up"
               size="24px"
               class="cursor-pointer text-neutral-400 transition-all hover:text-neutral-600"
-              @click="() => (k.category = undefined)"
+              @click="() => removeCategory(k)"
             />
             <!-- TODO -->
             <!-- <Icon
@@ -81,6 +81,7 @@ const { getTokenSilently } = useAuth();
 
 const stores = {
   issue: useIssueStore(),
+  case: useCaseStore(),
   keyword: useKeywordStore(),
   modal: useModalStore(),
 };
@@ -114,6 +115,27 @@ const filteredKeywords = computed(() =>
     : []
 );
 
+const updateKeyword = async (
+  el: Pick<Keyword, '_id' | 'body' | 'category' | 'type'>
+) => {
+  const { _id, body, category, type } = el;
+
+  let token = await getTokenSilently();
+  console.log('Patching: ', el);
+  const { data: editedKeyword } = await fetchResource<Keyword>(
+    token,
+    `/api/keywords/${_id}`,
+    {
+      method: 'put',
+      body: { body, category: category || null, type: type || null },
+    }
+  );
+  console.log('Patched: ', editedKeyword);
+
+  token = await getTokenSilently();
+  await stores.case.update(token);
+};
+
 const handleDrop = async () => {
   try {
     loading.value = true;
@@ -122,25 +144,28 @@ const handleDrop = async () => {
       return;
     }
 
-    draggingKeyword.value.category = currentElement.value.name;
-    draggingKeyword.value.type = currentElement.value.type;
+    await updateKeyword({
+      _id: draggingKeyword.value._id,
+      body: draggingKeyword.value.body,
+      category: currentElement.value.name,
+      type: currentElement.value.type,
+    });
+  } catch (e) {
+    console.error(e);
+  } finally {
+    loading.value = false;
+  }
+};
 
-    const token = await getTokenSilently();
-    console.log('Patching: ', draggingKeyword);
-    const { data: editedKeyword } = await fetchResource<Keyword>(
-      token,
-      `/api/keywords/${draggingKeyword.value._id}`,
-      {
-        method: 'put',
-        body: {
-          body: draggingKeyword.value.body,
-          category: draggingKeyword.value.category,
-          type: draggingKeyword.value.type,
-        },
-      }
-    );
-
-    console.log('Patched: ', editedKeyword);
+const removeCategory = async (el: Keyword) => {
+  try {
+    loading.value = true;
+    await updateKeyword({
+      _id: el._id,
+      body: el.body,
+      category: undefined,
+      type: undefined,
+    });
   } catch (e) {
     console.error(e);
   } finally {
@@ -150,7 +175,6 @@ const handleDrop = async () => {
 
 const setElement = (el: WorkshopElement) => {
   currentElement.value = el;
-
   localStorage.setItem(sortStorageKey, el.name);
 };
 </script>
