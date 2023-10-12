@@ -1,39 +1,42 @@
 <template>
   <div class="flex items-center justify-around">
     <CardButton
-      class="rounded-lg bg-red-400 px-8 py-3 text-white hover:bg-red-500"
-      @click.prevent="() => stores.case.clearCurrentCase()"
+      class="rounded-lg bg-red-400 px-8 text-white"
+      :class="!loading && 'hover:bg-red-500'"
+      :disabled="loading"
+      @click.prevent="() => stores.case.resetForm()"
     >
-      清除
+      <span class="py-3"> 清除 </span>
     </CardButton>
     <CardButton
-      class="rounded-lg bg-indigo-500 px-8 py-3 text-white hover:bg-indigo-600"
+      class="rounded-lg bg-indigo-500 px-8 text-white"
+      :class="!loading && 'hover:bg-indigo-600'"
+      :disabled="loading"
       @click.prevent="handleCreate"
     >
-      新增
+      <span class="py-3"> 新增 </span>
     </CardButton>
     <CardButton
-      class="rounded-lg bg-indigo-500 px-8 py-3 text-white hover:bg-indigo-600"
-      @click.prevent="handleCreate"
+      class="rounded-lg bg-indigo-500 px-8 text-white"
+      :class="!loading && 'hover:bg-indigo-600'"
+      :disabled="loading"
     >
-      歷史案例
+      <span class="py-3"> 歷史案例 </span>
     </CardButton>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { User, Case } from '@/types';
+import type { Case } from '@/types';
 import { NewCaseSchema } from '@/types';
 
-const { user, getTokenSilently } = useAuth();
+const { getTokenSilently } = useAuth();
 const stores = {
   issue: useIssueStore(),
   case: useCaseStore(),
 };
 const { issue, issueId } = storeToRefs(stores.issue);
-const { currentCase, imageFileBuffer, imageUrlBuffer, loading } = storeToRefs(
-  stores.case
-);
+const { currentCase, imageFile, imageUrl, loading } = storeToRefs(stores.case);
 
 const handleCreate = async () => {
   try {
@@ -43,33 +46,34 @@ const handleCreate = async () => {
       throw new Error('issue undefined');
     }
 
-    const token = await getTokenSilently();
-    const c = NewCaseSchema.parse(currentCase.value);
-
-    console.log(imageFileBuffer.value);
-
-    if (imageUrlBuffer.value) {
-      c.image = imageFileBuffer.value
-        ? (await uploadImageFile(token, imageFileBuffer.value)).data
-        : (await uploadImageUrl(token, imageUrlBuffer.value)).data;
-      console.log(`image url: ${c.image}`);
+    let token: string = '';
+    const el = NewCaseSchema.parse(currentCase.value);
+    if (imageUrl.value) {
+      token = await getTokenSilently();
+      const { data: uploadedUrl } = await uploadImageToS3(
+        token,
+        imageUrl.value,
+        imageFile.value
+      );
+      el.image = uploadedUrl;
     }
 
-    console.log('Creating: ', c);
+    console.log('Creating: ', el);
+    token = await getTokenSilently();
     const { data: createdCase } = await fetchResource<Case>(
       token,
       `/api/issues/${issueId.value}/cases`,
       {
         method: 'post',
-        body: c,
+        body: el,
       }
     );
-    createdCase.creator = user.value as User;
-    createdCase.keywords = [];
-
     console.log('Created: ', createdCase);
-    stores.case.upsertCase(createdCase);
-    stores.case.changeActiveCase(createdCase);
+
+    token = await getTokenSilently();
+    await stores.case.update(token);
+    stores.case.resetForm();
+    stores.case.resetImage();
   } catch (e) {
     console.error(e);
   } finally {

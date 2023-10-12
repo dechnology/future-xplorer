@@ -2,7 +2,7 @@
   <div class="flex w-full flex-col">
     <label
       class="flex h-full w-full flex-1 flex-col items-center justify-center bg-black bg-opacity-20"
-      :class="!disabled && ' cursor-pointer transition-all hover:bg-opacity-30'"
+      :class="!disabled && 'cursor-pointer transition-all hover:bg-opacity-30'"
     >
       <Icon v-bind="iconNow" />
       <p v-if="text">{{ textNow }}</p>
@@ -143,9 +143,9 @@ const handleFileChange = (e: Event) => {
     return;
   }
 
-  console.log('selected file: ', files[0]);
+  console.log('Selected file: ', files[0]);
 
   emit('update:file', files[0]);
-  emit('blobUrlCreated', URL.createObjectURL(files[0]));
+  // emit('blobUrlCreated', URL.createObjectURL(files[0]));
 };
 </script>

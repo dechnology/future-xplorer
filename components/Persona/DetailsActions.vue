@@ -1,16 +1,20 @@
 <template>
   <div class="flex items-center justify-around">
     <CardButton
-      class="rounded-lg bg-red-400 px-8 py-3 text-white transition-all hover:bg-red-500"
+      class="rounded-lg bg-red-400 px-8 text-white transition-all"
+      :class="!loading && 'hover:bg-red-500'"
+      :disabled="loading"
       @click.prevent="handleRemove"
     >
-      刪除
+      <span class="py-3"> 刪除 </span>
     </CardButton>
     <CardButton
-      class="rounded-lg bg-black bg-opacity-40 px-8 py-3 text-white transition-all hover:bg-opacity-50"
+      class="rounded-lg bg-black bg-opacity-40 px-8 text-white transition-all"
+      :class="!loading && 'hover:bg-opacity-50'"
+      :disabled="loading"
       @click.prevent="handleEdit"
     >
-      編輯
+      <span class="py-3"> 編輯 </span>
     </CardButton>
   </div>
 </template>
@@ -32,7 +36,7 @@ const handleRemove = async () => {
       throw new Error('No active persona to remove');
     }
 
-    const token = await getTokenSilently();
+    let token = await getTokenSilently();
     const { message } = await fetchResource<Persona>(
       token,
       `/api/personas/${activeId.value}`,
@@ -40,9 +44,8 @@ const handleRemove = async () => {
     );
     console.log(message);
 
-    stores.persona.removePersona(activeId.value);
-    stores.persona.changeActivePersona();
-    console.log('persona removed');
+    token = await getTokenSilently();
+    await stores.persona.update(token);
   } catch (e) {
     console.error(e);
   } finally {

@@ -1,22 +1,28 @@
 <template>
   <div class="flex items-center justify-around">
     <CardButton
-      class="rounded-lg bg-red-400 px-8 py-3 text-white transition-all hover:bg-red-500"
+      class="rounded-lg bg-red-400 px-8 text-white transition-all"
+      :class="!loading && 'hover:bg-red-500'"
+      :disabled="loading"
       @click.prevent="handleRemove"
     >
-      刪除
+      <span class="py-3"> 刪除 </span>
     </CardButton>
     <CardButton
-      class="rounded-lg bg-indigo-500 px-8 py-3 text-white transition-all hover:bg-opacity-50"
-      @click.prevent="handleEdit"
+      class="rounded-lg bg-indigo-500 px-8 text-white transition-all"
+      :class="!loading && 'hover:bg-opacity-50'"
+      :disabled="loading"
+      @click.prevent="() => (state = 'EDITING')"
     >
-      編輯
+      <span class="py-3"> 編輯 </span>
     </CardButton>
     <CardButton
-      class="rounded-lg bg-lime-600 px-8 py-3 text-white transition-all hover:bg-opacity-50"
-      @click.prevent="handleKeyword"
+      class="rounded-lg bg-lime-600 px-8 text-white transition-all"
+      :class="!loading && 'hover:bg-opacity-50'"
+      :disabled="loading"
+      @click.prevent="() => stores.modal.show()"
     >
-      關鍵字
+      <span class="py-3"> 關鍵字 </span>
     </CardButton>
   </div>
 </template>
@@ -39,7 +45,7 @@ const handleRemove = async () => {
       throw new Error('No active case to remove');
     }
 
-    const token = await getTokenSilently();
+    let token = await getTokenSilently();
     const { message } = await fetchResource<Case>(
       token,
       `/api/cases/${activeId.value}`,
@@ -47,21 +53,12 @@ const handleRemove = async () => {
     );
     console.log(message);
 
-    stores.case.removeCase(activeId.value);
-    stores.case.changeActiveCase();
-    console.log('case removed');
+    token = await getTokenSilently();
+    stores.case.update(token);
   } catch (e) {
     console.error(e);
   } finally {
     loading.value = false;
   }
-};
-
-const handleEdit = () => {
-  state.value = 'EDITING';
-};
-
-const handleKeyword = () => {
-  stores.modal.show();
 };
 </script>

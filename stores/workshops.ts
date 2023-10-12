@@ -1,5 +1,5 @@
 import cloneDeep from 'lodash/cloneDeep';
-import { FormStateKeys } from '@/types';
+import { FormStateKey } from '@/types';
 import type { NewWorkshop, Workshop } from '@/types';
 import { getCurrentFormCardProps, getNewWorkshop } from '~/utils/form';
 
@@ -10,7 +10,7 @@ export const useWorkshopsStore = definePiniaStore('workshops', () => {
   const activeWorkshop = ref<Workshop | null>(null);
   const activeId = computed(() => activeWorkshop.value?._id);
 
-  const state = ref<FormStateKeys>('NEW');
+  const state = ref<FormStateKey>('NEW');
   const loading = ref(false);
   const formDisabled = computed(
     () => state.value === 'DETAILS' || loading.value

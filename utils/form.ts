@@ -2,7 +2,7 @@ import { fakerZH_TW } from '@faker-js/faker';
 import { format } from 'date-fns';
 import {
   FormState,
-  FormStateKeys,
+  FormStateKey,
   NewCase,
   NewIssue,
   NewKeyword,
@@ -41,7 +41,7 @@ export const FormStates = (resourceName: string) => {
 export const getCurrentFormCardProps = (
   resourceName: string,
   currentResourceInfo: { creator?: User; createdAt?: Date; updatedAt?: Date },
-  state: FormStateKeys
+  state: FormStateKey
 ) => {
   const { creator, createdAt, updatedAt } = currentResourceInfo;
   const timestamps = createdAt && updatedAt && { createdAt, updatedAt };

@@ -40,17 +40,18 @@ import { User } from '@/types';
 const props = defineProps<{
   formTitle?: string;
   creator?: User;
-  username?: string;
   timestamps?: { createdAt: Date; updatedAt: Date };
 }>();
+
+const { username } = useAuth();
 
 const creatorName = computed(() => {
   if (props.creator) {
     return props.creator.name;
   }
 
-  if (props.username) {
-    return props.username;
+  if (username) {
+    return username.value;
   }
 });
 </script>

@@ -1,25 +1,30 @@
 <template>
   <div class="flex items-center justify-around">
     <CardButton
-      class="rounded-lg bg-red-400 px-8 py-3 text-white hover:bg-red-500"
-      @click.prevent="handleCancel"
+      class="rounded-lg bg-red-400 px-8 text-white"
+      :class="!loading && 'hover:bg-red-500'"
+      :disabled="loading"
+      @click.prevent="() => stores.case.resetForm()"
     >
-      取消
+      <span class="py-3"> 取消 </span>
     </CardButton>
     <CardButton
-      class="rounded-lg bg-indigo-500 px-8 py-3 text-white hover:bg-indigo-600"
+      class="rounded-lg bg-indigo-500 px-8 text-white"
+      :class="!loading && 'hover:bg-indigo-600'"
+      :disabled="loading"
       @click.prevent="handleSaveEdit"
     >
-      儲存
+      <span class="py-3"> 儲存 </span>
     </CardButton>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { User, Case } from '@/types';
+import isEqual from 'lodash/isEqual';
+import type { Case } from '@/types';
 import { NewCaseSchema } from '@/types';
 
-const { user, getTokenSilently } = useAuth();
+const { getTokenSilently } = useAuth();
 const stores = {
   case: useCaseStore(),
 };
@@ -27,46 +32,45 @@ const {
   currentCase,
   activeCase,
   activeId,
-  imageFileBuffer,
-  imageUrlBuffer,
+  imageFile,
+  imageUrl,
   state,
   loading,
 } = storeToRefs(stores.case);
-
-const handleCancel = () => {
-  stores.case.changeActiveCase(activeCase.value);
-};
 
 const handleSaveEdit = async () => {
   try {
     loading.value = true;
 
-    // if (_.isEqual(currentCase.value, activeCase.value)) {
-    //   state.value = 'DETAILS';
-    //   return;
-    // }
-
-    const token = await getTokenSilently();
-    const c = NewCaseSchema.parse(currentCase.value);
-
-    if (imageUrlBuffer.value) {
-      c.image = imageFileBuffer.value
-        ? (await uploadImageFile(token, imageFileBuffer.value)).data
-        : (await uploadImageUrl(token, imageUrlBuffer.value)).data;
-      console.log(`image url: ${c.image}`);
+    if (isEqual(currentCase.value, activeCase.value)) {
+      state.value = 'DETAILS';
+      return;
     }
 
-    console.log('Patching: ', c);
+    let token = '';
+    const el = NewCaseSchema.parse(currentCase.value);
+
+    if (imageUrl.value) {
+      token = await getTokenSilently();
+      const { data: uploadedUrl } = await uploadImageToS3(
+        token,
+        imageUrl.value,
+        imageFile.value
+      );
+      el.image = uploadedUrl;
+    }
+
+    console.log('Patching: ', el);
+    token = await getTokenSilently();
     const { data: editedCase } = await fetchResource<Case>(
       token,
       `/api/issues/${activeId.value}`,
-      { method: 'put', body: c }
+      { method: 'put', body: el }
     );
-
-    editedCase.creator = user.value as User;
     console.log('Patched: ', editedCase);
-    activeCase.value = editedCase;
-    stores.case.changeActiveCase(editedCase);
+
+    token = await getTokenSilently();
+    stores.case.update(token);
   } catch (e) {
     console.error(e);
   } finally {

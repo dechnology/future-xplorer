@@ -1,21 +1,27 @@
 <template>
   <div class="flex flex-wrap items-center justify-center gap-6">
     <CardButton
-      class="h-12 rounded-lg bg-lime-600 px-8 py-3 text-white hover:bg-lime-700"
+      class="h-12 rounded-lg bg-lime-600 px-8 text-white"
+      :class="!loading && 'hover:bg-lime-700'"
+      :disabled="loading"
       @click="HandleKeywordsGeneration"
     >
-      AI生成關鍵字
+      <span class="py-3"> AI生成關鍵字 </span>
     </CardButton>
     <CardButton
-      class="h-12 rounded-lg bg-black bg-opacity-40 px-8 py-3 text-white hover:bg-opacity-50"
+      class="h-12 rounded-lg bg-black bg-opacity-40 px-8 text-white"
+      :class="!loading && 'hover:bg-opacity-50'"
+      :disabled="loading"
     >
-      使用說明
+      <span class="py-3"> 使用說明 </span>
     </CardButton>
     <CardButton
-      class="h-12 rounded-lg bg-black bg-opacity-40 px-8 py-3 text-white hover:bg-opacity-50"
+      class="h-12 rounded-lg bg-black bg-opacity-40 px-8 text-white"
+      :class="!loading && 'hover:bg-opacity-50'"
+      :disabled="loading"
       @click="() => stores.modal.close()"
     >
-      關閉
+      <span class="py-3"> 關閉 </span>
     </CardButton>
   </div>
 </template>
@@ -30,17 +36,17 @@ const stores = {
   modal: useModalStore(),
 };
 const { workshop, issue } = storeToRefs(stores.issue);
-const { activeCase, activeId, currentKeywords, loading } = storeToRefs(
-  stores.case
-);
+const { activeCase, activeId, loading } = storeToRefs(stores.case);
 
 const HandleKeywordsGeneration = async () => {
   try {
+    loading.value = true;
+
     if (!(workshop.value && issue.value && activeCase.value)) {
       throw new Error('no workshop, issue, or active case');
     }
 
-    const token = await getTokenSilently();
+    let token = await getTokenSilently();
 
     console.log('Generating keywords...');
     const { keywords } = await generateKeywords(token, {
@@ -59,11 +65,14 @@ const HandleKeywordsGeneration = async () => {
         body: { keywords },
       }
     );
-
     console.log('Created: ', data);
-    currentKeywords.value = [...currentKeywords.value, ...data];
+
+    token = await getTokenSilently();
+    await stores.case.update(token);
   } catch (e) {
     console.error(e);
+  } finally {
+    loading.value = false;
   }
 };
 </script>

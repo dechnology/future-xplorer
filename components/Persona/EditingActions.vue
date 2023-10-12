@@ -1,33 +1,40 @@
 <template>
-  <CardButton
-    class="mx-auto h-12 w-44 rounded-lg bg-lime-600 text-white hover:bg-lime-700"
-    :disabled="aiDisabled"
-    @click.prevent="() => handlePortraitGeneration()"
-  >
-    AI生成圖片
-  </CardButton>
   <div class="flex items-center justify-around">
     <CardButton
-      class="rounded-lg bg-red-400 px-8 py-3 text-white hover:bg-red-500"
-      @click.prevent="handleCancel"
+      class="mx-auto rounded-lg bg-lime-600 px-8 text-white"
+      :class="!loading && 'hover:bg-lime-700'"
+      :disabled="loading"
+      @click.prevent="() => handlePortraitGeneration()"
     >
-      取消
+      <span class="py-3"> AI生成圖片 </span>
+    </CardButton>
+  </div>
+  <div class="flex items-center justify-around">
+    <CardButton
+      class="rounded-lg bg-red-400 px-8 text-white"
+      :class="!loading && 'hover:bg-red-500'"
+      :disabled="loading"
+      @click.prevent="() => stores.persona.resetForm()"
+    >
+      <span class="py-3"> 取消 </span>
     </CardButton>
     <CardButton
-      class="rounded-lg bg-indigo-500 px-8 py-3 text-white hover:bg-indigo-600"
+      class="rounded-lg bg-indigo-500 px-8 text-white"
+      :class="!loading && 'hover:bg-indigo-600'"
+      :disabled="loading"
       @click.prevent="handleSaveEdit"
     >
-      儲存
+      <span class="py-3"> 儲存 </span>
     </CardButton>
   </div>
 </template>
 
 <script setup lang="ts">
-// import { isEqual } from 'lodash';
-import type { User, Persona } from '@/types';
+import isEqual from 'lodash/isEqual';
+import type { Persona } from '@/types';
 import { NewPersonaSchema } from '@/types';
 
-const { user, getTokenSilently } = useAuth();
+const { getTokenSilently } = useAuth();
 const stores = {
   issue: useIssueStore(),
   persona: usePersonaStore(),
@@ -37,10 +44,12 @@ const {
   currentPersona,
   activePersona,
   activeId,
-  imageFileBuffer,
-  imageUrlBuffer,
+  state,
+  imageState,
+  imageFile,
+  imageUrl,
   loading,
-  aiDisabled,
+  formDisabled,
 } = storeToRefs(stores.persona);
 
 const handlePortraitGeneration = async () => {
@@ -49,74 +58,69 @@ const handlePortraitGeneration = async () => {
       throw new Error('no workshop or issue');
     }
 
-    const persona = NewPersonaSchema.parse(currentPersona.value);
     const token = await getTokenSilently();
+    const persona = NewPersonaSchema.parse(currentPersona.value);
 
-    currentPersona.value.image = null;
-    imageFileBuffer.value = null;
-    imageUrlBuffer.value = null;
+    imageFile.value = null;
+    imageUrl.value = null;
 
-    stores.persona.aiPromptGeneration();
-    console.log('generating portrait for persona: ', persona);
-    const { err: errPrompt, prompt } = await generatePortraitPrompt(token, {
+    console.log('Generating prompt for persona: ', persona);
+    imageState.value = 'PROMPTING';
+    const { prompt } = await generatePortraitPrompt(token, {
       workshop: workshop.value,
       issue: issue.value,
       persona,
     });
     console.log('prompt: ', prompt);
-    if (errPrompt) {
-      return stores.persona.aiPromptFailed();
-    }
 
-    stores.persona.aiAvatarGeneration();
-    const { err: errImage, image } = await generateImage(token, { prompt });
+    imageState.value = 'GENERATING';
+    const { image } = await generateImage(token, { prompt });
     console.log('image: ', image);
-    if (errImage) {
-      return stores.persona.aiAvatarFailed();
-    }
 
-    imageFileBuffer.value = null;
-    imageUrlBuffer.value = image;
+    imageUrl.value = image;
+    imageState.value = 'IDLE';
   } catch (e) {
+    imageState.value = 'ERROR';
     console.error(e);
   }
-};
-
-const handleCancel = () => {
-  stores.persona.changeActivePersona(activePersona.value);
 };
 
 const handleSaveEdit = async () => {
   try {
     loading.value = true;
 
-    // if (isEqual(currentPersona.value, activePersona.value)) {
-    //   state.value = 'DETAILS';
-    //   return;
-    // }
-
-    const token = await getTokenSilently();
-    const p = NewPersonaSchema.parse(currentPersona.value);
-
-    if (imageUrlBuffer.value) {
-      p.image = imageFileBuffer.value
-        ? (await uploadImageFile(token, imageFileBuffer.value)).data
-        : (await uploadImageUrl(token, imageUrlBuffer.value)).data;
-      console.log(`image url: ${p.image}`);
+    if (isEqual(currentPersona.value, activePersona.value)) {
+      state.value = 'DETAILS';
+      return;
     }
 
-    console.log('Patching: ', p);
+    let token = await getTokenSilently();
+    const el = NewPersonaSchema.parse(currentPersona.value);
+    const { data: uploadedUrl } = await uploadImageToS3(
+      token,
+      imageUrl.value,
+      imageFile.value
+    );
+    el.image = uploadedUrl;
+
+    // if (imageUrl.value) {
+    //   el.image = imageFile.value
+    //     ? (await uploadImageFile(token, imageFile.value)).data
+    //     : (await uploadImageUrl(token, imageUrl.value)).data;
+    //   console.log(`image url: ${el.image}`);
+    // }
+
+    console.log('Patching: ', el);
+    token = await getTokenSilently();
     const { data: editedPersona } = await fetchResource<Persona>(
       token,
       `/api/personas/${activeId.value}`,
-      { method: 'put', body: p }
+      { method: 'put', body: el }
     );
-
-    editedPersona.creator = user.value as User;
     console.log('Patched: ', editedPersona);
-    activePersona.value = editedPersona;
-    stores.persona.changeActivePersona(editedPersona);
-    stores.persona.upsertPersona(editedPersona);
+
+    token = await getTokenSilently();
+    stores.persona.update(token);
   } catch (e) {
     console.error(e);
   } finally {

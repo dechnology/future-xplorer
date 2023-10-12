@@ -8,7 +8,7 @@
             <template #description>{{ formPanelProps.description }}</template>
           </PanelHeader>
         </template>
-        <FormCard v-bind="formCardProps" :username="username">
+        <FormCard v-bind="formCardProps">
           <template #body>
             <InputComponent
               v-model="currentCase.title"
@@ -75,22 +75,12 @@
             />
 
             <div class="flex flex-col overflow-hidden rounded-lg">
-              <NuxtImg
-                v-if="currentCase.image"
-                :src="currentCase.image"
-                alt="案例圖遺失"
-              />
-              <NuxtImg
-                v-else-if="imageUrlBuffer"
-                :src="imageUrlBuffer"
-                alt="新圖遺失"
-              />
-              <InputFileDropzone
-                v-else
-                v-model:file="imageFileBuffer"
+              <Image
+                v-model:file="imageFile"
+                :url="imgaeUrl"
                 :disabled="formDisabled"
-                class="h-72 shrink-0 grow"
-                @blob-url-created="(url) => (imageUrlBuffer = url)"
+                :image-state="imageState"
+                @blob-url-created="(url) => (imageUrl = url)"
               />
             </div>
           </template>
@@ -106,7 +96,7 @@
         <Card
           :active="!activeCase"
           class="h-[350px]"
-          @click="() => stores.case.changeActiveCase()"
+          @click="() => (activeCase = null)"
         >
           <CardIcon :icon="{ name: 'mdi:plus', size: '5rem' }">
             新增案例
@@ -129,8 +119,8 @@
           :key="el._id"
           :active="activeId === el._id"
           class="h-[350px]"
-          @dblclick="() => handleDblclick()"
-          @click="() => stores.case.changeActiveCase(el)"
+          @dblclick="() => stores.modal.show()"
+          @click="() => (activeCase = el)"
         >
           <template #image>
             <CardImage :url="el.image" />
@@ -154,62 +144,12 @@
       </CardGallery>
     </CardGalleryPanel>
   </NuxtLayout>
-  <CaseModal v-if="activeCase">
-    <CardHeader
-      :title="activeCase.title"
-      :creator-name="activeCase.creator.name"
-    />
-    <CaseModalContent v-slot="slotProps">
-      <div
-        v-for="(content, title) in slotProps.content"
-        :key="`${content}_${title}`"
-      >
-        <p>
-          <span class="text-base font-semibold text-gray-700">
-            {{ title }}：
-          </span>
-          <span>
-            {{ content }}
-          </span>
-        </p>
-      </div>
-    </CaseModalContent>
-    <CaseModalActions />
-    <template #keywords>
-      <KeywordGalleryPanel v-slot="slotProps" :include-search-bar="true">
-        <KeywordGallery :grid-cols="2">
-          <KeywordCard
-            v-for="(el, idx) in currentKeywords.filter((el) =>
-              el.body.includes(slotProps.searchQuery)
-            )"
-            :key="`${idx}_${el.body}`"
-            class="h-28"
-            @update:keyword="(body) => updateKeyword({ ...el, body })"
-          >
-            <template #category>
-              <span v-if="'category' in el && el.category">
-                {{ el.category }}
-              </span>
-            </template>
-            {{ el.body }}
-            <template #removeIcon>
-              <Icon
-                name="mdi:bin"
-                size="20px"
-                class="cursor-pointer text-red-400 transition-all hover:text-red-600"
-                @click="() => removeKeyword(el)"
-              />
-            </template>
-          </KeywordCard>
-        </KeywordGallery>
-      </KeywordGalleryPanel>
-    </template>
-  </CaseModal>
+  <CaseModal />
 </template>
 
 <script setup lang="ts">
 import type { ConcreteComponent } from 'nuxt/dist/app/compat/capi';
-import type { FormStateKeys, Keyword } from '~/types';
+import type { FormStateKey } from '~/types';
 
 const formPanelProps = {
   title: '案例列表',
@@ -218,14 +158,13 @@ const formPanelProps = {
 };
 
 const ActionsComponents: Partial<
-  Record<FormStateKeys, ConcreteComponent | string>
+  Record<FormStateKey, ConcreteComponent | string>
 > = {
   NEW: resolveComponent('CaseNewActions'),
   DETAILS: resolveComponent('CaseDetailsActions'),
   EDITING: resolveComponent('CaseEditingActions'),
 } as const;
 
-const { username, getTokenSilently } = useAuth();
 const stores = {
   case: useCaseStore(),
   modal: useModalStore(),
@@ -236,61 +175,13 @@ const {
   currentCase,
   activeCase,
   activeId,
-  imageUrlBuffer,
-  imageFileBuffer,
-  currentKeywords,
   state,
-  loading,
+  imageState,
+  imageUrl,
+  imageFile,
   formDisabled,
   formCardProps,
 } = storeToRefs(stores.case);
 
-const { ignoreNextClose } = storeToRefs(stores.modal);
-
-const handleDblclick = () => {
-  stores.modal.show();
-};
-
-const removeKeyword = async (kw: Keyword) => {
-  ignoreNextClose.value = true;
-
-  try {
-    loading.value = true;
-    const token = await getTokenSilently();
-    const { data } = await fetchResource<Keyword>(
-      token,
-      `/api/keywords/${kw._id}`,
-      {
-        method: 'delete',
-      }
-    );
-    console.log('Deleted: ', data);
-  } catch (e) {
-    console.error(e);
-  } finally {
-    loading.value = false;
-  }
-};
-
-const updateKeyword = async (kw: Keyword) => {
-  ignoreNextClose.value = true;
-
-  try {
-    loading.value = true;
-    const token = await getTokenSilently();
-    const { data } = await fetchResource<Keyword>(
-      token,
-      `/api/keywords/${kw._id}`,
-      {
-        method: 'put',
-        body: kw,
-      }
-    );
-    console.log('Updated: ', data);
-  } catch (e) {
-    console.error(e);
-  } finally {
-    loading.value = false;
-  }
-};
+const imgaeUrl = computed(() => imageUrl.value || activeCase.value?.image);
 </script>

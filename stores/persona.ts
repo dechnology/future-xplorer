@@ -1,58 +1,36 @@
+import cloneDeep from 'lodash/cloneDeep';
+
 import { getNewPersona } from '~/utils';
-import { FormStateKeys, Persona, NewPersona } from '@/types';
+import { FormStateKey, Persona, NewPersona, ImageStateKey } from '@/types';
 
 export const usePersonaStore = definePiniaStore('persona', () => {
   const issueStore = useIssueStore();
 
-  const personas = computed((): Persona[] =>
-    issueStore.issue ? issueStore.issue.personas : []
-  );
+  const personas = computed<Persona[]>({
+    get() {
+      return issueStore.issue ? issueStore.issue.personas : [];
+    },
+    set(newValue) {
+      if (issueStore.issue) {
+        issueStore.issue.personas = newValue;
+      }
+    },
+  });
 
   const currentPersona = ref<Persona | NewPersona>(getNewPersona());
   const activePersona = ref<Persona | null>(null);
   const activeId = computed(() => activePersona.value?._id);
-  const imageUrlBuffer = ref<string | null>(null);
-  const imageFileBuffer = ref<File | null>(null);
-  const imgStatus = ref<
-    | 'waitting'
-    | 'prompt'
-    | 'avatar'
-    | 'uploading'
-    | 'finished'
-    | 'promptError'
-    | 'avatarError'
-    | 'uploadingError'
-  >('waitting');
 
-  const state = ref<FormStateKeys>('NEW');
+  const imageUrl = ref<string | null>(null);
+  const imageFile = ref<File | null>(null);
+
+  const state = ref<FormStateKey>('NEW');
+  const imageState = ref<ImageStateKey>('IDLE');
   const loading = ref(false);
   const formDisabled = computed(
-    () => state.value === 'DETAILS' || loading.value
+    () =>
+      state.value === 'DETAILS' || imageState.value !== 'IDLE' || loading.value
   );
-  const aiDisabled = computed(() => {
-    const arr = Object.entries(currentPersona.value).map(([key, value]) => {
-      return { key, value };
-    });
-    console.log('arr =>', arr);
-    const optionalProps = [
-      'other',
-      'image',
-      '_id',
-      'creator',
-      'issue',
-      'createdAt',
-      'updatedAt',
-      '__v',
-      'id',
-    ];
-    const requiredProps = arr.filter(
-      (item) => !optionalProps.includes(item.key)
-    );
-    // check if all required props are filled
-    const isFilled = requiredProps.every((item) => !!item.value);
-    const result = !isFilled || loading.value;
-    return result;
-  });
   const formCardProps = computed(() =>
     getCurrentFormCardProps(
       '人物',
@@ -61,94 +39,36 @@ export const usePersonaStore = definePiniaStore('persona', () => {
     )
   );
 
-  function upsertPersona(el: Persona) {
-    if (!issueStore.issue) {
-      return;
+  async function update(token: string, searchQuery?: string) {
+    if (!issueStore.issueId) {
+      throw new Error('no issue id');
     }
 
-    const index = issueStore.issue?.personas.findIndex(
-      (persona) => persona._id === el._id
-    );
+    const { data } = await fetchResources<Persona>(token, '/api/personas', {
+      query: { issueId: issueStore.issueId, searchQuery },
+    });
 
-    if (index === -1) {
-      issueStore.issue.personas.push(el);
-    } else {
-      issueStore.issue.personas[index] = el;
-    }
+    personas.value = data;
   }
 
-  function removePersona(id: string) {
-    if (!issueStore.issue) {
-      return;
-    }
-
-    const index = issueStore.issue?.personas.findIndex(
-      (persona) => persona._id === id
-    );
-
-    if (index === -1) {
-      throw new Error('no issue match given id');
-    } else {
-      issueStore.issue.personas.splice(index, 1);
-    }
+  function resetForm() {
+    state.value = activePersona.value ? 'DETAILS' : 'NEW';
+    currentPersona.value = activePersona.value
+      ? cloneDeep(activePersona.value)
+      : getNewPersona();
   }
 
-  function clearCurrentPersona() {
-    currentPersona.value = getNewPersona();
-    imageFileBuffer.value = null;
-    imageUrlBuffer.value = null;
-    imgStatus.value = 'waitting';
+  function resetImage() {
+    imageState.value =
+      !activePersona.value || activePersona.value.image ? 'IDLE' : 'NONE';
+    imageFile.value = null;
+    imageUrl.value = null;
   }
 
-  function changeActivePersona(p?: Persona | null) {
-    if (p) {
-      activePersona.value = p;
-      currentPersona.value = { ...p };
-      state.value = 'DETAILS';
-    } else {
-      activePersona.value = null;
-      clearCurrentPersona();
-      state.value = 'NEW';
-    }
-    imageFileBuffer.value = null;
-    imageUrlBuffer.value = null;
-  }
-
-  function aiPromptGeneration() {
-    console.log('imgStatus.value =>', imgStatus.value);
-    imgStatus.value = 'prompt';
-    console.log('imgStatus.value =>', imgStatus.value);
-  }
-  function aiPromptFailed() {
-    console.log('imgStatus.value =>', imgStatus.value);
-    imgStatus.value = 'promptError';
-    console.log('imgStatus.value =>', imgStatus.value);
-  }
-  function aiAvatarGeneration() {
-    console.log('imgStatus.value =>', imgStatus.value);
-    imgStatus.value = 'avatar';
-    console.log('imgStatus.value =>', imgStatus.value);
-  }
-  function aiAvatarFailed() {
-    console.log('imgStatus.value =>', imgStatus.value);
-    imgStatus.value = 'avatarError';
-    console.log('imgStatus.value =>', imgStatus.value);
-  }
-  function aiUploading() {
-    console.log('imgStatus.value =>', imgStatus.value);
-    imgStatus.value = 'uploading';
-    console.log('imgStatus.value =>', imgStatus.value);
-  }
-  function aiUploadingFailed() {
-    console.log('imgStatus.value =>', imgStatus.value);
-    imgStatus.value = 'uploadingError';
-    console.log('imgStatus.value =>', imgStatus.value);
-  }
-  function aiFinishedGeneration() {
-    console.log('imgStatus.value =>', imgStatus.value);
-    imgStatus.value = 'finished';
-    console.log('imgStatus.value =>', imgStatus.value);
-  }
+  watch(activePersona, () => {
+    resetForm();
+    resetImage();
+  });
 
   return {
     personas,
@@ -156,26 +76,17 @@ export const usePersonaStore = definePiniaStore('persona', () => {
     activePersona,
     activeId,
 
-    imageUrlBuffer,
-    imageFileBuffer,
-    imgStatus,
+    imageUrl,
+    imageFile,
 
     state,
+    imageState,
     loading,
     formDisabled,
-    aiDisabled,
     formCardProps,
 
-    upsertPersona,
-    removePersona,
-    clearCurrentPersona,
-    changeActivePersona,
-    aiPromptGeneration,
-    aiPromptFailed,
-    aiAvatarGeneration,
-    aiAvatarFailed,
-    aiUploading,
-    aiUploadingFailed,
-    aiFinishedGeneration,
+    update,
+    resetForm,
+    resetImage,
   };
 });

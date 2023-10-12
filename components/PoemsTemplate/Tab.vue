@@ -138,9 +138,11 @@
 
 <script setup lang="ts">
 import { ConcreteComponent } from 'nuxt/dist/app/compat/capi';
-import { FormStateKeys } from '@/types';
+import { FormStateKey } from '@/types';
 
-const ActionsComponents: Record<FormStateKeys, ConcreteComponent | string> = {
+const ActionsComponents: Partial<
+  Record<FormStateKey, ConcreteComponent | string>
+> = {
   NEW: resolveComponent('PoemsTemplateNewActions'),
   DETAILS: resolveComponent('PoemsTemplateDetailsActions'),
   EDITING: resolveComponent('PoemsTemplateEditingActions'),

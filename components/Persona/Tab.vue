@@ -8,7 +8,7 @@
             <template #description>{{ formPanelProps.description }}</template>
           </PanelHeader>
         </template>
-        <FormCard v-bind="formCardProps" :username="username">
+        <FormCard v-bind="formCardProps">
           <template #body>
             <div class="grid grid-cols-2 gap-x-5 gap-y-7">
               <InputComponent
@@ -70,25 +70,12 @@
               :disabled="formDisabled"
             />
             <div class="flex flex-col overflow-hidden rounded-lg">
-              <NuxtImg
-                v-if="currentPersona.image"
-                :src="currentPersona.image"
-                placeholder="https://api.iconify.design/line-md:loading-alt-loop.svg"
-                alt=""
-              />
-              <NuxtImg
-                v-else-if="imageUrlBuffer"
-                :src="imageUrlBuffer"
-                placeholder="https://api.iconify.design/line-md:loading-alt-loop.svg"
-                alt="人物圖遺失"
-              />
-              <InputFileDropzone
-                v-else
-                v-model:file="imageFileBuffer"
-                class="h-72 shrink-0 grow"
+              <Image
+                v-model:file="imageFile"
+                :url="imgaeUrl"
                 :disabled="formDisabled"
-                :status="imgStatus"
-                @blob-url-created="(url) => (imageUrlBuffer = url)"
+                :image-state="imageState"
+                @blob-url-created="(url) => (imageUrl = url)"
               />
             </div>
           </template>
@@ -121,7 +108,7 @@
         <Card
           :active="!activePersona"
           class="h-[350px]"
-          @click="() => stores.persona.changeActivePersona()"
+          @click="() => (activePersona = null)"
         >
           <CardIcon :icon="{ name: 'mdi:plus', size: '5rem' }">
             新增人物
@@ -138,7 +125,7 @@
           :active="activeId === p._id"
           class="h-[350px]"
           @dblclick="() => openModel()"
-          @click="() => stores.persona.changeActivePersona(p)"
+          @click="() => (activePersona = p)"
         >
           <template #image>
             <CardImage :url="p.image" />
@@ -200,7 +187,7 @@
 <script setup lang="ts">
 import { format } from 'date-fns';
 import type { ConcreteComponent } from 'nuxt/dist/app/compat/capi';
-import type { FormStateKeys } from '~/types';
+import type { FormStateKey } from '~/types';
 
 const formPanelProps = {
   title: '人物清單',
@@ -208,14 +195,13 @@ const formPanelProps = {
 };
 
 const ActionsComponents: Partial<
-  Record<FormStateKeys, ConcreteComponent | string>
+  Record<FormStateKey, ConcreteComponent | string>
 > = {
   NEW: resolveComponent('PersonaNewActions'),
   DETAILS: resolveComponent('PersonaDetailsActions'),
   EDITING: resolveComponent('PersonaEditingActions'),
 } as const;
 
-const { username } = useAuth();
 const stores = {
   persona: usePersonaStore(),
   modal: useModalStore(),
@@ -226,13 +212,15 @@ const {
   currentPersona,
   activePersona,
   activeId,
-  imageUrlBuffer,
-  imageFileBuffer,
+  imageUrl,
+  imageFile,
   state,
+  imageState,
   formDisabled,
   formCardProps,
-  imgStatus,
 } = storeToRefs(stores.persona);
+
+const imgaeUrl = computed(() => imageUrl.value || activePersona.value?.image);
 
 const openModel = () => {
   stores.modal.show();

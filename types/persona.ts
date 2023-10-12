@@ -14,13 +14,8 @@ export const NewPersonaSchema = z.object({
 export type NewPersona = z.infer<typeof NewPersonaSchema>;
 
 export interface Persona extends Base, NewPersona {
-  issue: Issue | string;
+  issue?: Issue | string;
 }
-
-// export interface PersonaContext {
-//   workshop: Pick<Workshop, '_id' | 'name' | 'description'>;
-//   issue: Pick<Issue, '_id' | 'title' | 'description'>;
-// }
 
 export interface PortraitRequestBody extends IssueContext {
   persona: NewPersona;

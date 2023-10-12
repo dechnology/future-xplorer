@@ -75,10 +75,10 @@
 
 <script setup lang="ts">
 import { ConcreteComponent } from 'nuxt/dist/app/compat/capi';
-import type { FormPanelProps, FormStateKeys } from '~/types';
+import type { FormPanelProps, FormStateKey } from '~/types';
 
 const ActionsComponents: Partial<
-  Record<FormStateKeys, string | ConcreteComponent>
+  Record<FormStateKey, string | ConcreteComponent>
 > = {
   NEW: resolveComponent('IssueNewActions'),
   DETAILS: resolveComponent('IssueDetailsActions'),
