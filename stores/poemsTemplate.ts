@@ -1,7 +1,7 @@
 import { fakerZH_TW } from '@faker-js/faker';
 import { getNewPoemsTemplate } from '@/utils';
 import type {
-  FormStateKeys,
+  FormStateKey,
   PoemsTemplate,
   NewPoemsTemplate,
   SelectOption,
@@ -25,7 +25,7 @@ export const usePoemsTemplateStore = definePiniaStore('poems template', () => {
   const activePoemsTemplate = ref<PoemsTemplate | null>(null);
   const activeId = computed(() => activePoemsTemplate.value?._id);
 
-  const state = ref<FormStateKeys>('NEW');
+  const state = ref<FormStateKey>('NEW');
   const loading = ref(false);
   const formDisabled = computed(
     () => state.value === 'DETAILS' || loading.value

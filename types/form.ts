@@ -1,7 +1,7 @@
-export type FormStateKeys = 'NEW' | 'DETAILS' | 'EDITING' | 'MULTIPLE';
+export type FormStateKey = 'NEW' | 'DETAILS' | 'EDITING' | 'MULTIPLE';
 
 export type FormState = {
-  [K in FormStateKeys]: { formTitle: string };
+  [K in FormStateKey]: { formTitle: string };
 };
 
 export interface FormPanelProps {

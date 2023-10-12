@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash/cloneDeep';
 import { getNewCase } from '~/utils';
-import { FormStateKeys, Case, NewCase, Keyword, NewKeyword } from '@/types';
+import { FormStateKey, Case, NewCase, Keyword, NewKeyword } from '@/types';
 
 export const useCaseStore = definePiniaStore('case', () => {
   const issueStore = useIssueStore();
@@ -20,7 +20,7 @@ export const useCaseStore = definePiniaStore('case', () => {
 
   const currentKeywords = ref<Keyword[]>([]);
 
-  const state = ref<FormStateKeys>('NEW');
+  const state = ref<FormStateKey>('NEW');
   const loading = ref(false);
   const formDisabled = computed(
     () => state.value === 'DETAILS' || loading.value

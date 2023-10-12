@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash/cloneDeep';
 import type {
-  FormStateKeys,
+  FormStateKey,
   Story,
   NewStory,
   PoemsTemplate,
@@ -22,7 +22,7 @@ export const useStoryStore = definePiniaStore('story', () => {
   const activeIds = computed(() => activeStories.value.map((el) => el._id));
   const activeId = computed(() => activeIds.value[0]);
 
-  const state = ref<FormStateKeys>('NEW');
+  const state = ref<FormStateKey>('NEW');
   const loading = ref(false);
   const formDisabled = computed(
     () => state.value === 'DETAILS' || loading.value

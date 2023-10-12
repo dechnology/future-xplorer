@@ -1,6 +1,7 @@
 export * from './base';
 export * from './user';
 export * from './form';
+export * from './image';
 
 export * from './workshop';
 export * from './issue';

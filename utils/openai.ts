@@ -13,32 +13,24 @@ import type {
 export const generatePortraitPrompt = async (
   token: string,
   body: PortraitRequestBody
-): Promise<{ err: any; prompt: string }> => {
-  try {
-    const { data, error } = await useFetch(`/api/openai/prompt/portrait`, {
-      method: 'post',
-      headers: { Authorization: `Bearer ${token}` },
-      body,
-    });
+): Promise<{ prompt: string }> => {
+  const { data, error } = await useFetch(`/api/openai/prompt/portrait`, {
+    method: 'post',
+    headers: { Authorization: `Bearer ${token}` },
+    body,
+  });
 
-    if (error.value) {
-      console.log('error.value =>', error.value);
-      return { err: error.value, prompt: '' };
-    }
-
-    if (!data.value) {
-      return { err: new Error('data are null'), prompt: '' };
-    }
-
-    const { prompt } = data.value;
-
-    return {
-      err: null,
-      prompt,
-    };
-  } catch (e) {
-    return { err: e, prompt: '' };
+  if (error.value) {
+    throw error.value;
   }
+
+  if (!data.value) {
+    throw new Error('data are null');
+  }
+
+  const { prompt } = data.value;
+
+  return { prompt };
 };
 
 export const generateImage = async (

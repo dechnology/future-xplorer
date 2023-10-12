@@ -32,7 +32,7 @@ const handleRemove = async () => {
       throw new Error('No active persona to remove');
     }
 
-    const token = await getTokenSilently();
+    let token = await getTokenSilently();
     const { message } = await fetchResource<Persona>(
       token,
       `/api/personas/${activeId.value}`,
@@ -40,9 +40,8 @@ const handleRemove = async () => {
     );
     console.log(message);
 
-    stores.persona.removePersona(activeId.value);
-    stores.persona.changeActivePersona();
-    console.log('persona removed');
+    token = await getTokenSilently();
+    await stores.persona.update(token);
   } catch (e) {
     console.error(e);
   } finally {
