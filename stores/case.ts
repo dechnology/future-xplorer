@@ -1,13 +1,23 @@
 import cloneDeep from 'lodash/cloneDeep';
 import { getNewCase } from '~/utils';
-import { FormStateKey, Case, NewCase, Keyword, NewKeyword } from '@/types';
+import { FormStateKey, Case, NewCase, Keyword, ImageStateKey } from '@/types';
 
 export const useCaseStore = definePiniaStore('case', () => {
   const issueStore = useIssueStore();
 
-  const cases = computed((): Case[] =>
-    issueStore.issue ? issueStore.issue.cases : []
-  );
+  const cases = computed<Case[]>({
+    get() {
+      return issueStore.issue ? issueStore.issue.cases : [];
+    },
+    set(newValue) {
+      if (issueStore.issue) {
+        issueStore.issue.cases = newValue;
+        activeCase.value =
+          issueStore.issue.cases.find((el) => el._id === activeId.value) ||
+          null;
+      }
+    },
+  });
 
   const currentCase = ref<Case | NewCase>(getNewCase());
   const activeCase = ref<Case | null>(null);
@@ -15,12 +25,11 @@ export const useCaseStore = definePiniaStore('case', () => {
     activeCase.value ? activeCase.value.keywords : []
   );
   const activeId = computed(() => activeCase.value?._id);
-  const imageUrlBuffer = ref<string | null>(null);
-  const imageFileBuffer = ref<File | null>(null);
-
-  const currentKeywords = ref<Keyword[]>([]);
+  const imageUrl = ref<string | null>(null);
+  const imageFile = ref<File | null>(null);
 
   const state = ref<FormStateKey>('NEW');
+  const imageState = ref<ImageStateKey>('IDLE');
   const loading = ref(false);
   const formDisabled = computed(
     () => state.value === 'DETAILS' || loading.value
@@ -29,52 +38,37 @@ export const useCaseStore = definePiniaStore('case', () => {
     getCurrentFormCardProps('案例', currentCase.value as Case, state.value)
   );
 
-  function upsertCase(el: Case) {
-    if (!issueStore.issue) {
-      return;
+  async function update(token: string, searchQuery?: string) {
+    if (!issueStore.issueId) {
+      throw new Error('no issue id');
     }
 
-    const index = cases.value.findIndex((c) => c._id === el._id);
+    const { data } = await fetchResources<Case>(token, '/api/cases', {
+      query: { issueId: issueStore.issueId, searchQuery },
+    });
 
-    if (index === -1) {
-      issueStore.issue.cases.push(el);
-    } else {
-      issueStore.issue.cases[index] = el;
-    }
+    cases.value = data;
+    console.log('cases', data);
   }
 
-  function removeCase(id: string) {
-    if (!issueStore.issue) {
-      return;
-    }
-
-    const index = cases.value.findIndex((c) => c._id === id);
-
-    if (index === -1) {
-      throw new Error('no issue match given id');
-    } else {
-      issueStore.issue.cases.splice(index, 1);
-    }
+  function resetForm() {
+    state.value = activeCase.value ? 'DETAILS' : 'NEW';
+    currentCase.value = activeCase.value
+      ? cloneDeep(activeCase.value)
+      : getNewCase();
   }
 
-  function clearCurrentCase() {
-    currentCase.value = getNewCase();
-    imageUrlBuffer.value = null;
+  function resetImage() {
+    imageState.value =
+      !activeCase.value || activeCase.value.image ? 'IDLE' : 'NONE';
+    imageFile.value = null;
+    imageUrl.value = null;
   }
 
-  function changeActiveCase(c?: Case | null) {
-    if (c) {
-      activeCase.value = c;
-      currentCase.value = cloneDeep(c);
-      currentKeywords.value = cloneDeep(c.keywords);
-      state.value = 'DETAILS';
-    } else {
-      activeCase.value = null;
-      clearCurrentCase();
-      currentKeywords.value = [];
-      state.value = 'NEW';
-    }
-  }
+  watch(activeCase, () => {
+    resetForm();
+    resetImage();
+  });
 
   return {
     cases,
@@ -83,19 +77,17 @@ export const useCaseStore = definePiniaStore('case', () => {
     activeKeywords,
     activeId,
 
-    imageUrlBuffer,
-    imageFileBuffer,
-
-    currentKeywords,
+    imageUrl,
+    imageFile,
 
     state,
+    imageState,
     loading,
     formDisabled,
     formCardProps,
 
-    upsertCase,
-    removeCase,
-    clearCurrentCase,
-    changeActiveCase,
+    update,
+    resetForm,
+    resetImage,
   };
 });

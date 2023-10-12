@@ -61,7 +61,7 @@ const stores = {
   case: useCaseStore(),
   modal: useModalStore(),
 };
-const { activeCase, activeId, currentKeywords } = storeToRefs(stores.case);
+const { activeCase, activeId } = storeToRefs(stores.case);
 const { ignoreNextClose } = storeToRefs(stores.modal);
 
 const textSelectionState = useTextSelection();
@@ -184,21 +184,21 @@ const handleButtonClick = async () => {
   try {
     if (!isTextTooLong.value) {
       console.log('newKeywords accepted');
-      const kw = NewKeywordSchema.parse({ body: selectedText.value });
-      // newKeywords.value.unshift(k);
+      const el = NewKeywordSchema.parse({ body: selectedText.value });
 
-      const token = await getTokenSilently();
+      let token = await getTokenSilently();
       const { data } = await fetchResources<Keyword>(
         token,
         `/api/cases/${activeId.value}/keywords`,
         {
           method: 'post',
-          body: { keywords: [kw] },
+          body: { keywords: [el] },
         }
       );
-
       console.log('Created: ', data);
-      currentKeywords.value = [...currentKeywords.value, ...data];
+
+      token = await getTokenSilently();
+      stores.case.update(token);
     }
   } catch (e) {
     console.error(e);

@@ -10,7 +10,7 @@
         size="3rem"
         class="animate-spin"
       />
-      <div class="flex w-full items-center justify-center py-3 text-center">
+      <div class="flex w-full items-center justify-center text-center">
         <slot />
       </div>
     </div>

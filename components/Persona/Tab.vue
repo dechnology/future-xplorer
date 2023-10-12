@@ -8,7 +8,7 @@
             <template #description>{{ formPanelProps.description }}</template>
           </PanelHeader>
         </template>
-        <FormCard v-bind="formCardProps" :username="username">
+        <FormCard v-bind="formCardProps">
           <template #body>
             <div class="grid grid-cols-2 gap-x-5 gap-y-7">
               <InputComponent
@@ -202,7 +202,6 @@ const ActionsComponents: Partial<
   EDITING: resolveComponent('PersonaEditingActions'),
 } as const;
 
-const { username } = useAuth();
 const stores = {
   persona: usePersonaStore(),
   modal: useModalStore(),

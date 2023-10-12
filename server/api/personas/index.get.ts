@@ -21,8 +21,6 @@ export default defineEventHandler(
 
     const el = await PersonaModel.find({ issue: issueId }).populate('creator');
 
-    console.log(el);
-
     if (!el) {
       throw createError({
         statusCode: 400,

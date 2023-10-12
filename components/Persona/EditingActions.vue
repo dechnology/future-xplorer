@@ -1,24 +1,30 @@
 <template>
   <div class="flex items-center justify-around">
     <CardButton
-      class="mx-auto h-12 w-44 rounded-lg bg-lime-600 text-white hover:bg-lime-700"
+      class="mx-auto rounded-lg bg-lime-600 px-8 text-white"
+      :class="!loading && 'hover:bg-lime-700'"
+      :disabled="loading"
       @click.prevent="() => handlePortraitGeneration()"
     >
-      AI生成新圖片
+      <span class="py-3"> AI生成圖片 </span>
     </CardButton>
   </div>
   <div class="flex items-center justify-around">
     <CardButton
-      class="rounded-lg bg-red-400 px-8 py-3 text-white hover:bg-red-500"
+      class="rounded-lg bg-red-400 px-8 text-white"
+      :class="!loading && 'hover:bg-red-500'"
+      :disabled="loading"
       @click.prevent="() => stores.persona.resetForm()"
     >
-      取消
+      <span class="py-3"> 取消 </span>
     </CardButton>
     <CardButton
-      class="rounded-lg bg-indigo-500 px-8 py-3 text-white hover:bg-indigo-600"
+      class="rounded-lg bg-indigo-500 px-8 text-white"
+      :class="!loading && 'hover:bg-indigo-600'"
+      :disabled="loading"
       @click.prevent="handleSaveEdit"
     >
-      儲存
+      <span class="py-3"> 儲存 </span>
     </CardButton>
   </div>
 </template>
@@ -43,6 +49,7 @@ const {
   imageFile,
   imageUrl,
   loading,
+  formDisabled,
 } = storeToRefs(stores.persona);
 
 const handlePortraitGeneration = async () => {

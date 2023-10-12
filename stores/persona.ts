@@ -65,13 +65,7 @@ export const usePersonaStore = definePiniaStore('persona', () => {
     imageUrl.value = null;
   }
 
-  watch(imageFile, (file) => {
-    if (file) {
-      imageUrl.value = URL.createObjectURL(file);
-    }
-  });
-
-  watch(activePersona, (el) => {
+  watch(activePersona, () => {
     resetForm();
     resetImage();
   });

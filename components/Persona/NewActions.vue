@@ -1,28 +1,28 @@
 <template>
   <CardButton
-    class="px- mx-auto rounded-lg bg-lime-600 px-8 text-white"
-    :class="!formDisabled && 'hover:bg-lime-700'"
-    :disabled="formDisabled"
+    class="mx-auto rounded-lg bg-lime-600 px-8 text-white"
+    :class="!loading && 'hover:bg-lime-700'"
+    :disabled="loading"
     @click.prevent="() => handlePortraitGeneration()"
   >
-    AI生成圖片
+    <span class="py-3"> AI生成圖片 </span>
   </CardButton>
   <div class="flex items-center justify-around">
     <CardButton
-      class="px- rounded-lg bg-red-400 px-8 text-white"
-      :class="!formDisabled && 'hover:bg-red-500'"
-      :disabled="formDisabled"
+      class="rounded-lg bg-red-400 px-8 text-white"
+      :class="!loading && 'hover:bg-red-500'"
+      :disabled="loading"
       @click.prevent="() => stores.persona.resetForm()"
     >
-      清除
+      <span class="py-3"> 清除 </span>
     </CardButton>
     <CardButton
-      class="px- rounded-lg bg-indigo-500 px-8 text-white"
-      :class="!formDisabled && 'hover:bg-indigo-600'"
-      :disabled="formDisabled"
+      class="rounded-lg bg-indigo-500 px-8 text-white"
+      :class="!loading && 'hover:bg-indigo-600'"
+      :disabled="loading"
       @click.prevent="handleCreate"
     >
-      新增
+      <span class="py-3"> 新增 </span>
     </CardButton>
   </div>
 </template>
