@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Base, Issue, IssueContext, Workshop } from '@/types';
+import { Base, Issue, IssueContext } from '@/types';
 
 export const NewPersonaSchema = z.object({
   role: z.string().trim().nonempty(),

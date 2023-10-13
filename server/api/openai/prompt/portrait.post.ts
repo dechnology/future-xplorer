@@ -1,5 +1,13 @@
-import { NewPersona, IssueContext, PortraitRequestBody } from '@/types';
-import { getIssueConextMessage } from '~/server/utils/openai';
+import {
+  NewPersona,
+  IssueContext,
+  PortraitRequestBody,
+  PromptResponseBody,
+} from '@/types';
+import {
+  createDallePrompt,
+  getIssueConextMessage,
+} from '~/server/utils/openai';
 
 const getSystemMessage = (ctx: IssueContext): string => {
   return [
@@ -35,34 +43,38 @@ const getUserMessage = (p: NewPersona): string => {
     baseMessage.push(`Additional information: ${p.other}`);
   }
 
-  baseMessage.push(
-    "'''",
-    'Remeber to keep your respose under 1000 CHARACTERS:'
-  );
-
   return baseMessage.join('\n');
 };
 
+const functions = [
+  {
+    name: 'generate_portrait_prompt',
+    description: 'generate an portrait prompt from the persona details.',
+    parameters: {
+      type: 'object',
+      properties: {
+        prompt: {
+          type: 'string',
+          description:
+            "The prompt of the portrait. The order of the elements is place, decoration, lighting, the person. When describing the person, describe the person's whereabout, pose, expression, and clothing. The prompt should be under 1000 CHARACTERS. This prompt should be wriiten in English. Ensure the portrait focuses on the face of the persona. The portrait should depict ONLY ONE individual.",
+        },
+      },
+      required: ['prompt'],
+    },
+  },
+];
+
 export default defineEventHandler(
-  async (event): Promise<{ prompt: string }> => {
+  async (event): Promise<PromptResponseBody> => {
     const { persona, ...ctx }: PortraitRequestBody = await readBody(event);
 
-    const completions = await openai.chat.completions.create({
+    return await createDallePrompt({
       model: 'gpt-3.5-turbo',
       messages: [
         { role: 'system', content: getSystemMessage(ctx) },
         { role: 'user', content: getUserMessage(persona) },
       ],
+      functions,
     });
-
-    if (!completions.choices[0].message) {
-      throw new Error(`OpenAI error: ${completions}`);
-    }
-
-    if (!completions.choices[0].message.content) {
-      throw new Error(`OpenAI error: ${completions}`);
-    }
-
-    return { prompt: completions.choices[0].message.content };
   }
 );

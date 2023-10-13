@@ -15,7 +15,3 @@ export interface Illustration extends Base, NewIllustration {
 
 export type IllustrationPromptRequestBody = IssueContext &
   Pick<Illustration, 'story'>;
-
-export interface IllustrationPromptResponseBody {
-  prompt: string;
-}
