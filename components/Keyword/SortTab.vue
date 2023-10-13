@@ -34,9 +34,9 @@
           {{ el.name }}
         </KeywordCategoryTab>
         <!-- TODO add button to create new category -->
-        <!-- <KeywordCategoryTab class="ml-auto">
+        <KeywordCategoryTab class="ml-auto" @click="() => stores.modal.show()">
           <Icon name="mdi:plus" size="2rem" />
-        </KeywordCategoryTab> -->
+        </KeywordCategoryTab>
       </KeywordCategoryTabWrapper>
       <KeywordGallery @dragover.prevent @drop="handleDrop">
         <KeywordCard
@@ -65,6 +65,7 @@
         </KeywordCard>
       </KeywordGallery>
     </KeywordGalleryPanel>
+    <KeywordCategoryModal />
   </NuxtLayout>
 </template>
 
