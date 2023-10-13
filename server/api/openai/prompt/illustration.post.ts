@@ -1,9 +1,12 @@
 import type {
   IssueContext,
   IllustrationPromptRequestBody,
-  IllustrationPromptResponseBody,
+  PromptResponseBody,
 } from '@/types';
-import { getIssueConextMessage } from '~/server/utils/openai';
+import {
+  createDallePrompt,
+  getIssueConextMessage,
+} from '~/server/utils/openai';
 
 const getSystemMessage = (ctx: IssueContext): string =>
   [
@@ -50,11 +53,11 @@ const functions = [
 ];
 
 export default defineEventHandler(
-  async (event): Promise<IllustrationPromptResponseBody> => {
+  async (event): Promise<PromptResponseBody> => {
     const { story, ...ctx }: IllustrationPromptRequestBody =
       await readBody(event);
 
-    const completions = await openai.chat.completions.create({
+    return await createDallePrompt({
       model: 'gpt-3.5-turbo',
       messages: [
         { role: 'system', content: getSystemMessage(ctx) },
@@ -62,17 +65,5 @@ export default defineEventHandler(
       ],
       functions,
     });
-
-    const message = completions.choices[0].message;
-
-    if (!message.function_call) {
-      throw new Error('no function call');
-    }
-
-    const parsedArguments = JSON.parse(message.function_call.arguments);
-
-    console.log(parsedArguments);
-
-    return parsedArguments as IllustrationPromptResponseBody;
   }
 );
