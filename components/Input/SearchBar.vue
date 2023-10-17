@@ -16,7 +16,10 @@
         "
       />
     </div>
-    <button class="rounded bg-blue-600 px-6 py-1 text-white">
+    <button
+      class="rounded bg-blue-600 px-6 py-1 text-white"
+      @click="$emit('search')"
+    >
       {{ buttonText }}
     </button>
   </div>
@@ -31,11 +34,8 @@ interface Props {
 
 defineEmits<{
   (e: 'update:modelValue', value: string): void;
+  (e: 'search'): void;
 }>();
 
-const {
-  modelValue,
-  placeholder = '',
-  buttonText = '搜尋',
-} = defineProps<Props>();
+defineProps<Props>();
 </script>

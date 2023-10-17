@@ -103,7 +103,7 @@
         </FormCard>
       </FormPanel>
     </template>
-    <CardGalleryPanel v-slot="slotProps">
+    <CardGalleryPanel @search="handleSearch">
       <CardGallery>
         <Card
           :active="!activePersona"
@@ -116,11 +116,7 @@
         </Card>
         <!-- Should be async component -->
         <Card
-          v-for="p in personas.filter((p) =>
-            [p.name, p.role, p.age, p.gender, p.trait, p.other]
-              .join()
-              .includes(slotProps.searchQuery)
-          )"
+          v-for="p in personas"
           :key="p._id"
           :active="activeId === p._id"
           class="h-[350px]"
@@ -202,12 +198,15 @@ const ActionsComponents: Partial<
   EDITING: resolveComponent('PersonaEditingActions'),
 } as const;
 
+const { getTokenSilently } = useAuth();
+
 const stores = {
   persona: usePersonaStore(),
   modal: useModalStore(),
 };
 
 const {
+  searchQuery,
   personas,
   currentPersona,
   activePersona,
@@ -225,4 +224,15 @@ const imgaeUrl = computed(() => imageUrl.value || activePersona.value?.image);
 const openModel = () => {
   stores.modal.show();
 };
+const handleSearch = async (value: string) => {
+  searchQuery.value = value;
+
+  const token = await getTokenSilently();
+  await stores.persona.update(token);
+};
+
+onMounted(async () => {
+  const token = await getTokenSilently();
+  await stores.persona.init(token);
+});
 </script>

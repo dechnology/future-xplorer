@@ -32,7 +32,7 @@
         </FormCard>
       </FormPanel>
     </template>
-    <CardGalleryPanel v-slot="slopProps">
+    <CardGalleryPanel @search="handleSearch">
       <CardGallery>
         <Card
           :active="!activeId"
@@ -45,9 +45,7 @@
         </Card>
         <ClientOnly>
           <Card
-            v-for="i in issues.filter((i) =>
-              i.title.includes(slopProps.searchQuery)
-            )"
+            v-for="i in issues"
             :key="i._id"
             :active="activeId === i._id"
             class="h-[300px]"
@@ -102,6 +100,7 @@ const stores = {
 const {
   workshop,
   workshopId,
+  searchQuery,
   issues,
   currentIssue,
   activeId,
@@ -112,6 +111,13 @@ const {
 
 const handleDblclick = (issueId: string) => {
   router.push(`/workshop/${workshopId.value}/issue/${issueId}`);
+};
+
+const handleSearch = async (value: string) => {
+  searchQuery.value = value;
+
+  const token = await getTokenSilently();
+  await stores.workshop.updateIssues(token);
 };
 
 onMounted(async () => {

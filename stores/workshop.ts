@@ -5,6 +5,7 @@ export const useWorkshopStore = definePiniaStore('workshop', () => {
   const workshop = ref<Workshop | null>(null);
   const workshopId = computed(() => workshop.value?._id);
 
+  const searchQuery = ref<string>();
   const issues = ref<BaseIssue[]>([]);
   const currentIssue = ref<NewIssue | BaseIssue>(getNewIssue());
   const activeIssue = ref<BaseIssue | null>(null);
@@ -28,10 +29,9 @@ export const useWorkshopStore = definePiniaStore('workshop', () => {
       throw new Error('no workshop id');
     }
 
-    const { data } = await fetchResources<BaseIssue>(
-      token,
-      `/api/workshops/${workshopId.value}/issues`
-    );
+    const { data } = await fetchResources<BaseIssue>(token, `/api/issues`, {
+      query: { workshopId: workshopId.value, searchQuery: searchQuery.value },
+    });
 
     issues.value = data;
   }
@@ -66,6 +66,7 @@ export const useWorkshopStore = definePiniaStore('workshop', () => {
     workshop,
     workshopId,
 
+    searchQuery,
     issues,
     currentIssue,
     activeIssue,

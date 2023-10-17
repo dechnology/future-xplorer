@@ -1,3 +1,4 @@
+import { FilterQuery } from 'mongoose';
 import { Persona, ResourceObject } from '@/types';
 import { PersonaModel } from '@/server/models';
 
@@ -19,7 +20,20 @@ export default defineEventHandler(
       });
     }
 
-    const el = await PersonaModel.find({ issue: issueId }).populate('creator');
+    const filter: FilterQuery<Persona> = { issue: issueId };
+    if (searchQuery) {
+      const searchRegex = new RegExp(searchQuery, 'i');
+      filter.$or = [
+        { role: searchRegex },
+        { name: searchRegex },
+        { age: searchRegex },
+        { gender: searchRegex },
+        { trait: searchRegex },
+        { other: searchRegex },
+      ];
+    }
+
+    const el = await PersonaModel.find(filter).populate('creator');
 
     if (!el) {
       throw createError({

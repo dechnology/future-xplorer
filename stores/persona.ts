@@ -6,16 +6,8 @@ import { FormStateKey, Persona, NewPersona, ImageStateKey } from '@/types';
 export const usePersonaStore = definePiniaStore('persona', () => {
   const issueStore = useIssueStore();
 
-  const personas = computed<Persona[]>({
-    get() {
-      return issueStore.issue ? issueStore.issue.personas : [];
-    },
-    set(newValue) {
-      if (issueStore.issue) {
-        issueStore.issue.personas = newValue;
-      }
-    },
-  });
+  const searchQuery = ref<string>();
+  const personas = ref<Persona[]>([]);
 
   const currentPersona = ref<Persona | NewPersona>(getNewPersona());
   const activePersona = ref<Persona | null>(null);
@@ -39,16 +31,20 @@ export const usePersonaStore = definePiniaStore('persona', () => {
     )
   );
 
-  async function update(token: string, searchQuery?: string) {
+  async function update(token: string) {
     if (!issueStore.issueId) {
       throw new Error('no issue id');
     }
 
     const { data } = await fetchResources<Persona>(token, '/api/personas', {
-      query: { issueId: issueStore.issueId, searchQuery },
+      query: { issueId: issueStore.issueId, searchQuery: searchQuery.value },
     });
 
     personas.value = data;
+  }
+
+  async function init(token: string) {
+    await update(token);
   }
 
   function resetForm() {
@@ -71,6 +67,7 @@ export const usePersonaStore = definePiniaStore('persona', () => {
   });
 
   return {
+    searchQuery,
     personas,
     currentPersona,
     activePersona,
@@ -86,6 +83,7 @@ export const usePersonaStore = definePiniaStore('persona', () => {
     formCardProps,
 
     update,
+    init,
     resetForm,
     resetImage,
   };
