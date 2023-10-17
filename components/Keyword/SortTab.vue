@@ -10,7 +10,7 @@
         </template>
         <KeywordGallery :grid-cols="2">
           <KeywordCard
-            v-for="k in selfKeywords.filter((k) => !k.category)"
+            v-for="k in keywords.filter((k) => !k.category)"
             :key="k._id"
             :draggable="true"
             class="h-40"
@@ -81,7 +81,6 @@ const { getTokenSilently } = useAuth();
 
 const stores = {
   issue: useIssueStore(),
-  case: useCaseStore(),
   keyword: useKeywordStore(),
   modal: useModalStore(),
 };
@@ -102,13 +101,13 @@ const getCurrentElement = (
   }
 };
 
-const { selfKeywords, loading } = storeToRefs(stores.keyword);
+const { keywords, loading } = storeToRefs(stores.keyword);
 
 const draggingKeyword = ref<Keyword | null>(null);
 const currentElement = ref<WorkshopElement | undefined>(getCurrentElement());
 const filteredKeywords = computed(() =>
-  selfKeywords.value
-    ? selfKeywords.value.filter(
+  keywords.value
+    ? keywords.value.filter(
         (kw) =>
           currentElement.value && kw.category === currentElement.value.name
       )
@@ -133,7 +132,7 @@ const updateKeyword = async (
   console.log('Patched: ', editedKeyword);
 
   token = await getTokenSilently();
-  await stores.case.update(token);
+  await stores.keyword.update(token, { self: true });
 };
 
 const handleDrop = async () => {
@@ -177,4 +176,9 @@ const setElement = (el: WorkshopElement) => {
   currentElement.value = el;
   localStorage.setItem(sortStorageKey, el.name);
 };
+
+onMounted(async () => {
+  const token = await getTokenSilently();
+  await stores.keyword.update(token, { self: true });
+});
 </script>

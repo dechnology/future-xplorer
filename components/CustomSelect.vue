@@ -3,10 +3,10 @@
     <slot :selected="selected" />
     <span>
       <Icon
-        @click="() => (dropdownShown = !dropdownShown)"
         class="cursor-pointer transition-all duration-300"
         :class="dropdownShown && '-rotate-90'"
         name="pepicons-pop:triangle-left-filled"
+        @click="() => (dropdownShown = !dropdownShown)"
       />
     </span>
     <div
@@ -17,8 +17,9 @@
       <Dropdown>
         <DropdownItem
           v-for="opt in options"
+          :key="`${opt.name}_${opt.data}`"
+          :active="selected && selected.name === opt.name"
           @click="() => handleClick(opt)"
-          :active="selected.name === opt.name"
         >
           {{ opt.name }}
         </DropdownItem>
@@ -40,7 +41,7 @@ const props = defineProps<Props>();
 
 const emit = defineEmits<{ (e: 'update:modelValue', data: T): void }>();
 
-const selected = shallowRef<Option>(props.options[0]);
+const selected = shallowRef<Option>();
 const dropdownShown = ref(false);
 const dropdownDiv = ref<HTMLDivElement | null>(null);
 

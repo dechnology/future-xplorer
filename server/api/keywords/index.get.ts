@@ -1,8 +1,10 @@
+import { FilterQuery } from 'mongoose';
 import { Keyword, ResourceObject } from '@/types';
-import { KeywordModel } from '@/server/models';
+import { CaseModel, KeywordModel } from '@/server/models';
 
 interface KeywordQuery {
-  caseId: string;
+  issueId: string;
+  userIds?: string[];
   searchQuery?: string;
 }
 
@@ -10,16 +12,28 @@ export default defineEventHandler(
   async (event): Promise<ResourceObject<Keyword[]>> => {
     authenticate(event.context);
 
-    const { caseId, searchQuery } = getQuery<KeywordQuery>(event);
+    const { issueId, userIds, searchQuery } = getQuery<KeywordQuery>(event);
 
-    if (!caseId) {
+    if (!issueId) {
       throw createError({
         statusCode: 400,
         statusMessage: 'Issue ID is required',
       });
     }
 
-    const el = await KeywordModel.find({ case: caseId }).populate([
+    // Find all cases for the given issue
+    const cases = await CaseModel.find({ issue: issueId }).select('_id');
+    const caseIds = cases.map((c) => c._id);
+
+    const filter: FilterQuery<Keyword> = { case: { $in: caseIds } };
+    if (userIds) {
+      filter.creator = { $in: userIds };
+    }
+    if (searchQuery) {
+      filter.$text = { $search: searchQuery };
+    }
+
+    const el = await KeywordModel.find(filter).populate([
       'creator',
       { path: 'votes', populate: ['creator', 'keyword'] },
     ]);

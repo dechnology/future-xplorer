@@ -198,7 +198,7 @@ const handleButtonClick = async () => {
       console.log('Created: ', data);
 
       token = await getTokenSilently();
-      stores.case.update(token);
+      await stores.case.update(token);
     }
   } catch (e) {
     console.error(e);
