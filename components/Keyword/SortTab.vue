@@ -33,7 +33,6 @@
         >
           {{ el.name }}
         </KeywordCategoryTab>
-        <!-- TODO add button to create new category -->
         <KeywordCategoryTab class="ml-auto" @click="() => stores.modal.show()">
           <Icon name="mdi:plus" size="2rem" />
         </KeywordCategoryTab>

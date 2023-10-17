@@ -16,6 +16,12 @@
             >
               {{ name }}
             </KeywordCategoryTab>
+            <KeywordCategoryTab
+              class="ml-auto"
+              @click="() => stores.modal.show()"
+            >
+              <Icon name="mdi:plus" size="2rem" />
+            </KeywordCategoryTab>
           </KeywordCategoryTabWrapper>
           <div class="flex min-h-0 shrink grow basis-auto">
             <KeywordGalleryPanel input-classes="basis-1/2">
@@ -105,6 +111,7 @@
         </KeywordCard>
       </KeywordGallery>
     </KeywordGalleryPanel>
+    <KeywordCategoryModal />
   </NuxtLayout>
 </template>
 
@@ -120,7 +127,11 @@ const formPanelProps = {
 };
 
 const { user, userId, getTokenSilently } = useAuth();
-const stores = { issue: useIssueStore(), keyword: useKeywordStore() };
+const stores = {
+  issue: useIssueStore(),
+  keyword: useKeywordStore(),
+  modal: useModalStore(),
+};
 const { elementsArray } = storeToRefs(stores.issue);
 const {
   loading,
