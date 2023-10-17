@@ -2,6 +2,7 @@ import type { Workshop, Issue, IssueTab, WorkshopElement } from '@/types';
 
 export const useIssueStore = definePiniaStore('issue', () => {
   const workshop = ref<Workshop | null>(null);
+  const workshopId = computed(() => workshop.value?._id);
   const elements = computed(() => {
     if (workshop.value) {
       const { objects, environments, messages, services } = workshop.value;
@@ -48,6 +49,35 @@ export const useIssueStore = definePiniaStore('issue', () => {
   const issueId = computed(() => issue.value?._id);
   const currentTab = ref<IssueTab>(readCurrentTab());
 
+  const loading = ref(false);
+
+  async function updateWorkshop(token: string) {
+    if (!workshopId.value) {
+      throw new Error('no workshop id');
+    }
+
+    const { data } = await fetchResource<Workshop>(
+      token,
+      `/api/workshops/${workshopId.value}`
+    );
+
+    workshop.value = data;
+  }
+
+  async function updateIssue(token: string) {
+    if (!issueId.value) {
+      throw new Error('no issue id');
+    }
+
+    const { data } = await fetchResource<Issue>(
+      token,
+      `/api/issues/${issueId.value}`,
+      { deserializer: deserializeIssue }
+    );
+
+    issue.value = data;
+  }
+
   async function init(token: string, workshopId: string, issueId: string) {
     const [workshopResponse, issuesResponse] = await Promise.all([
       fetchResource<Workshop>(token, `/api/workshops/${workshopId}`),
@@ -67,13 +97,17 @@ export const useIssueStore = definePiniaStore('issue', () => {
 
   return {
     workshop,
+    workshopId,
     elements,
     elementsArray,
 
     issue,
     issueId,
     currentTab,
+    loading,
 
+    updateWorkshop,
+    updateIssue,
     init,
     setTab,
   };
