@@ -1,23 +1,18 @@
 import cloneDeep from 'lodash/cloneDeep';
 import { getNewCase } from '~/utils';
-import { FormStateKey, Case, NewCase, Keyword, ImageStateKey } from '@/types';
+import type {
+  FormStateKey,
+  Case,
+  NewCase,
+  Keyword,
+  ImageStateKey,
+} from '@/types';
 
 export const useCaseStore = definePiniaStore('case', () => {
   const issueStore = useIssueStore();
 
-  const cases = computed<Case[]>({
-    get() {
-      return issueStore.issue ? issueStore.issue.cases : [];
-    },
-    set(newValue) {
-      if (issueStore.issue) {
-        issueStore.issue.cases = newValue;
-        activeCase.value =
-          issueStore.issue.cases.find((el) => el._id === activeId.value) ||
-          null;
-      }
-    },
-  });
+  const searchQuery = ref<string>();
+  const cases = ref<Case[]>([]);
 
   const currentCase = ref<Case | NewCase>(getNewCase());
   const activeCase = ref<Case | null>(null);
@@ -38,17 +33,20 @@ export const useCaseStore = definePiniaStore('case', () => {
     getCurrentFormCardProps('案例', currentCase.value as Case, state.value)
   );
 
-  async function update(token: string, searchQuery?: string) {
+  async function update(token: string) {
     if (!issueStore.issueId) {
       throw new Error('no issue id');
     }
 
     const { data } = await fetchResources<Case>(token, '/api/cases', {
-      query: { issueId: issueStore.issueId, searchQuery },
+      query: { issueId: issueStore.issueId, searchQuery: searchQuery.value },
     });
 
     cases.value = data;
-    console.log('cases', data);
+  }
+
+  async function init(token: string) {
+    await update(token);
   }
 
   function resetForm() {
@@ -71,6 +69,7 @@ export const useCaseStore = definePiniaStore('case', () => {
   });
 
   return {
+    searchQuery,
     cases,
     currentCase,
     activeCase,
@@ -87,6 +86,7 @@ export const useCaseStore = definePiniaStore('case', () => {
     formCardProps,
 
     update,
+    init,
     resetForm,
     resetImage,
   };

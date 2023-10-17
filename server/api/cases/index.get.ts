@@ -1,3 +1,4 @@
+import { FilterQuery } from 'mongoose';
 import { Case, ResourceObject } from '@/types';
 import { CaseModel } from '@/server/models';
 
@@ -19,7 +20,22 @@ export default defineEventHandler(
       });
     }
 
-    const el = await CaseModel.find({ issue: issueId }).populate([
+    const filter: FilterQuery<Case> = { issue: issueId };
+    if (searchQuery) {
+      const searchRegex = new RegExp(searchQuery, 'i');
+      filter.$or = [
+        { title: searchRegex },
+        { background: searchRegex },
+        { method: searchRegex },
+        { goal: searchRegex },
+        { challenge: searchRegex },
+        { result: searchRegex },
+        { reference: searchRegex },
+        { other: searchRegex },
+      ];
+    }
+
+    const el = await CaseModel.find(filter).populate([
       'creator',
       {
         path: 'keywords',

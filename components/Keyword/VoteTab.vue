@@ -59,7 +59,10 @@
                     .map((u) => ({ name: u.name, data: u }))
                 "
               >
-                {{ slotProps.selected.name }}的關鍵字
+                <span v-if="slotProps.selected">
+                  {{ slotProps.selected.name }}的關鍵字
+                </span>
+                <span v-else>選擇參與者</span>
               </CustomSelect>
               <KeywordGallery>
                 <KeywordCard
@@ -239,4 +242,9 @@ const setCategory = (cat: string | undefined | null) => {
     localStorage.setItem(stroageKey, cat);
   }
 };
+
+onMounted(async () => {
+  const token = await getTokenSilently();
+  await stores.keyword.update(token);
+});
 </script>

@@ -1,24 +1,17 @@
-import { Keyword, User } from '@/types';
+import { Case, Keyword, User } from '@/types';
+
+interface KeywordUpdateOptions {
+  self?: boolean;
+}
 
 export const useKeywordStore = definePiniaStore('keywords', () => {
-  const { user } = useAuth();
-  const caseStore = useCaseStore();
+  const { user, userId } = useAuth();
+  const issueStore = useIssueStore();
 
   const loading = ref(false);
 
-  const keywords = computed<Keyword[]>(() =>
-    caseStore.cases
-      .flatMap((c) => [...c.keywords])
-      .sort((a, b) => {
-        if (!a.category) return -1;
-        if (!b.category) return 1;
-        return 0;
-      })
-  );
-
-  const votedKeywords = computed(() =>
-    keywords.value.filter((kw) => kw.votes.length > 0)
-  );
+  const searchQuery = ref<string>();
+  const keywords = ref<Keyword[]>([]);
 
   // users can maybe be fetched from the database instead of computed out of keywords
   const keywordUsers = computed(() => {
@@ -34,8 +27,8 @@ export const useKeywordStore = definePiniaStore('keywords', () => {
     return users;
   });
 
-  const selfKeywords = computed(() =>
-    keywords.value.filter((kw) => kw.creator._id === user.value?._id)
+  const votedKeywords = computed(() =>
+    keywords.value.filter((kw) => kw.votes.length > 0)
   );
 
   const selfVotes = computed(() =>
@@ -48,32 +41,56 @@ export const useKeywordStore = definePiniaStore('keywords', () => {
       : []
   );
 
-  const selfVotedIds = computed(() =>
-    selfVotes.value.map((vote) => vote.keyword._id)
-  );
-
   const favoriteKeywords = computed(() =>
-    keywords.value.filter((kw) => selfVotedIds.value.includes(kw._id))
+    keywords.value.filter((kw) =>
+      selfVotes.value.map((vote) => vote.keyword._id).includes(kw._id)
+    )
   );
 
   const nonFavoriteKeywords = computed(() =>
-    keywords.value.filter((kw) => !selfVotedIds.value.includes(kw._id))
+    keywords.value.filter(
+      (kw) => !selfVotes.value.map((vote) => vote.keyword._id).includes(kw._id)
+    )
   );
 
   const nonFavoriteSelfKeywords = computed(() =>
     nonFavoriteKeywords.value.filter((kw) => kw.creator._id === user.value?._id)
   );
 
+  async function update(
+    token: string,
+    opt: KeywordUpdateOptions = { self: false }
+  ) {
+    if (!issueStore.issueId) {
+      throw new Error('no issue id');
+    }
+
+    const { data } = await fetchResources<Keyword>(token, '/api/keywords', {
+      query: {
+        issueId: issueStore.issueId,
+        userIds: opt.self && user.value ? [userId.value] : undefined,
+        searchQuery: searchQuery.value,
+      },
+    });
+
+    keywords.value = data;
+  }
+
+  async function init(token: string, opt?: KeywordUpdateOptions) {
+    await update(token, opt);
+  }
+
   return {
     loading,
     keywords,
     votedKeywords,
-    selfKeywords,
     selfVotes,
-    selfVotedIds,
     favoriteKeywords,
     nonFavoriteKeywords,
     nonFavoriteSelfKeywords,
     keywordUsers,
+
+    update,
+    init,
   };
 });

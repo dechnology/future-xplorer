@@ -91,7 +91,7 @@
         </FormCard>
       </FormPanel>
     </template>
-    <CardGalleryPanel v-slot="slopProps">
+    <CardGalleryPanel @search="handleSearch">
       <CardGallery>
         <Card
           :active="!activeCase"
@@ -104,18 +104,7 @@
         </Card>
         <!-- Should be async component -->
         <Card
-          v-for="el in cases.filter((el) =>
-            [
-              el.title,
-              el.background,
-              el.method,
-              el.goal,
-              el.challenge,
-              el.other,
-            ]
-              .join()
-              .includes(slopProps.searchQuery)
-          )"
+          v-for="el in cases"
           :key="el._id"
           :active="activeId === el._id"
           class="h-[350px]"
@@ -165,12 +154,15 @@ const ActionsComponents: Partial<
   EDITING: resolveComponent('CaseEditingActions'),
 } as const;
 
+const { getTokenSilently } = useAuth();
+
 const stores = {
   case: useCaseStore(),
   modal: useModalStore(),
 };
 
 const {
+  searchQuery,
   cases,
   currentCase,
   activeCase,
@@ -184,4 +176,15 @@ const {
 } = storeToRefs(stores.case);
 
 const imgaeUrl = computed(() => imageUrl.value || activeCase.value?.image);
+
+const handleSearch = async (value: string) => {
+  searchQuery.value = value;
+  const token = await getTokenSilently();
+  await stores.case.update(token);
+};
+
+onMounted(async () => {
+  const token = await getTokenSilently();
+  await stores.case.update(token);
+});
 </script>
