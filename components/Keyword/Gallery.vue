@@ -10,5 +10,14 @@
 </template>
 
 <script setup lang="ts">
-withDefaults(defineProps<{ gridCols?: number }>(), { gridCols: 1 });
+interface Props {
+  gridCols?: number;
+  searchQuery?: string;
+  category?: string;
+}
+withDefaults(defineProps<Props>(), {
+  gridCols: 1,
+  searchQuery: undefined,
+  category: undefined,
+});
 </script>
