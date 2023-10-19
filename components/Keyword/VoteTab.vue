@@ -239,6 +239,6 @@ const setCategory = (cat: string | undefined | null) => {
 
 onMounted(async () => {
   const token = await getTokenSilently();
-  await stores.keyword.update(token);
+  await stores.keyword.init(token);
 });
 </script>
