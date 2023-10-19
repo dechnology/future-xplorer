@@ -23,6 +23,6 @@ const schema = new Schema<Workshop>(
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   }
-);
+).index({ '$**': 'text' });
 
 export default mongoose.model<Workshop>('Workshop', schema, 'workshop');

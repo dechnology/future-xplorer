@@ -19,6 +19,6 @@ const schema = new Schema<Persona>(
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   }
-);
+).index({ '$**': 'text' });
 
 export default mongoose.model<Persona>('Persona', schema, 'persona');

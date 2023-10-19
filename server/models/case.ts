@@ -21,7 +21,7 @@ const schema = new Schema<Case>(
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   }
-);
+).index({ '$**': 'text' });
 
 schema.virtual('keywords', {
   ref: 'Keyword',

@@ -83,7 +83,7 @@
         </FormCard>
       </FormPanel>
     </template>
-    <CardGalleryPanel v-slot="slopProps">
+    <CardGalleryPanel @search="handleSearch">
       <CardGallery :grid-cols="3">
         <Card
           class="h-[350px]"
@@ -104,9 +104,7 @@
               el.object,
               el.environment,
               el.service,
-            ]
-              .join()
-              .includes(slopProps.searchQuery)
+            ].join()
           )"
           :key="el._id"
           class="h-[350px]"
@@ -161,7 +159,7 @@ const stores = {
   poemsTemplate: usePoemsTemplateStore(),
 };
 const {
-  loading,
+  searchQuery,
   poemsTemplates,
   activePoemsTemplate,
   activeId,
@@ -175,6 +173,13 @@ const {
 
 const handleDblclick = () => {
   stores.modal.show();
+};
+
+const handleSearch = async (value: string) => {
+  searchQuery.value = value;
+
+  const token = await getTokenSilently();
+  stores.poemsTemplate.update(token);
 };
 
 onMounted(async () => {
