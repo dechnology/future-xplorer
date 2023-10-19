@@ -9,6 +9,6 @@ const schema = new Schema<User>(
     issues: [{ type: Schema.Types.ObjectId, ref: 'Issue' }],
   },
   { timestamps: true, strictQuery: true, id: true, _id: true }
-);
+).index({ '$**': 'text' });
 
 export default mongoose.model<User>('User', schema, 'user');

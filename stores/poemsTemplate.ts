@@ -1,3 +1,4 @@
+import cloneDeep from 'lodash/cloneDeep';
 import { fakerZH_TW } from '@faker-js/faker';
 import { getNewPoemsTemplate } from '@/utils';
 import type {
@@ -13,11 +14,8 @@ export const usePoemsTemplateStore = definePiniaStore('poems template', () => {
   const personaStore = usePersonaStore();
   const keywordStore = useKeywordStore();
 
-  console.log(issueStore.issue?.poemsTemplates);
-
-  const poemsTemplates = computed((): PoemsTemplate[] =>
-    issueStore.issue ? issueStore.issue.poemsTemplates : []
-  );
+  const searchQuery = ref<string>();
+  const poemsTemplates = ref<PoemsTemplate[]>([]);
 
   const currentPoemsTemplate = ref<PoemsTemplate | NewPoemsTemplate>(
     getNewPoemsTemplate()
@@ -52,63 +50,48 @@ export const usePoemsTemplateStore = definePiniaStore('poems template', () => {
       M: [],
       S: [],
     };
-    keywordStore.votedKeywords.forEach((el) => {
-      el.type &&
-        results[el.type].push({
-          name: el.body,
-          data: el.body,
-        });
-    });
+    keywordStore.keywords
+      .filter((el) => el.votes.length > 0)
+      .forEach((el) => {
+        el.type &&
+          results[el.type].push({
+            name: el.body,
+            data: el.body,
+          });
+      });
     return results;
   });
 
-  function upsertPoemsTemplate(el: PoemsTemplate) {
-    if (!issueStore.issue) {
-      return;
+  async function update(token: string) {
+    if (!issueStore.issueId) {
+      throw new Error('no issue id');
     }
 
-    const index = issueStore.issue?.poemsTemplates.findIndex(
-      (persona) => persona._id === el._id
+    const { data } = await fetchResources<PoemsTemplate>(
+      token,
+      '/api/poemsTemplates',
+      {
+        query: { issueId: issueStore.issueId, searchQuery: searchQuery.value },
+      }
     );
 
-    if (index === -1) {
-      issueStore.issue.poemsTemplates.push(el);
-    } else {
-      issueStore.issue.poemsTemplates[index] = el;
-    }
+    poemsTemplates.value = data;
   }
 
-  function removePoemsTemplate(id: string) {
-    if (!issueStore.issue) {
-      return;
-    }
-
-    const index = issueStore.issue?.poemsTemplates.findIndex(
-      (persona) => persona._id === id
-    );
-
-    if (index === -1) {
-      throw new Error('no issue match given id');
-    } else {
-      issueStore.issue.poemsTemplates.splice(index, 1);
-    }
+  async function init(token: string) {
+    await update(token);
   }
 
-  function clearCurrentPoemsTemplate() {
-    currentPoemsTemplate.value = getNewPoemsTemplate();
+  function resetForm() {
+    state.value = activePoemsTemplate.value ? 'DETAILS' : 'NEW';
+    currentPoemsTemplate.value = activePoemsTemplate.value
+      ? cloneDeep(activePoemsTemplate.value)
+      : getNewPoemsTemplate();
   }
 
-  function changeActivePoemsTemplate(p?: PoemsTemplate | null) {
-    if (p) {
-      activePoemsTemplate.value = { ...p };
-      currentPoemsTemplate.value = { ...p };
-      state.value = 'DETAILS';
-    } else {
-      activePoemsTemplate.value = null;
-      clearCurrentPoemsTemplate();
-      state.value = 'NEW';
-    }
-  }
+  watch(activePoemsTemplate, () => {
+    resetForm();
+  });
 
   function getRandomContext() {
     return {
@@ -138,6 +121,7 @@ export const usePoemsTemplateStore = definePiniaStore('poems template', () => {
   }
 
   return {
+    searchQuery,
     poemsTemplates,
     currentPoemsTemplate,
     activePoemsTemplate,
@@ -150,10 +134,9 @@ export const usePoemsTemplateStore = definePiniaStore('poems template', () => {
     personaOptions,
     keywordOptions,
 
-    upsertPoemsTemplate,
-    removePoemsTemplate,
-    clearCurrentPoemsTemplate,
-    changeActivePoemsTemplate,
+    init,
+    update,
+    resetForm,
     getRandomContext,
     randomizeContext,
   };

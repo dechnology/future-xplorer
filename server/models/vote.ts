@@ -12,6 +12,6 @@ const schema = new Schema<Vote>(
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   }
-);
+).index({ '$**': 'text' });
 
 export default mongoose.model<Vote>('Vote', schema, 'vote');

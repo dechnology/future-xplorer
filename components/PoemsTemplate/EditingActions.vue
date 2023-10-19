@@ -16,35 +16,36 @@
 </template>
 
 <script setup lang="ts">
-import type { User, PoemsTemplate } from '@/types';
+import isEqual from 'lodash/isEqual';
+import type { PoemsTemplate } from '@/types';
 import { NewPoemsTemplateSchema } from '@/types';
 
-const { user, getTokenSilently } = useAuth();
+const { getTokenSilently } = useAuth();
 const stores = {
   issue: useIssueStore(),
   poemsTemplate: usePoemsTemplateStore(),
 };
-const { currentPoemsTemplate, activePoemsTemplate, activeId, loading } =
+const { currentPoemsTemplate, activePoemsTemplate, activeId, state, loading } =
   storeToRefs(stores.poemsTemplate);
 
 const handleCancel = () => {
-  stores.poemsTemplate.changeActivePoemsTemplate(activePoemsTemplate.value);
+  stores.poemsTemplate.resetForm();
 };
 
 const handleSaveEdit = async () => {
   try {
     loading.value = true;
 
-    // if (isEqual(currentPoemsTemplate.value, activePoemsTemplate.value)) {
-    //   state.value = 'DETAILS';
-    //   return;
-    // }
+    if (isEqual(currentPoemsTemplate.value, activePoemsTemplate.value)) {
+      state.value = 'DETAILS';
+      return;
+    }
 
     if (!currentPoemsTemplate.value.persona) {
       throw new Error('no persona');
     }
 
-    const token = await getTokenSilently();
+    let token = await getTokenSilently();
     const p = NewPoemsTemplateSchema.passthrough().parse(
       currentPoemsTemplate.value
     );
@@ -58,12 +59,10 @@ const handleSaveEdit = async () => {
         body: { ...p, persona: currentPoemsTemplate.value.persona._id },
       }
     );
-
-    editedPoemsTemplate.creator = user.value as User;
-    editedPoemsTemplate.persona = currentPoemsTemplate.value.persona;
     console.log('Patched: ', editedPoemsTemplate);
-    stores.poemsTemplate.upsertPoemsTemplate(editedPoemsTemplate);
-    stores.poemsTemplate.changeActivePoemsTemplate(editedPoemsTemplate);
+
+    token = await getTokenSilently();
+    await stores.poemsTemplate.update(token);
   } catch (e) {
     console.error(e);
   } finally {
