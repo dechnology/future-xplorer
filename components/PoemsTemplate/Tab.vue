@@ -88,7 +88,7 @@
         <Card
           class="h-[350px]"
           :active="!activePoemsTemplate"
-          @click="() => stores.poemsTemplate.changeActivePoemsTemplate()"
+          @click="() => (activePoemsTemplate = null)"
         >
           <CardIcon :icon="{ name: 'mdi:plus', size: '5rem' }">
             新增模板
@@ -112,7 +112,7 @@
           class="h-[350px]"
           :active="activeId === el._id"
           @dblclick="() => handleDblclick()"
-          @click="() => stores.poemsTemplate.changeActivePoemsTemplate(el)"
+          @click="() => (activePoemsTemplate = el)"
         >
           <CardTitle>{{ el.title }}</CardTitle>
           <CardDescription>
@@ -153,10 +153,9 @@ const formPanelProps = {
   description: '第四步將前三步所得之資料組合成一張張的情境故事(poems)',
 };
 
-const { username } = useAuth();
+const { username, getTokenSilently } = useAuth();
 const stores = {
   modal: useModalStore(),
-  issue: useIssueStore(),
   persona: usePersonaStore(),
   keyword: useKeywordStore(),
   poemsTemplate: usePoemsTemplateStore(),
@@ -177,4 +176,12 @@ const {
 const handleDblclick = () => {
   stores.modal.show();
 };
+
+onMounted(async () => {
+  let token = await getTokenSilently();
+  await Promise.all([stores.persona.init(token), stores.keyword.init(token)]);
+
+  token = await getTokenSilently();
+  await stores.poemsTemplate.init(token);
+});
 </script>

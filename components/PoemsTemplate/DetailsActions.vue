@@ -32,7 +32,7 @@ const handleRemove = async () => {
       throw new Error('No active poemsTemplate to remove');
     }
 
-    const token = await getTokenSilently();
+    let token = await getTokenSilently();
     const { message } = await fetchResource<PoemsTemplate>(
       token,
       `/api/poemsTemplates/${activeId.value}`,
@@ -40,8 +40,8 @@ const handleRemove = async () => {
     );
     console.log(message);
 
-    stores.poemsTemplate.removePoemsTemplate(activeId.value);
-    stores.poemsTemplate.changeActivePoemsTemplate();
+    token = await getTokenSilently();
+    await stores.poemsTemplate.update(token);
     console.log('poemsTemplate removed');
   } catch (e) {
     console.error(e);
