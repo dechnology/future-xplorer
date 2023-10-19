@@ -6,8 +6,9 @@ export default defineEventHandler(
     const { id: creator } = authenticate(event.context);
     const id = getRouterParam(event, 'id');
 
-    const newKeywords = (await readBody<{ keywords: NewKeyword[] }>(event))
-      .keywords;
+    const { keywords: newKeywords } = await readBody<{
+      keywords: NewKeyword[];
+    }>(event);
 
     const keywordDocuments = await KeywordModel.insertMany(
       newKeywords.map((newKeyword) => ({

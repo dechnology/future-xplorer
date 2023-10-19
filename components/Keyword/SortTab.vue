@@ -8,9 +8,14 @@
             <template #description>{{ formPanelProps.description }}</template>
           </PanelHeader>
         </template>
-        <KeywordGallery :grid-cols="2">
+        <KeywordGallery
+          v-slot="slotProps"
+          :update-signal="updateSignal"
+          :keyword-query="{ ...keywordQuery, category: undefined }"
+          :grid-cols="2"
+        >
           <KeywordCard
-            v-for="k in keywords.filter((k) => !k.category)"
+            v-for="k in slotProps.keywords.filter((k) => !k.category)"
             :key="k._id"
             :draggable="true"
             class="h-40"
@@ -37,9 +42,15 @@
           <Icon name="mdi:plus" size="2rem" />
         </KeywordCategoryTab>
       </KeywordCategoryTabWrapper>
-      <KeywordGallery @dragover.prevent @drop="handleDrop">
+      <KeywordGallery
+        v-slot="slotProps"
+        :update-signal="updateSignal"
+        :keyword-query="keywordQuery"
+        @dragover.prevent
+        @drop="handleDrop"
+      >
         <KeywordCard
-          v-for="k in filteredKeywords"
+          v-for="k in slotProps.keywords"
           :key="k._id"
           class="h-32"
           @update:keyword="(body) => (k.body = body)"
@@ -69,7 +80,7 @@
 </template>
 
 <script setup lang="ts">
-import { Keyword, WorkshopElement } from '@/types';
+import { Keyword, KeywordQuery, WorkshopElement } from '@/types';
 
 const formPanelProps = {
   title: '關鍵字整理',
@@ -77,15 +88,14 @@ const formPanelProps = {
     '第三步需自行在網路平台查詢收集可能的產品與服務案例資料，彙整成獨立的牌卡。',
 };
 
-const { getTokenSilently } = useAuth();
+const { userId, getTokenSilently } = useAuth();
 
 const stores = {
   issue: useIssueStore(),
-  keyword: useKeywordStore(),
   modal: useModalStore(),
 };
 
-const { elementsArray } = storeToRefs(stores.issue);
+const { issueId, elementsArray } = storeToRefs(stores.issue);
 
 const getCurrentElement = (
   defaultElement: WorkshopElement | undefined = elementsArray.value.at(0)
@@ -101,20 +111,18 @@ const getCurrentElement = (
   }
 };
 
-const { keywords, loading } = storeToRefs(stores.keyword);
-
 const draggingKeyword = ref<Keyword | null>(null);
 const currentElement = ref<WorkshopElement | undefined>(getCurrentElement());
-const filteredKeywords = computed(() =>
-  keywords.value
-    ? keywords.value.filter(
-        (kw) =>
-          currentElement.value && kw.category === currentElement.value.name
-      )
-    : []
-);
+const loading = ref(false);
+const updateSignal = ref(false);
 
-const updateKeyword = async (
+const keywordQuery = computed<KeywordQuery>(() => ({
+  issueId: issueId.value,
+  userId: userId.value,
+  category: currentElement.value?.name,
+}));
+
+const patchKeyword = async (
   el: Pick<Keyword, '_id' | 'body' | 'category' | 'type'>
 ) => {
   const { _id, body, category, type } = el;
@@ -132,7 +140,6 @@ const updateKeyword = async (
   console.log('Patched: ', editedKeyword);
 
   token = await getTokenSilently();
-  await stores.keyword.update(token, { self: true });
 };
 
 const handleDrop = async () => {
@@ -143,12 +150,13 @@ const handleDrop = async () => {
       return;
     }
 
-    await updateKeyword({
+    await patchKeyword({
       _id: draggingKeyword.value._id,
       body: draggingKeyword.value.body,
       category: currentElement.value.name,
       type: currentElement.value.type,
     });
+    updateSignal.value = !updateSignal.value;
   } catch (e) {
     console.error(e);
   } finally {
@@ -159,12 +167,13 @@ const handleDrop = async () => {
 const removeCategory = async (el: Keyword) => {
   try {
     loading.value = true;
-    await updateKeyword({
+    await patchKeyword({
       _id: el._id,
       body: el.body,
       category: undefined,
       type: undefined,
     });
+    updateSignal.value = !updateSignal.value;
   } catch (e) {
     console.error(e);
   } finally {
@@ -176,9 +185,4 @@ const setElement = (el: WorkshopElement) => {
   currentElement.value = el;
   localStorage.setItem(sortStorageKey, el.name);
 };
-
-onMounted(async () => {
-  const token = await getTokenSilently();
-  await stores.keyword.update(token, { self: true });
-});
 </script>
