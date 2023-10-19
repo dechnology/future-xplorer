@@ -26,9 +26,13 @@
           <div class="flex min-h-0 shrink grow basis-auto">
             <KeywordGalleryPanel input-classes="basis-1/2">
               <KeywordHeader> 我的關鍵字 </KeywordHeader>
-              <KeywordGallery>
+              <KeywordGallery
+                v-slot="slotProps"
+                :update-signal="updateSignal"
+                :keyword-query="{ ...keywordQuery, userId }"
+              >
                 <KeywordCard
-                  v-for="kw in filteredSelfKeywords"
+                  v-for="kw in slotProps.keywords"
                   :key="kw._id"
                   class="h-40"
                   @update:keyword="(body) => (kw.body = body)"
@@ -64,9 +68,13 @@
                 </span>
                 <span v-else>選擇參與者</span>
               </CustomSelect>
-              <KeywordGallery>
+              <KeywordGallery
+                v-slot="slotProps"
+                :update-signal="updateSignal"
+                :keyword-query="keywordQuery"
+              >
                 <KeywordCard
-                  v-for="kw in filteredUserKeywords"
+                  v-for="kw in slotProps.keywords"
                   :key="kw._id"
                   class="h-40"
                   @update:keyword="(body) => (kw.body = body)"
@@ -90,13 +98,20 @@
         </template>
       </FormPanel>
     </template>
-    <KeywordGalleryPanel v-slot="slotProps" :include-search-bar="true">
+    <KeywordGalleryPanel :include-search-bar="true">
       <KeywordHeader> 我的最愛 </KeywordHeader>
-      <KeywordGallery>
+      <KeywordGallery
+        v-slot="slotProps"
+        :update-signal="updateSignal"
+        :keyword-query="{
+          ...keywordQuery,
+          category: undefined,
+          userId: undefined,
+          voted: true,
+        }"
+      >
         <KeywordCard
-          v-for="kw in favoriteKeywords.filter((kw) =>
-            kw.body.includes(slotProps.searchQuery)
-          )"
+          v-for="kw in slotProps.keywords"
           :key="kw._id"
           class="h-32"
           @update:keyword="(body) => (kw.body = body)"
@@ -119,7 +134,7 @@
 </template>
 
 <script setup lang="ts">
-import { Keyword, User, Vote } from '@/types';
+import { Keyword, KeywordQuery, User, Vote } from '@/types';
 
 const stroageKey = 'vote category';
 
@@ -129,20 +144,20 @@ const formPanelProps = {
     '第三步需自行在網路平台查詢收集可能的產品與服務案例資料，彙整成獨立的牌卡。',
 };
 
-const { user, userId, getTokenSilently } = useAuth();
+const { userId, getTokenSilently } = useAuth();
 const stores = {
   issue: useIssueStore(),
   keyword: useKeywordStore(),
   modal: useModalStore(),
 };
-const { elementsArray } = storeToRefs(stores.issue);
-const {
-  loading,
-  favoriteKeywords,
-  nonFavoriteKeywords,
-  nonFavoriteSelfKeywords,
-  keywordUsers,
-} = storeToRefs(stores.keyword);
+const { issueId, elementsArray } = storeToRefs(stores.issue);
+const { loading, keywordUsers } = storeToRefs(stores.keyword);
+
+const categoryTabs = computed(() => [
+  { name: '全部', value: undefined },
+  { name: '未分類', value: null },
+  ...elementsArray.value.map((el) => ({ name: el.name, value: el.name })),
+]);
 
 const getCurrentCategory = () => {
   try {
@@ -157,34 +172,17 @@ const getCurrentCategory = () => {
   }
 };
 
-const categoryTabs = computed(() => [
-  { name: '全部', value: null },
-  { name: '未分類', value: undefined },
-  ...elementsArray.value.map((el) => ({ name: el.name, value: el.name })),
-]);
-
-const currentUser = ref<User | undefined>(keywordUsers.value.at(0));
+const currentUser = ref<User>();
 const currentCategory = ref<string | undefined | null>(getCurrentCategory());
+const updateSignal = ref(false);
 
-const filteredKeywords = computed(() =>
-  currentCategory.value === null
-    ? nonFavoriteKeywords.value
-    : nonFavoriteKeywords.value.filter(
-        (kw) => kw.category === currentCategory.value
-      )
-);
-const filteredUserKeywords = computed(() =>
-  filteredKeywords.value.filter(
-    (kw) => currentUser.value && kw.creator._id === currentUser.value._id
-  )
-);
-const filteredSelfKeywords = computed(() =>
-  currentCategory.value === null
-    ? nonFavoriteSelfKeywords.value
-    : nonFavoriteSelfKeywords.value.filter(
-        (kw) => kw.category === currentCategory.value
-      )
-);
+const keywordQuery = computed<KeywordQuery>(() => ({
+  issueId: issueId.value,
+  category: currentCategory.value,
+  userId: currentUser.value?._id || null,
+  voterId: userId.value,
+  voted: false,
+}));
 
 const vote = async (kw: Keyword) => {
   try {
@@ -192,14 +190,13 @@ const vote = async (kw: Keyword) => {
 
     const token = await getTokenSilently();
     console.log('Voting: ', kw.body);
-    const { data: vote } = await fetchResource<Vote>(token, `/api/votes`, {
+    const { data } = await fetchResource<Vote>(token, `/api/votes`, {
       query: { keyword: kw._id },
       method: 'post',
     });
-    vote.keyword = kw;
-    vote.creator = user.value as User;
-    console.log('vote: ', vote);
-    kw.votes.push(vote);
+    console.log('Voted: ', data);
+
+    updateSignal.value = !updateSignal.value;
   } catch (e) {
     console.error(e);
   } finally {
@@ -218,12 +215,9 @@ const cancelVote = async (kw: Keyword) => {
       method: 'delete',
       deserializer: null,
     });
-
     console.log('message: ', message);
-    const index = kw.votes.findIndex(
-      (vote) => vote.creator._id === userId.value
-    );
-    kw.votes.splice(index, 1);
+
+    updateSignal.value = !updateSignal.value;
   } catch (e) {
     console.error(e);
   } finally {
@@ -245,6 +239,6 @@ const setCategory = (cat: string | undefined | null) => {
 
 onMounted(async () => {
   const token = await getTokenSilently();
-  await stores.keyword.update(token);
+  await stores.keyword.init(token);
 });
 </script>
