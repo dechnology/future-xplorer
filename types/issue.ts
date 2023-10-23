@@ -50,7 +50,7 @@ export const IssueTabs: Record<IssueTabKeys, IssueTab> = {
   persona: { name: 'persona', title: '人物清單' },
   case: { name: 'case', title: '案例清單' },
   keywordSort: { name: 'keywordSort', title: '案例整理' },
-  keywordVote: { name: 'keywordVote', title: '案例分享' },
+  keywordVote: { name: 'keywordVote', title: '關鍵字分享' },
   poemsTemplate: { name: 'poemsTemplate', title: '模板設計' },
   story: { name: 'story', title: '情境故事' },
   illustration: { name: 'illustration', title: '圖片產製' },

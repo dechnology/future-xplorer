@@ -14,9 +14,10 @@ export default defineEventHandler(
           'creator',
           {
             path: 'keywords',
+            options: { sort: { updatedAt: -1 } },
             populate: [
               'creator',
-              { path: 'votes', populate: ['creator', 'keyword'] },
+              { path: 'votes', options: { sort: { updatedAt: -1 } }, populate: ['creator', 'keyword'] },
             ],
           },
         ],

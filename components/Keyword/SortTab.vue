@@ -110,9 +110,14 @@ const filteredKeywords = computed(() =>
     ? keywords.value.filter(
         (kw) =>
           currentElement.value && kw.category === currentElement.value.name
-      )
-    : []
-);
+      ).sort((a, b) => {
+        if (a.updatedAt > b.updatedAt) return -1;
+        if (a.updatedAt < b.updatedAt) return 1;
+        return 0;
+      })
+    : [];
+    return sortResult
+  });
 
 const updateKeyword = async (
   el: Pick<Keyword, '_id' | 'body' | 'category' | 'type'>

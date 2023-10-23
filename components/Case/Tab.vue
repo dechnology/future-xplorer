@@ -173,6 +173,8 @@ const {
   imageFile,
   formDisabled,
   formCardProps,
+  showNewKeywordBtn,
+  keywordInput,
 } = storeToRefs(stores.case);
 
 const imgaeUrl = computed(() => imageUrl.value || activeCase.value?.image);

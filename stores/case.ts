@@ -32,6 +32,12 @@ export const useCaseStore = definePiniaStore('case', () => {
   const formCardProps = computed(() =>
     getCurrentFormCardProps('案例', currentCase.value as Case, state.value)
   );
+  const keywordInput = ref<string | null>("");
+  const showNewKeywordBtn = ref(true);
+
+  function clearKeywordInput() {
+    keywordInput.value = '';
+  }
 
   async function update(token: string) {
     if (!issueStore.issueId) {
@@ -89,5 +95,9 @@ export const useCaseStore = definePiniaStore('case', () => {
     init,
     resetForm,
     resetImage,
+    keywordInput,
+    showNewKeywordBtn,
+
+    clearKeywordInput,
   };
 });

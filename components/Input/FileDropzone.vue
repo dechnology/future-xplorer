@@ -110,7 +110,7 @@ const textNow = computed(() => {
   console.log('props.disabled =>', props.disabled);
   console.log('props.status =>', props.status);
   if (props.disabled) {
-    return props.disabledIcon;
+    return textChangeTo.value = '請點擊上傳檔案';
   }
   if (props.status === 'waiting') {
     textChangeTo.value = '點擊上傳圖片';
