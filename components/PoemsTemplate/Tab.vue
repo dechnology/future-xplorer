@@ -83,12 +83,12 @@
         </FormCard>
       </FormPanel>
     </template>
-    <CardGalleryPanel v-slot="slopProps">
+    <CardGalleryPanel @search="handleSearch">
       <CardGallery :grid-cols="3">
         <Card
           class="h-[350px]"
           :active="!activePoemsTemplate"
-          @click="() => stores.poemsTemplate.changeActivePoemsTemplate()"
+          @click="() => (activePoemsTemplate = null)"
         >
           <CardIcon :icon="{ name: 'mdi:plus', size: '5rem' }">
             新增模板
@@ -104,15 +104,13 @@
               el.object,
               el.environment,
               el.service,
-            ]
-              .join()
-              .includes(slopProps.searchQuery)
+            ].join()
           )"
           :key="el._id"
           class="h-[350px]"
           :active="activeId === el._id"
           @dblclick="() => handleDblclick()"
-          @click="() => stores.poemsTemplate.changeActivePoemsTemplate(el)"
+          @click="() => (activePoemsTemplate = el)"
         >
           <CardTitle>{{ el.title }}</CardTitle>
           <CardDescription>
@@ -153,16 +151,15 @@ const formPanelProps = {
   description: '第四步將前三步所得之資料組合成一張張的情境故事(poems)',
 };
 
-const { username } = useAuth();
+const { username, getTokenSilently } = useAuth();
 const stores = {
   modal: useModalStore(),
-  issue: useIssueStore(),
   persona: usePersonaStore(),
   keyword: useKeywordStore(),
   poemsTemplate: usePoemsTemplateStore(),
 };
 const {
-  loading,
+  searchQuery,
   poemsTemplates,
   activePoemsTemplate,
   activeId,
@@ -177,4 +174,19 @@ const {
 const handleDblclick = () => {
   stores.modal.show();
 };
+
+const handleSearch = async (value: string) => {
+  searchQuery.value = value;
+
+  const token = await getTokenSilently();
+  stores.poemsTemplate.update(token);
+};
+
+onMounted(async () => {
+  let token = await getTokenSilently();
+  await Promise.all([stores.persona.init(token), stores.keyword.init(token)]);
+
+  token = await getTokenSilently();
+  await stores.poemsTemplate.init(token);
+});
 </script>

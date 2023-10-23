@@ -15,7 +15,7 @@ const schema = new Schema<Illustration>(
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   }
-);
+).index({ '$**': 'text' });
 
 export default mongoose.model<Illustration>(
   'Illustration',

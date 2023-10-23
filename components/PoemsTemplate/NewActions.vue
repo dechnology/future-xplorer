@@ -2,7 +2,7 @@
   <div class="flex items-center justify-around">
     <CardButton
       class="rounded-lg bg-red-400 px-8 py-3 text-white hover:bg-red-500"
-      @click.prevent="() => stores.poemsTemplate.clearCurrentPoemsTemplate()"
+      @click.prevent="() => stores.poemsTemplate.resetForm()"
     >
       清除
     </CardButton>
@@ -16,10 +16,10 @@
 </template>
 
 <script setup lang="ts">
-import type { User, PoemsTemplate } from '@/types';
+import type { PoemsTemplate } from '@/types';
 import { NewPoemsTemplateSchema } from '@/types';
 
-const { user, getTokenSilently } = useAuth();
+const { getTokenSilently } = useAuth();
 const stores = {
   issue: useIssueStore(),
   poemsTemplate: usePoemsTemplateStore(),
@@ -37,7 +37,7 @@ const handleCreate = async () => {
 
     console.log(currentPoemsTemplate.value);
 
-    const token = await getTokenSilently();
+    let token = await getTokenSilently();
     const p = NewPoemsTemplateSchema.passthrough().parse(
       currentPoemsTemplate.value
     );
@@ -51,13 +51,10 @@ const handleCreate = async () => {
         body: { ...p, persona: currentPoemsTemplate.value.persona._id },
       }
     );
-
-    createdPoemsTemplate.creator = user.value as User;
-    createdPoemsTemplate.persona = currentPoemsTemplate.value.persona;
-
     console.log('Created: ', createdPoemsTemplate);
-    stores.poemsTemplate.upsertPoemsTemplate(createdPoemsTemplate);
-    stores.poemsTemplate.changeActivePoemsTemplate(createdPoemsTemplate);
+
+    token = await getTokenSilently();
+    await stores.poemsTemplate.update(token);
   } catch (e) {
     console.error(e);
   } finally {

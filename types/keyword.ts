@@ -25,3 +25,15 @@ export interface Keyword extends Base, NewKeyword {
   type?: 'O' | 'E' | 'M' | 'S';
   votes: Vote[];
 }
+
+export interface KeywordQuery {
+  issueId?: string;
+  caseId?: string;
+  searchQuery?: string;
+
+  userId: string | undefined | null;
+  category: string | undefined | null;
+
+  voterId?: string;
+  voted?: boolean;
+}

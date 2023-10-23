@@ -18,7 +18,7 @@ const schema = new Schema<PoemsTemplate>(
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   }
-);
+).index({ '$**': 'text' });
 
 export default mongoose.model<PoemsTemplate>(
   'PoemsTemplate',
