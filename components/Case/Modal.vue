@@ -29,18 +29,21 @@
         <CaseModalActions />
       </div>
       <div class="basis-1/2">
-        <KeywordGalleryPanel v-slot="slotProps" :include-search-bar="true">
-          <KeywordGallery :grid-cols="2">
+        <KeywordGalleryPanel :include-search-bar="true">
+          <KeywordGallery
+            v-slot="slotProps"
+            :update-signal="updateSignal"
+            :keyword-query="keywordQuery"
+            :grid-cols="2"
+          >
+            <KeywordAddCard @add-keyword="createKeyword" />
             <KeywordCard
-              v-for="(el, idx) in activeCase.keywords.filter((el) =>
-                el.body.includes(slotProps.searchQuery)
-              )"
+              v-for="(el, idx) in slotProps.keywords"
               :key="`${idx}_${el.body}`"
-              class="h-28"
               @update:keyword="(body) => updateKeyword({ ...el, body })"
             >
-              <template #category>
-                <span v-if="'category' in el && el.category">
+              <template v-if="'category' in el && el.category" #category>
+                <span>
                   {{ el.category }}
                 </span>
               </template>
@@ -62,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import { Keyword } from '~/types';
+import { Keyword, KeywordQuery, NewKeywordSchema } from '~/types';
 
 const { getTokenSilently } = useAuth();
 
@@ -71,11 +74,18 @@ const stores = {
   case: useCaseStore(),
 };
 const { shown } = storeToRefs(stores.modal);
-const { activeCase, loading } = storeToRefs(stores.case);
+const { activeCase, activeId, loading } = storeToRefs(stores.case);
 
 const { ignoreNextClose } = storeToRefs(stores.modal);
 
 const modal = ref<HTMLDialogElement | null>(null);
+const updateSignal = ref(false);
+
+const keywordQuery = computed<KeywordQuery>(() => ({
+  caseId: activeId.value,
+  userId: undefined,
+  category: undefined,
+}));
 
 watch(shown, (newShown) => {
   console.log('shown: ', shown.value);
@@ -87,13 +97,44 @@ watch(shown, (newShown) => {
   modal.value?.close();
 });
 
+const createKeyword = async (body: string) => {
+  ignoreNextClose.value = true;
+
+  try {
+    loading.value = true;
+
+    if (!activeId.value) {
+      throw new Error('No active case');
+    }
+
+    const el = NewKeywordSchema.parse({ body });
+
+    const token = await getTokenSilently();
+    const { data } = await fetchResources<Keyword>(
+      token,
+      `/api/cases/${activeId.value}/keywords`,
+      {
+        method: 'post',
+        body: { keywords: [el] },
+      }
+    );
+    console.log('Created: ', data);
+
+    updateSignal.value = !updateSignal.value;
+  } catch (e) {
+    console.error(e);
+  } finally {
+    loading.value = false;
+  }
+};
+
 const removeKeyword = async (kw: Keyword) => {
   ignoreNextClose.value = true;
 
   try {
     loading.value = true;
 
-    let token = await getTokenSilently();
+    const token = await getTokenSilently();
     const { data } = await fetchResource<Keyword>(
       token,
       `/api/keywords/${kw._id}`,
@@ -103,8 +144,7 @@ const removeKeyword = async (kw: Keyword) => {
     );
     console.log('Deleted: ', data);
 
-    token = await getTokenSilently();
-    await stores.case.update(token);
+    updateSignal.value = !updateSignal.value;
   } catch (e) {
     console.error(e);
   } finally {
@@ -117,7 +157,8 @@ const updateKeyword = async (kw: Keyword) => {
 
   try {
     loading.value = true;
-    let token = await getTokenSilently();
+
+    const token = await getTokenSilently();
     const { data } = await fetchResource<Keyword>(
       token,
       `/api/keywords/${kw._id}`,
@@ -128,8 +169,7 @@ const updateKeyword = async (kw: Keyword) => {
     );
     console.log('Updated: ', data);
 
-    token = await getTokenSilently();
-    await stores.case.update(token);
+    updateSignal.value = !updateSignal.value;
   } catch (e) {
     console.error(e);
   } finally {
