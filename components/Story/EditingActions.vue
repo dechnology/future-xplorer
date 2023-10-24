@@ -16,16 +16,15 @@
 </template>
 
 <script setup lang="ts">
-// import { isEqual } from 'lodash';
-import type { User, Story } from '@/types';
+import isEqual from 'lodash/isEqual';
+import type { Story } from '@/types';
 import { NewStorySchema } from '@/types';
 
-const { user, getTokenSilently } = useAuth();
+const { getTokenSilently } = useAuth();
 const stores = {
-  issue: useIssueStore(),
   story: useStoryStore(),
 };
-const { currentStory, activeStories, activeId, state, loading } = storeToRefs(
+const { currentStory, activeStories, activeId, loading } = storeToRefs(
   stores.story
 );
 
@@ -37,15 +36,15 @@ const handleSaveEdit = async () => {
   try {
     loading.value = true;
 
-    // if (isEqual(currentStory.value, activeStories.value)) {
-    //   state.value = 'DETAILS';
-    //   return;
-    // }
+    if (isEqual(currentStory.value, activeStories.value)) {
+      stores.story.resetForm();
+      return;
+    }
 
-    const token = await getTokenSilently();
     const story = NewStorySchema.parse(currentStory.value);
 
     console.log('Patching: ', story);
+    let token = await getTokenSilently();
     const { data: editedStory } = await fetchResource<Story>(
       token,
       `/api/stories/${activeId.value}`,
@@ -54,10 +53,11 @@ const handleSaveEdit = async () => {
         body: story,
       }
     );
-
-    editedStory.creator = user.value as User;
     console.log('Patched: ', editedStory);
-    stores.story.upsertStory(editedStory);
+
+    token = await getTokenSilently();
+    await stores.story.update(token);
+    activeStories.value = [];
   } catch (e) {
     console.error(e);
   } finally {

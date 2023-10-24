@@ -31,21 +31,19 @@
         </FormCard>
       </FormPanel>
     </template>
-    <CardGalleryPanel v-slot="slotProps">
+    <CardGalleryPanel @search="handleSearch">
       <CardGallery :grid-cols="3">
         <Card
           :active="!activeStories"
           class="h-[350px]"
-          @click="() => stores.story.clearActiveStories()"
+          @click="() => (activeStories = [])"
         >
           <CardIcon :icon="{ name: 'mdi:plus', size: '5rem' }">
             新增故事
           </CardIcon>
         </Card>
         <Card
-          v-for="el in stories.filter((el) =>
-            [el.title, el.content].join().includes(slotProps.searchQuery)
-          )"
+          v-for="el in stories"
           :key="el._id"
           class="h-[350px]"
           :active="activeIds.includes(el._id)"
@@ -65,8 +63,9 @@
 import { ConcreteComponent } from 'nuxt/dist/app/compat/capi';
 import type { FormStateKey } from '@/types';
 
-const ActionsComponents: Partial<
-  Record<FormStateKey, ConcreteComponent | string>
+const ActionsComponents: Record<
+  FormStateKey | 'MULTIPLE',
+  ConcreteComponent | string
 > = {
   NEW: resolveComponent('StoryNewActions'),
   DETAILS: resolveComponent('StoryDetailsActions'),
@@ -80,15 +79,18 @@ const formPanelProps = {
     '第五步從一張張的情境故事(poems)中選擇一張或彙整出一張形成最終的未來情境文字描述(一句話)',
 };
 
-const { username } = useAuth();
+const { username, getTokenSilently } = useAuth();
 const stores = {
   modal: useModalStore(),
+  persona: usePersonaStore(),
+  keyword: useKeywordStore(),
   poemsTemplate: usePoemsTemplateStore(),
   story: useStoryStore(),
 };
 const {
+  searchQuery,
   stories,
-  currentStory,
+  currentContext,
   activeStories,
   activeIds,
   state,
@@ -100,6 +102,24 @@ const handleDblclick = () => {
 };
 
 const handleDiceClick = () => {
-  // currentStory.value.context = stores.poemsTemplate.getRandomContext();
+  currentContext.value = stores.poemsTemplate.getRandomContext();
 };
+
+const handleSearch = async (value: string) => {
+  searchQuery.value = value;
+
+  const token = await getTokenSilently();
+  stores.story.update(token);
+};
+
+onMounted(async () => {
+  let token = await getTokenSilently();
+  await Promise.all([stores.persona.init(token), stores.keyword.init(token)]);
+
+  token = await getTokenSilently();
+  await stores.poemsTemplate.init(token);
+
+  token = await getTokenSilently();
+  await stores.story.init(token);
+});
 </script>

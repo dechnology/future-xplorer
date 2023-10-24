@@ -53,38 +53,6 @@ export const useStoryStore = definePiniaStore('story', () => {
     await update(token);
   }
 
-  function upsertStory(el: Story) {
-    if (!issueStore.issue) {
-      return;
-    }
-
-    const index = issueStore.issue?.stories.findIndex(
-      (story) => story._id === el._id
-    );
-
-    if (index === -1) {
-      issueStore.issue.stories.push(el);
-    } else {
-      issueStore.issue.stories[index] = el;
-    }
-  }
-
-  function removeStory(id: string) {
-    if (!issueStore.issue) {
-      return;
-    }
-
-    const index = issueStore.issue?.stories.findIndex(
-      (story) => story._id === id
-    );
-
-    if (index === -1) {
-      throw new Error('no issue match given id');
-    } else {
-      issueStore.issue.stories.splice(index, 1);
-    }
-  }
-
   function clearCurrent() {
     currentStory.value = getNewStory();
     currentContext.value = getNewStoryContext();
@@ -100,10 +68,6 @@ export const useStoryStore = definePiniaStore('story', () => {
     } else {
       activeStories.value.push(story);
     }
-  }
-
-  function clearActiveStories() {
-    activeStories.value = [];
   }
 
   function resetForm() {
@@ -133,6 +97,7 @@ export const useStoryStore = definePiniaStore('story', () => {
   });
 
   return {
+    searchQuery,
     stories,
     currentStory,
     currentContext,
@@ -148,10 +113,7 @@ export const useStoryStore = definePiniaStore('story', () => {
 
     init,
     update,
-    upsertStory,
-    removeStory,
     clearCurrent,
-    clearActiveStories,
     toggleActiveStory,
     resetForm,
   };
