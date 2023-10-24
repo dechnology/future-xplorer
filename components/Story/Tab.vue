@@ -63,10 +63,10 @@
 
 <script setup lang="ts">
 import { ConcreteComponent } from 'nuxt/dist/app/compat/capi';
-import type { FormStateKeys } from '@/types';
+import type { FormStateKey } from '@/types';
 
 const ActionsComponents: Partial<
-  Record<FormStateKeys, ConcreteComponent | string>
+  Record<FormStateKey, ConcreteComponent | string>
 > = {
   NEW: resolveComponent('StoryNewActions'),
   DETAILS: resolveComponent('StoryDetailsActions'),
@@ -100,6 +100,6 @@ const handleDblclick = () => {
 };
 
 const handleDiceClick = () => {
-  currentStory.value.context = stores.poemsTemplate.getRandomContext();
+  // currentStory.value.context = stores.poemsTemplate.getRandomContext();
 };
 </script>

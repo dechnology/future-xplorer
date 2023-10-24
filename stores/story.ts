@@ -12,9 +12,8 @@ export const useStoryStore = definePiniaStore('story', () => {
   const issueStore = useIssueStore();
   const poemsTemplateStore = usePoemsTemplateStore();
 
-  const stories = computed((): Story[] =>
-    issueStore.issue ? issueStore.issue.stories : []
-  );
+  const searchQuery = ref<string>();
+  const stories = ref<Story[]>([]);
 
   const currentStory = ref<Story | NewStory>(getNewStory());
   const currentContext = ref<StoryContext>(getNewStoryContext());
@@ -37,6 +36,22 @@ export const useStoryStore = definePiniaStore('story', () => {
       data: el,
     }))
   );
+
+  async function update(token: string) {
+    if (!issueStore.issueId) {
+      throw new Error('no issue id');
+    }
+
+    const { data } = await fetchResources<Story>(token, '/api/stories', {
+      query: { issueId: issueStore.issueId, searchQuery: searchQuery.value },
+    });
+
+    stories.value = data;
+  }
+
+  async function init(token: string) {
+    await update(token);
+  }
 
   function upsertStory(el: Story) {
     if (!issueStore.issue) {
@@ -91,6 +106,20 @@ export const useStoryStore = definePiniaStore('story', () => {
     activeStories.value = [];
   }
 
+  function resetForm() {
+    const nActiveStories = activeStories.value.length;
+
+    if (nActiveStories === 0) {
+      state.value = 'NEW';
+      clearCurrent();
+    } else if (nActiveStories === 1) {
+      state.value = 'DETAILS';
+      currentStory.value = cloneDeep(activeStories.value[0]);
+    } else {
+      state.value = 'MULTIPLE';
+    }
+  }
+
   watchDeep(activeStories, (newActiveStories) => {
     if (newActiveStories.length === 0) {
       state.value = 'NEW';
@@ -117,10 +146,13 @@ export const useStoryStore = definePiniaStore('story', () => {
     formCardProps,
     poemsTemplateOptions,
 
+    init,
+    update,
     upsertStory,
     removeStory,
     clearCurrent,
     clearActiveStories,
     toggleActiveStory,
+    resetForm,
   };
 });
