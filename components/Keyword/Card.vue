@@ -8,10 +8,11 @@
           <slot name="favIcon" />
         </div>
         <div
-        :class="[
-          'w-fit rounded-2xl bg-black px-3 py-1 text-sm font-medium leading-snug text-white',
-          $slots.category ? '' : 'bg-opacity-40 '
-        ]"
+          v-if="showCategory"
+          :class="[
+            'w-fit rounded-2xl bg-black px-3 py-1 text-sm font-medium leading-snug text-white',
+            $slots.category ? '' : 'bg-opacity-40 ',
+          ]"
         >
           <slot name="category">未分類</slot>
         </div>
@@ -35,6 +36,15 @@
 </template>
 
 <script setup lang="ts">
+withDefaults(
+  defineProps<{
+    showCategory?: boolean;
+  }>(),
+  {
+    showCategory: true,
+  }
+);
+
 const emit = defineEmits<{
   (e: 'update:keyword', body: string): void;
 }>();

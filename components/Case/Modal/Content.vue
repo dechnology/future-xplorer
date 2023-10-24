@@ -182,24 +182,25 @@ const handleMouseup = () => {
 
 const handleButtonClick = async () => {
   try {
-    if (!isTextTooLong.value) {
-      console.log('newKeywords accepted');
-      const el = NewKeywordSchema.parse({ body: selectedText.value });
-
-      let token = await getTokenSilently();
-      const { data } = await fetchResources<Keyword>(
-        token,
-        `/api/cases/${activeId.value}/keywords`,
-        {
-          method: 'post',
-          body: { keywords: [el] },
-        }
-      );
-      console.log('Created: ', data);
-
-      token = await getTokenSilently();
-      await stores.case.update(token);
+    if (isTextTooLong.value) {
+      throw new Error('Text too long');
     }
+
+    const el = NewKeywordSchema.parse({ body: selectedText.value });
+
+    let token = await getTokenSilently();
+    const { data } = await fetchResources<Keyword>(
+      token,
+      `/api/cases/${activeId.value}/keywords`,
+      {
+        method: 'post',
+        body: { keywords: [el] },
+      }
+    );
+    console.log('Created: ', data);
+
+    token = await getTokenSilently();
+    await stores.case.update(token);
   } catch (e) {
     console.error(e);
   }
