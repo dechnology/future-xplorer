@@ -1,11 +1,11 @@
+import cloneDeep from 'lodash/cloneDeep';
 import type { Illustration, NewIllustration } from '@/types';
 
 export const useIllustrationStore = definePiniaStore('illustration', () => {
   const issueStore = useIssueStore();
 
-  const illustrations = computed((): Illustration[] =>
-    issueStore.issue ? issueStore.issue.illustrations : []
-  );
+  const searchQuery = ref<string>();
+  const illustrations = ref<Illustration[]>([]);
 
   const currentIllustration = ref<Illustration | NewIllustration>(
     getNewIllustration()
@@ -15,38 +15,6 @@ export const useIllustrationStore = definePiniaStore('illustration', () => {
 
   const loading = ref(false);
   const formDisabled = computed(() => loading.value);
-
-  function upsertIllustration(el: Illustration) {
-    if (!issueStore.issue) {
-      return;
-    }
-
-    const index = issueStore.issue?.illustrations.findIndex(
-      (illustration) => illustration._id === el._id
-    );
-
-    if (index === -1) {
-      issueStore.issue.illustrations.push(el);
-    } else {
-      issueStore.issue.illustrations[index] = el;
-    }
-  }
-
-  function removeIllustration(id: string) {
-    if (!issueStore.issue) {
-      return;
-    }
-
-    const index = issueStore.issue?.illustrations.findIndex(
-      (illustration) => illustration._id === id
-    );
-
-    if (index === -1) {
-      throw new Error('no issue match given id');
-    } else {
-      issueStore.issue.illustrations.splice(index, 1);
-    }
-  }
 
   function clearCurrentIllustration() {
     currentIllustration.value = getNewIllustration();
@@ -62,7 +30,41 @@ export const useIllustrationStore = definePiniaStore('illustration', () => {
     }
   }
 
+  async function update(token: string) {
+    if (!issueStore.issueId) {
+      throw new Error('no issue id');
+    }
+
+    const { data } = await fetchResources<Illustration>(
+      token,
+      '/api/illustrations',
+      {
+        query: {
+          issueId: issueStore.issueId,
+          searchQuery: searchQuery.value,
+        },
+      }
+    );
+
+    illustrations.value = data;
+  }
+
+  async function init(token: string) {
+    await update(token);
+  }
+
+  function resetForm() {
+    currentIllustration.value = activeIllustration.value
+      ? cloneDeep(activeIllustration.value)
+      : getNewIllustration();
+  }
+
+  watch(activeIllustration, () => {
+    resetForm();
+  });
+
   return {
+    searchQuery,
     illustrations,
     currentIllustration,
     activeIllustration,
@@ -71,8 +73,8 @@ export const useIllustrationStore = definePiniaStore('illustration', () => {
     loading,
     formDisabled,
 
-    upsertIllustration,
-    removeIllustration,
+    init,
+    update,
     clearCurrentIllustration,
     changeActiveIllustration,
   };

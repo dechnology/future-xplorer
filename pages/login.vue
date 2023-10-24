@@ -2,15 +2,17 @@
   <NuxtLayout>
     <div class="m-auto flex flex-col gap-8 rounded-2xl bg-slate-100 p-8">
       <Logo class="m-auto w-1/3 fill-purple-500" />
-      <InputText
+      <InputComponent
         v-model="uid"
+        type="text"
         title="UID"
         placeholder="請輸入 UID"
         :disabled="false"
         :select-only="false"
       />
-      <InputText
+      <InputComponent
         v-model="username"
+        type="text"
         title="使用者名稱"
         placeholder="請輸入使用者名稱"
         :disabled="false"

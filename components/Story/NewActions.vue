@@ -2,7 +2,7 @@
   <div class="flex items-center justify-around">
     <CardButton
       class="rounded-lg bg-red-400 px-8 py-3 text-white hover:bg-red-500"
-      @click.prevent="() => stores.story.clearCurrentStory()"
+      @click.prevent="() => stores.story.resetForm()"
     >
       清除
     </CardButton>
@@ -16,10 +16,10 @@
 </template>
 
 <script setup lang="ts">
-import type { User, Story } from '@/types';
+import type { Story } from '@/types';
 import { NewStorySchema } from '@/types';
 
-const { user, getTokenSilently } = useAuth();
+const { getTokenSilently } = useAuth();
 const stores = {
   issue: useIssueStore(),
   story: useStoryStore(),
@@ -31,12 +31,10 @@ const handleCreate = async () => {
   try {
     loading.value = true;
 
-    console.log(currentStory.value);
-
-    const token = await getTokenSilently();
     const story = NewStorySchema.parse(currentStory.value);
-
     console.log('Creating: ', story);
+
+    let token = await getTokenSilently();
     const { data: createdStory } = await fetchResource<Story>(
       token,
       `/api/issues/${issueId.value}/stories`,
@@ -45,12 +43,11 @@ const handleCreate = async () => {
         body: { ...story },
       }
     );
-
-    createdStory.creator = user.value as User;
-
     console.log('Created: ', createdStory);
-    stores.story.upsertStory(createdStory);
-    stores.story.toggleActiveStory(createdStory);
+
+    token = await getTokenSilently();
+    await stores.story.update(token);
+    stores.story.resetForm();
   } catch (e) {
     console.error(e);
   } finally {

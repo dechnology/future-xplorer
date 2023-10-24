@@ -10,15 +10,15 @@
 </template>
 
 <script setup lang="ts">
-import { Story, User } from '@/types';
+import { Story } from '@/types';
 
-const { user, getTokenSilently } = useAuth();
+const { getTokenSilently } = useAuth();
 const stores = {
   issue: useIssueStore(),
   story: useStoryStore(),
 };
 const { workshop, issue, issueId } = storeToRefs(stores.issue);
-const { activeStories, state } = storeToRefs(stores.story);
+const { activeStories } = storeToRefs(stores.story);
 
 const handleCombineStory = async () => {
   try {
@@ -26,9 +26,8 @@ const handleCombineStory = async () => {
       throw new Error('no workshop or issue');
     }
 
-    const token = await getTokenSilently();
-
     console.log('Combining story...');
+    let token = await getTokenSilently();
     const { story: newStory } = await generateStoryCombine(token, {
       workshop: workshop.value,
       issue: issue.value,
@@ -40,6 +39,7 @@ const handleCombineStory = async () => {
 
     // Use function call to generate context for the AI generated story
     console.log('Creating: ', newStory);
+    token = await getTokenSilently();
     const { data: createdStory } = await fetchResource<Story>(
       token,
       `/api/issues/${issueId.value}/stories`,
@@ -48,12 +48,11 @@ const handleCombineStory = async () => {
         body: newStory,
       }
     );
-
-    createdStory.creator = user.value as User;
-
     console.log('Created: ', createdStory);
-    stores.story.upsertStory(createdStory);
-    stores.story.toggleActiveStory(createdStory);
+
+    token = await getTokenSilently();
+    await stores.story.update(token);
+    activeStories.value = [];
   } catch (e) {
     console.error(e);
   }
