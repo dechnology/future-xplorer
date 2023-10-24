@@ -68,16 +68,14 @@
         </FormCard>
       </FormPanel>
     </template>
-    <CardGalleryPanel v-slot="slotProps">
+    <CardGalleryPanel @search="handleSearch">
       <CardGallery :grid-cols="4">
         <Card
-          v-for="el in illustrations.filter((el) =>
-            [el.prompt, el.story].join().includes(slotProps.searchQuery)
-          )"
+          v-for="el in illustrations"
           :key="el._id"
           class="h-[350px]"
           @dblclick="() => handleDblclick()"
-          @click="() => stores.illustration.changeActiveIllustration(el)"
+          @click="() => (currentIllustration = cloneDeep(el))"
         >
           <template #image>
             <CardImage :url="el.image" />
@@ -91,32 +89,14 @@
       </CardGallery>
     </CardGalleryPanel>
   </NuxtLayout>
-  <IllustrationStoriesModal>
-    <CardGallery :grid-cols="5">
-      <Card
-        v-for="el in stories"
-        :key="el._id"
-        :active="selectedStory?._id === el._id"
-        class="h-[305px]"
-        @click="() => (selectedStory = el)"
-      >
-        <CardTitle>{{ el.title }}</CardTitle>
-        <CardDescription :line-clamp="10">
-          {{ el.content }}
-        </CardDescription>
-        <CardFootnote>
-          {{ `建立者：${el.creator.name}` }}
-        </CardFootnote>
-      </Card>
-    </CardGallery>
-    <template #actions>
-      <IllustrationStoriesModalActions @confirm="handelConfirm" />
-    </template>
-  </IllustrationStoriesModal>
+  <IllustrationStoriesModal
+    @confirm="(el) => (currentIllustration.story = el)"
+  />
 </template>
 
 <script setup lang="ts">
-import { Illustration, NewIllustrationSchema, Story, type User } from '~/types';
+import cloneDeep from 'lodash/cloneDeep';
+import { Illustration, NewIllustrationSchema } from '~/types';
 
 const formPanelProps = {
   title: '情境圖',
@@ -124,21 +104,21 @@ const formPanelProps = {
     '第五步從一張張的情境故事(poems)中選擇一張或彙整出一張形成最終的未來情境文字描述(一句話)',
 };
 
-const { user, getTokenSilently } = useAuth();
+const { getTokenSilently } = useAuth();
 const stores = {
   modal: useModalStore(),
   issue: useIssueStore(),
-  persona: usePersonaStore(),
-  keyword: useKeywordStore(),
-  illustration: useIllustrationStore(),
   story: useStoryStore(),
+  illustration: useIllustrationStore(),
 };
 const { workshop, issue, issueId } = storeToRefs(stores.issue);
-const { loading, illustrations, currentIllustration, formDisabled } =
-  storeToRefs(stores.illustration);
-const { stories } = storeToRefs(stores.story);
-
-const selectedStory = ref<Story>();
+const {
+  searchQuery,
+  illustrations,
+  currentIllustration,
+  formDisabled,
+  loading,
+} = storeToRefs(stores.illustration);
 
 const numberToGenerate = ref(1);
 
@@ -171,34 +151,31 @@ const imageGeneration = async () => {
   try {
     loading.value = true;
 
-    const illustration = NewIllustrationSchema.passthrough().parse(
-      currentIllustration.value
-    );
-    const token = await getTokenSilently();
+    const el = NewIllustrationSchema.parse(currentIllustration.value);
+
+    let token = await getTokenSilently();
     const { image } = await generateImage(token, {
-      prompt: illustration.prompt,
+      prompt: el.prompt,
     });
-
     const { data: imageUrl } = await uploadImageUrl(token, image);
-
     console.log('Image url: ', imageUrl);
 
+    token = await getTokenSilently();
     const { data: createdIllustration } = await fetchResource<Illustration>(
       token,
       `/api/issues/${issueId.value}/illustrations`,
       {
         method: 'post',
         body: {
-          ...illustration,
+          ...el,
           image: imageUrl,
         },
       }
     );
-
-    createdIllustration.creator = user.value as User;
-
     console.log('Created: ', createdIllustration);
-    stores.illustration.upsertIllustration(createdIllustration);
+
+    token = await getTokenSilently();
+    await stores.illustration.update(token);
   } catch (e) {
     console.error(e);
   } finally {
@@ -226,15 +203,22 @@ const handleImageGenerations = async () => {
   await Promise.all(promises);
 };
 
-const handelConfirm = () => {
-  if (selectedStory.value) {
-    currentIllustration.value.story = selectedStory.value.content;
-    selectedStory.value = undefined;
-    stores.modal.close();
-  }
-};
-
 const handleDblclick = () => {
   stores.modal.show();
 };
+
+const handleSearch = async (value: string) => {
+  searchQuery.value = value;
+
+  const token = await getTokenSilently();
+  stores.illustration.update(token);
+};
+
+onMounted(async () => {
+  const token = await getTokenSilently();
+  await Promise.all([
+    stores.story.init(token),
+    stores.illustration.init(token),
+  ]);
+});
 </script>

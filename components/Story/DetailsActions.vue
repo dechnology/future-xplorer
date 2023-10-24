@@ -22,15 +22,17 @@
 </template>
 
 <script setup lang="ts">
-import { Story, User } from '@/types';
+import { Story } from '@/types';
 
-const { user, getTokenSilently } = useAuth();
+const { getTokenSilently } = useAuth();
 const stores = {
   issue: useIssueStore(),
   story: useStoryStore(),
 };
 const { workshop, issue, issueId } = storeToRefs(stores.issue);
-const { currentStory, activeId, state, loading } = storeToRefs(stores.story);
+const { currentStory, activeId, activeStories, state, loading } = storeToRefs(
+  stores.story
+);
 
 const handleRemove = async () => {
   try {
@@ -40,7 +42,7 @@ const handleRemove = async () => {
       throw new Error('No active story to remove');
     }
 
-    const token = await getTokenSilently();
+    let token = await getTokenSilently();
     const { message } = await fetchResource<Story>(
       token,
       `/api/stories/${activeId.value}`,
@@ -48,9 +50,9 @@ const handleRemove = async () => {
     );
     console.log(message);
 
-    stores.story.removeStory(activeId.value);
-    stores.story.clearActiveStories();
-    console.log('story removed');
+    token = await getTokenSilently();
+    await stores.story.update(token);
+    activeStories.value = [];
   } catch (e) {
     console.error(e);
   } finally {
@@ -71,9 +73,8 @@ const handleRemakeStory = async () => {
 
     const newTitle = `${currentStory.value.title} AI編輯`;
 
-    const token = await getTokenSilently();
-
     console.log('Remaking story...');
+    let token = await getTokenSilently();
     const { story: newStory } = await generateStoryRemake(token, {
       title: newTitle,
       workshop: workshop.value,
@@ -82,6 +83,7 @@ const handleRemakeStory = async () => {
     });
 
     console.log('Creating: ', newStory);
+    token = await getTokenSilently();
     const { data: createdStory } = await fetchResource<Story>(
       token,
       `/api/issues/${issueId.value}/stories`,
@@ -90,12 +92,11 @@ const handleRemakeStory = async () => {
         body: newStory,
       }
     );
-
-    createdStory.creator = user.value as User;
-
     console.log('Created: ', createdStory);
-    stores.story.upsertStory(createdStory);
-    stores.story.toggleActiveStory(createdStory);
+
+    token = await getTokenSilently();
+    await stores.story.update(token);
+    activeStories.value = [];
   } catch (e) {
     console.error(e);
   }

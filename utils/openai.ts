@@ -1,6 +1,6 @@
 import type {
+  PromptResponseBody,
   IllustrationPromptRequestBody,
-  IllustrationPromptResponseBody,
   KeywordsRequestBody,
   KeywordsResponseBody,
   PortraitRequestBody,
@@ -152,7 +152,7 @@ export const generateStoryCombine = async (
 export const generateIllustrationPrompt = async (
   token: string,
   body: IllustrationPromptRequestBody
-): Promise<IllustrationPromptResponseBody> => {
+): Promise<PromptResponseBody> => {
   const { data, error } = await useFetch(`/api/openai/prompt/illustration`, {
     method: 'post',
     headers: { Authorization: `Bearer ${token}` },
