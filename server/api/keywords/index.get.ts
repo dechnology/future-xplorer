@@ -40,7 +40,13 @@ export default defineEventHandler(
     }
 
     if (searchQuery) {
-      filter.$text = { $search: searchQuery };
+      filter = {
+        ...filter,
+        $or: [
+          { body: { $regex: searchQuery, $options: 'i' } },
+          { category: { $regex: searchQuery, $options: 'i' } },
+        ],
+      };
     }
 
     // filter votes
