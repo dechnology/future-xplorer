@@ -32,7 +32,7 @@
         <CaseModalActions @ai-generation="updateSignal = !updateSignal" />
       </div>
       <div class="basis-1/2">
-        <KeywordGalleryPanel :include-search-bar="true">
+        <KeywordGalleryPanel :include-search-bar="true" @search="handleSearch">
           <KeywordGallery
             v-slot="slotProps"
             :update-signal="updateSignal"
@@ -82,23 +82,19 @@ const { activeCase, activeId, loading } = storeToRefs(stores.case);
 const { ignoreNextClose } = storeToRefs(stores.modal);
 
 const modal = ref<HTMLDialogElement | null>(null);
+const searchQuery = ref();
 const updateSignal = ref(false);
 
 const keywordQuery = computed<KeywordQuery>(() => ({
   caseId: activeId.value,
   userId: undefined,
+  searchQuery: searchQuery.value,
   category: undefined,
 }));
 
-watch(shown, (newShown) => {
-  console.log('shown: ', shown.value);
-
-  if (newShown) {
-    modal.value?.showModal();
-    return;
-  }
-  modal.value?.close();
-});
+const handleSearch = (value: string) => {
+  searchQuery.value = value;
+};
 
 const createKeyword = async (body: string) => {
   ignoreNextClose.value = true;
@@ -179,4 +175,14 @@ const updateKeyword = async (kw: Keyword) => {
     loading.value = false;
   }
 };
+
+watch(shown, (newShown) => {
+  console.log('shown: ', shown.value);
+
+  if (newShown) {
+    modal.value?.showModal();
+    return;
+  }
+  modal.value?.close();
+});
 </script>
