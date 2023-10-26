@@ -1,6 +1,7 @@
 <template>
   <div
     class="flex items-center gap-2 rounded-lg bg-white px-[15px] py-5 shadow-lg"
+    @dblclick="handleDblclick"
   >
     <div class="flex h-full grow flex-col gap-2">
       <div class="flex gap-2">
@@ -18,13 +19,11 @@
         </div>
       </div>
       <div
+        ref="inputDivRef"
         :contenteditable="editing"
-        class="grow border-none bg-green-100 p-2 text-2xl font-bold text-lime-500"
-        @keypress.enter.prevent="
-          (e: KeyboardEvent) =>
-            updateKeyword((e.target as HTMLDivElement).innerText)
-        "
-        @dblclick="handleDblclick"
+        class="grow border-none p-2 text-2xl font-bold text-lime-500"
+        @focusout="handleKeywordUpdate"
+        @keypress.enter.prevent="handleKeywordUpdate"
       >
         <slot />
       </div>
@@ -49,14 +48,16 @@ const emit = defineEmits<{
   (e: 'update:keyword', body: string): void;
 }>();
 
+const inputDivRef = ref<HTMLDivElement | null>(null);
 const editing = ref(false);
 
 const handleDblclick = () => {
   editing.value = true;
+  inputDivRef.value?.focus();
 };
 
-const updateKeyword = (body: string) => {
+const handleKeywordUpdate = (e: KeyboardEvent | FocusEvent) => {
   editing.value = false;
-  emit('update:keyword', body);
+  emit('update:keyword', (e.target as HTMLDivElement).innerText);
 };
 </script>
