@@ -10,7 +10,7 @@ export default defineEventHandler(
       ...newWorkshop,
     });
     if (!workshop) {
-      throw Error('Workshop creation failed');
+      throw new Error('Workshop creation failed');
     }
     return { data: workshop };
   }

@@ -29,6 +29,10 @@
 <script setup lang="ts">
 import type { Keyword } from '@/types';
 
+const emit = defineEmits<{
+  (e: 'aiGeneration'): void;
+}>();
+
 const { getTokenSilently } = useAuth();
 const stores = {
   issue: useIssueStore(),
@@ -46,15 +50,13 @@ const HandleKeywordsGeneration = async () => {
       throw new Error('no workshop, issue, or active case');
     }
 
-    let token = await getTokenSilently();
-
     console.log('Generating keywords...');
+    const token = await getTokenSilently();
     const { keywords } = await generateKeywords(token, {
       workshop: workshop.value,
       issue: issue.value,
       _case: activeCase.value,
     });
-    console.log('keywords: ', keywords);
 
     console.log('Creating: ', keywords);
     const { data } = await fetchResources<Keyword>(
@@ -67,8 +69,7 @@ const HandleKeywordsGeneration = async () => {
     );
     console.log('Created: ', data);
 
-    token = await getTokenSilently();
-    await stores.case.update(token);
+    emit('aiGeneration');
   } catch (e) {
     console.error(e);
   } finally {

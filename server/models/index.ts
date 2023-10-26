@@ -8,3 +8,5 @@ export { default as VoteModel } from './vote';
 export { default as PoemsTemplateModel } from './poemsTemplate';
 export { default as StoryModel } from './story';
 export { default as IllustrationModel } from './illustration';
+
+export { default as HistoryCaseModel } from './historyCase';

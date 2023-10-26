@@ -35,11 +35,18 @@ export default defineEventHandler(
       const cases = await CaseModel.find({ issue: issueId }).select('_id');
       const caseIds = cases.map((c) => c._id);
       filter.case = { $in: caseIds };
-      if (searchQuery) {
-        filter.$text = { $search: searchQuery };
-      }
     } else {
       filter.case = caseId;
+    }
+
+    if (searchQuery) {
+      filter = {
+        ...filter,
+        $or: [
+          { body: { $regex: searchQuery, $options: 'i' } },
+          { category: { $regex: searchQuery, $options: 'i' } },
+        ],
+      };
     }
 
     // filter votes
