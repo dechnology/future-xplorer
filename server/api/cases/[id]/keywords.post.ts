@@ -1,5 +1,5 @@
 import { KeywordModel } from '@/server/models';
-import { ResourceObject, NewKeyword, Keyword } from '@/types';
+import { ResourceObject, Keyword } from '@/types';
 
 export default defineEventHandler(
   async (event): Promise<ResourceObject<Keyword[]>> => {
@@ -7,14 +7,14 @@ export default defineEventHandler(
     const id = getRouterParam(event, 'id');
 
     const { keywords: newKeywords } = await readBody<{
-      keywords: NewKeyword[];
+      keywords: string[];
     }>(event);
 
     const keywordDocuments = await KeywordModel.insertMany(
       newKeywords.map((newKeyword) => ({
         creator,
         case: id,
-        ...newKeyword,
+        body: newKeyword,
       }))
     );
 

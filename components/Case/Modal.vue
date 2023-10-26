@@ -11,7 +11,10 @@
           :title="activeCase.title"
           :creator-name="activeCase.creator.name"
         />
-        <CaseModalContent v-slot="slotProps">
+        <CaseModalContent
+          v-slot="slotProps"
+          @keyword-creation="updateSignal = !updateSignal"
+        >
           <div
             v-for="(content, title) in slotProps.content"
             :key="`${content}_${title}`"
@@ -26,7 +29,7 @@
             </p>
           </div>
         </CaseModalContent>
-        <CaseModalActions />
+        <CaseModalActions @ai-generation="updateSignal = !updateSignal" />
       </div>
       <div class="basis-1/2">
         <KeywordGalleryPanel :include-search-bar="true">

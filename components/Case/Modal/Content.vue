@@ -43,7 +43,8 @@
 </template>
 
 <script setup lang="ts">
-import { Keyword, NewKeywordSchema } from '@/types';
+import { z } from 'zod';
+import type { Keyword } from '@/types';
 
 interface CaseContent {
   背景介紹: string;
@@ -54,6 +55,10 @@ interface CaseContent {
   其他: string;
   參考資料: string;
 }
+
+const emit = defineEmits<{
+  (e: 'keywordCreation'): void;
+}>();
 
 const { getTokenSilently } = useAuth();
 
@@ -186,9 +191,9 @@ const handleButtonClick = async () => {
       throw new Error('Text too long');
     }
 
-    const el = NewKeywordSchema.parse({ body: selectedText.value });
+    const el = z.string().nonempty().parse(selectedText.value);
 
-    let token = await getTokenSilently();
+    const token = await getTokenSilently();
     const { data } = await fetchResources<Keyword>(
       token,
       `/api/cases/${activeId.value}/keywords`,
@@ -199,8 +204,7 @@ const handleButtonClick = async () => {
     );
     console.log('Created: ', data);
 
-    token = await getTokenSilently();
-    await stores.case.update(token);
+    emit('keywordCreation');
   } catch (e) {
     console.error(e);
   }
