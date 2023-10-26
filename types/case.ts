@@ -32,3 +32,8 @@ export interface KeywordsRequestBody extends IssueContext {
 export interface KeywordsResponseBody {
   keywords: string[];
 }
+
+export type HistoryCase = Omit<
+  Case,
+  'issue' | 'keywords' | 'image' | 'other' | 'creator'
+>;
