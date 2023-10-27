@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { AsyncData } from 'nuxt/app';
 import { Serialize } from 'nitropack';
-import { Base, ResourceObject } from '@/types';
+import { Base, HistoryCase, ResourceObject } from '@/types';
 
 interface FetchResourceOptions<T> {
   method: 'get' | 'post' | 'put' | 'delete';
@@ -151,4 +151,22 @@ export const uploadImageToS3 = async (
   }
 
   return uploadImageFile(token, file);
+};
+
+export const fetchHistoryCases = async (
+  token: string
+): Promise<HistoryCase[]> => {
+  const { data, error } = await useFetch('/api/cases/history', {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (error.value) {
+    throw error.value;
+  }
+
+  if (!data.value) {
+    throw new Error('data are null');
+  }
+
+  return data.value.data;
 };

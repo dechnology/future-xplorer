@@ -111,6 +111,16 @@
           @dblclick="() => stores.modal.show()"
           @click="() => (activeCase = el)"
         >
+          <template
+            v-if="el.keywords.flatMap((kw) => kw.votes).length > 0"
+            #absolute
+          >
+            <Icon
+              name="mdi:star"
+              size="1.5rem"
+              class="absolute right-2 top-2 text-white"
+            />
+          </template>
           <template #image>
             <CardImage :url="el.image" />
           </template>

@@ -4,7 +4,7 @@
       class="h-12 rounded-lg bg-lime-600 px-8 text-white"
       :class="!loading && 'hover:bg-lime-700'"
       :disabled="loading"
-      @click="HandleKeywordsGeneration"
+      @click.prevent="HandleKeywordsGeneration"
     >
       <span class="py-3"> AI生成關鍵字 </span>
     </CardButton>
@@ -19,7 +19,7 @@
       class="h-12 rounded-lg bg-black bg-opacity-40 px-8 text-white"
       :class="!loading && 'hover:bg-opacity-50'"
       :disabled="loading"
-      @click="() => stores.modal.close()"
+      @click.prevent="() => stores.modal.close()"
     >
       <span class="py-3"> 關閉 </span>
     </CardButton>
@@ -41,9 +41,11 @@ const stores = {
 };
 const { workshop, issue } = storeToRefs(stores.issue);
 const { activeCase, activeId, loading } = storeToRefs(stores.case);
+const { ignoreNextClose } = storeToRefs(stores.modal);
 
 const HandleKeywordsGeneration = async () => {
   try {
+    ignoreNextClose.value = true;
     loading.value = true;
 
     if (!(workshop.value && issue.value && activeCase.value)) {

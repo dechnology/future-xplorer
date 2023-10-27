@@ -18,7 +18,7 @@ const s3 = new S3Client({
   },
 });
 
-const getImage = async (bucket: string, key: string) => {
+export const getImage = async (bucket: string, key: string) => {
   const command = new GetObjectCommand({
     Bucket: bucket,
     Key: key,
@@ -37,7 +37,7 @@ const getImage = async (bucket: string, key: string) => {
   }
 };
 
-const listBuckets = async () => {
+export const listBuckets = async () => {
   const command = new ListBucketsCommand({});
   const { Owner, Buckets } = await s3.send(command);
 
@@ -54,9 +54,7 @@ const listBuckets = async () => {
 };
 
 export const listObjects = async (bucket: string) => {
-  const command = new ListObjectsV2Command({
-    Bucket: 'dechnology',
-  });
+  const command = new ListObjectsV2Command({ Bucket: bucket });
 
   try {
     console.log('Your bucket contains the following objects:\n');
@@ -84,7 +82,7 @@ export const listObjects = async (bucket: string) => {
 
 export default defineNitroPlugin((nitroApp) => {
   try {
-    listObjects('dechnology');
+    listBuckets();
   } catch (e) {
     console.error(e);
   }
