@@ -4,7 +4,11 @@
     :style="{ gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))` }"
   >
     <slot :keywords="keywords">
-      <!-- default content -->
+      <p
+        class="justify-self-center text-2xl font-bold text-black text-opacity-30"
+      >
+        尚未有關鍵字資料
+      </p>
     </slot>
   </div>
 </template>

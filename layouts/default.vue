@@ -3,11 +3,11 @@
     class="min-h-0 min-w-[1080px] shrink grow basis-auto items-center bg-gray-50"
   >
     <div class="flex h-full items-stretch justify-center gap-8 p-10">
-      <div class="flex flex-col gap-5" :style="{ flexBasis: leftBasis }">
+      <div class="flex basis-1/2 flex-col gap-5">
         <Breadcrumbs />
         <slot name="form" />
       </div>
-      <div :style="{ flexBasis: rightBasis }">
+      <div class="basis-1/2">
         <slot />
       </div>
     </div>
