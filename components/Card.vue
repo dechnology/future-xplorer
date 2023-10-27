@@ -1,7 +1,10 @@
 <template>
   <div :class="cardClasses">
+    <slot name="absolute" />
     <slot name="image" />
-    <div class="flex shrink grow basis-auto flex-col items-center justify-center p-5">
+    <div
+      class="relative flex shrink grow basis-auto flex-col items-center justify-center p-5"
+    >
       <slot />
     </div>
   </div>
@@ -24,6 +27,7 @@ const cardClasses = computed(() =>
       'transition-all',
       'flex',
       'flex-col',
+      'relative',
     ],
     props.active ? 'bg-gray-200' : ['hover:bg-gray-100']
   )
