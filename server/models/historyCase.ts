@@ -3,13 +3,14 @@ import { HistoryCase } from '@/types';
 
 const schema = new Schema<HistoryCase>(
   {
+    _id: { type: String, required: true },
     title: { type: String, required: true },
-    background: { type: String, required: true },
-    method: { type: String, required: true },
-    goal: { type: String, required: true },
-    challenge: { type: String, required: true },
-    result: { type: String, required: true },
-    reference: { type: String, required: true },
+    background: { type: String },
+    method: { type: String },
+    goal: { type: String },
+    challenge: { type: String },
+    result: { type: String },
+    reference: { type: String },
   },
   {
     timestamps: true,
@@ -22,5 +23,5 @@ const schema = new Schema<HistoryCase>(
 export default mongoose.model<HistoryCase>(
   'HistoryCase',
   schema,
-  'Historycase'
+  'historyCase'
 );
