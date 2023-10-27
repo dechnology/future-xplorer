@@ -98,13 +98,14 @@
         </template>
       </FormPanel>
     </template>
-    <KeywordGalleryPanel :include-search-bar="true">
+    <KeywordGalleryPanel :include-search-bar="true" @search="handleSearch">
       <KeywordHeader> 我的最愛 </KeywordHeader>
       <KeywordGallery
         v-slot="slotProps"
         :update-signal="updateSignal"
         :keyword-query="{
           ...keywordQuery,
+          searchQuery: searchQuery,
           category: undefined,
           userId: undefined,
           voted: true,
@@ -175,6 +176,7 @@ const getCurrentCategory = () => {
 const currentUser = ref<User>();
 const currentCategory = ref<string | undefined | null>(getCurrentCategory());
 const updateSignal = ref(false);
+const searchQuery = ref();
 
 const keywordQuery = computed<KeywordQuery>(() => ({
   issueId: issueId.value,
@@ -235,6 +237,10 @@ const setCategory = (cat: string | undefined | null) => {
   } else {
     localStorage.setItem(stroageKey, cat);
   }
+};
+
+const handleSearch = (query: string) => {
+  searchQuery.value = query;
 };
 
 onMounted(async () => {
