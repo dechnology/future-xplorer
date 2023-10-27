@@ -78,7 +78,7 @@
           @click="() => (currentIllustration = cloneDeep(el))"
         >
           <template #image>
-            <CardImage :url="el.image" />
+            <CardImage :url="el.image" :download="true" />
           </template>
           <CardDescription classes="text-sm font-medium">
             {{
