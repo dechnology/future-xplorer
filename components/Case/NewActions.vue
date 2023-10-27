@@ -20,6 +20,7 @@
       class="rounded-lg bg-indigo-500 px-8 text-white"
       :class="!loading && 'hover:bg-indigo-600'"
       :disabled="loading"
+      @click.prevent="() => stores.modal.show()"
     >
       <span class="py-3"> 歷史案例 </span>
     </CardButton>
@@ -32,6 +33,7 @@ import { NewCaseSchema } from '@/types';
 
 const { getTokenSilently } = useAuth();
 const stores = {
+  modal: useModalStore(),
   issue: useIssueStore(),
   case: useCaseStore(),
 };

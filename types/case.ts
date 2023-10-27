@@ -33,7 +33,6 @@ export interface KeywordsResponseBody {
   keywords: string[];
 }
 
-export type HistoryCase = Omit<
-  Case,
-  'issue' | 'keywords' | 'image' | 'other' | 'creator'
->;
+export interface HistoryCase extends Omit<NewCase, 'image' | 'other'> {
+  _id: string;
+}

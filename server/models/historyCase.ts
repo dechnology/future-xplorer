@@ -13,10 +13,7 @@ const schema = new Schema<HistoryCase>(
     reference: { type: String },
   },
   {
-    timestamps: true,
     strictQuery: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
   }
 );
 
