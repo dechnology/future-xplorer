@@ -72,9 +72,33 @@ export const getNewWorkshop = (): NewWorkshop => {
   };
 };
 
+export const getDefaultWorkshop = (): NewWorkshop => {
+  const now = format(new Date(), 'yyyy/MM/dd');
+
+  return {
+    name: '預設工作坊名稱',
+    description: '預設工作坊描述',
+
+    dateValue: {
+      start: now,
+      end: now,
+    },
+
+    objects: ['技術'],
+    environments: ['場景體驗'],
+    messages: ['洞見與價值'],
+    services: ['使用者體驗'],
+  };
+};
+
 export const getNewIssue = (): NewIssue => ({
   title: '',
   description: '',
+});
+
+export const getDefaultIssue = (): NewIssue => ({
+  title: '預設議題標題',
+  description: '預設議題描述',
 });
 
 export const getNewPersona = (): NewPersona => ({
@@ -119,6 +143,18 @@ export const getNewCase = (): NewCase => ({
   result: '',
   reference: '',
   other: '',
+  image: null,
+});
+
+export const getDefaultCase = (): NewCase => ({
+  title: '預設案例標題',
+  background: '預設案例背景',
+  method: '預設案例方法',
+  goal: '預設案例目標',
+  challenge: '預設案例挑戰',
+  result: '預設案例結果',
+  reference: '預設案例參考資料',
+  other: '預設案例其他',
   image: null,
 });
 

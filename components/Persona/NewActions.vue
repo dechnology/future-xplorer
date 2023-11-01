@@ -51,7 +51,18 @@ const handlePortraitGeneration = async () => {
     imageFile.value = null;
     imageUrl.value = null;
 
+    // force to use some default values if not provided
+    currentPersona.value = {
+      ...getRandomNewPersona(),
+      ...Object.fromEntries(
+        Object.entries(currentPersona.value).filter(([k, v]) => v)
+      ),
+    };
+
+    console.log('Generating: ', currentPersona.value);
+
     const el = NewPersonaSchema.parse(currentPersona.value);
+
     let token = await getTokenSilently();
     console.log('Generating prompt for persona: ', el);
     imageState.value = 'PROMPTING';
@@ -85,14 +96,27 @@ const handleCreate = async () => {
       throw new Error('issue undefined');
     }
 
-    let token = await getTokenSilently();
+    // force to use some defaults if not provided
+    currentPersona.value = {
+      ...getRandomNewPersona(),
+      ...Object.fromEntries(
+        Object.entries(currentPersona.value).filter(([k, v]) => v)
+      ),
+    };
+
     const el = NewPersonaSchema.parse(currentPersona.value);
-    const { data: uploadedUrl } = await uploadImageToS3(
-      token,
-      imageUrl.value,
-      imageFile.value
-    );
-    el.image = uploadedUrl;
+
+    let token: string = '';
+
+    if (imageUrl.value) {
+      token = await getTokenSilently();
+      const { data: uploadedUrl } = await uploadImageToS3(
+        token,
+        imageUrl.value,
+        imageFile.value
+      );
+      el.image = uploadedUrl;
+    }
 
     console.log('Creating: ', el);
     token = await getTokenSilently();
