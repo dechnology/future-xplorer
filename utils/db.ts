@@ -135,13 +135,9 @@ export const uploadImageFile = async (
 
 export const uploadImageToS3 = async (
   token: string,
-  url: string | null,
+  url: string,
   file?: File | null
 ): Promise<ResourceObject<string>> => {
-  if (!url) {
-    throw new Error('url is null');
-  }
-
   if (url.startsWith('http')) {
     return await uploadImageUrl(token, url);
   }

@@ -31,16 +31,24 @@ const handleCreate = async () => {
   try {
     loading.value = true;
 
-    const story = NewStorySchema.parse(currentStory.value);
-    console.log('Creating: ', story);
+    currentStory.value = {
+      title: '預設故事標題',
+      content: '預設故事內容',
+      ...Object.fromEntries(
+        Object.entries(currentStory.value).filter(([k, v]) => v)
+      ),
+    };
 
+    const el = NewStorySchema.parse(currentStory.value);
+
+    console.log('Creating: ', el);
     let token = await getTokenSilently();
     const { data: createdStory } = await fetchResource<Story>(
       token,
       `/api/issues/${issueId.value}/stories`,
       {
         method: 'post',
-        body: { ...story },
+        body: { ...el },
       }
     );
     console.log('Created: ', createdStory);

@@ -31,24 +31,30 @@ const handleCreate = async () => {
   try {
     loading.value = true;
 
+    currentPoemsTemplate.value = {
+      title: '預設模板標題',
+      ...stores.poemsTemplate.getRandomContext(),
+      ...Object.fromEntries(
+        Object.entries(currentPoemsTemplate.value).filter(([k, v]) => v)
+      ),
+    };
+
     if (!currentPoemsTemplate.value.persona) {
       throw new Error('no persona');
     }
 
-    console.log(currentPoemsTemplate.value);
-
-    let token = await getTokenSilently();
-    const p = NewPoemsTemplateSchema.passthrough().parse(
+    const el = NewPoemsTemplateSchema.passthrough().parse(
       currentPoemsTemplate.value
     );
 
-    console.log('Creating: ', p);
+    console.log('Creating: ', el);
+    let token = await getTokenSilently();
     const { data: createdPoemsTemplate } = await fetchResource<PoemsTemplate>(
       token,
       `/api/issues/${issueId.value}/poemsTemplates`,
       {
         method: 'post',
-        body: { ...p, persona: currentPoemsTemplate.value.persona._id },
+        body: { ...el, persona: currentPoemsTemplate.value.persona?._id },
       }
     );
     console.log('Created: ', createdPoemsTemplate);

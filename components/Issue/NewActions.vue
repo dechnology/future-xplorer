@@ -34,10 +34,17 @@ const handleCreate = async () => {
       throw new Error('workshop id undefined');
     }
 
-    let token = await getTokenSilently();
+    currentIssue.value = {
+      ...getDefaultIssue(),
+      ...Object.fromEntries(
+        Object.entries(currentIssue.value).filter(([k, v]) => v)
+      ),
+    };
+
     const el = NewIssueSchema.parse(currentIssue.value);
 
     console.log('Creating: ', el);
+    let token = await getTokenSilently();
     const { data: createdIssue } = await fetchResource<Issue>(
       token,
       `/api/workshops/${workshopId.value}/issues`,

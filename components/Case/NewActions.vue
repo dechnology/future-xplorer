@@ -48,8 +48,16 @@ const handleCreate = async () => {
       throw new Error('issue undefined');
     }
 
-    let token: string = '';
+    currentCase.value = {
+      ...getDefaultCase(),
+      ...Object.fromEntries(
+        Object.entries(currentCase.value).filter(([k, v]) => v)
+      ),
+    };
+
     const el = NewCaseSchema.parse(currentCase.value);
+
+    let token: string = '';
     if (imageUrl.value) {
       token = await getTokenSilently();
       const { data: uploadedUrl } = await uploadImageToS3(

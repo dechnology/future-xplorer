@@ -34,6 +34,14 @@ const handleCreate = async () => {
   try {
     loading.value = true;
     let token = await getTokenSilently();
+
+    currentWorkshop.value = {
+      ...getDefaultWorkshop(),
+      ...Object.fromEntries(
+        Object.entries(currentWorkshop.value).filter(([k, v]) => v)
+      ),
+    };
+
     const el = NewWorkshopSchema.parse(currentWorkshop.value);
 
     console.log('Creating: ', el);
