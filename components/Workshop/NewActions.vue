@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center justify-around">
     <CardButton
-      class="rounded-lg bg-red-400 px-8 py-3 text-white"
+      class="rounded-lg bg-red-400 text-white"
       :class="!loading && 'transition-all hover:bg-red-500'"
       :disabled="loading"
       @click.prevent="handleClear"
@@ -9,7 +9,7 @@
       清除
     </CardButton>
     <CardButton
-      class="rounded-lg bg-indigo-500 px-8 py-3 text-white"
+      class="rounded-lg bg-indigo-500 text-white"
       :class="!loading && 'transition-all hover:bg-indigo-600'"
       :disabled="loading"
       @click.prevent="handleCreate"

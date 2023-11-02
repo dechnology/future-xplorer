@@ -1,8 +1,8 @@
 <template>
   <div
-    class="flex h-full flex-col items-center justify-center text-center text-2xl font-semibold text-neutral-500"
+    class="flex h-full flex-col items-center justify-center text-center text-sm font-semibold text-neutral-500 xl:text-2xl"
   >
-    <Icon v-bind="icon" />
+    <Icon :name="icon.name" class="h-8 w-8 xl:h-16 xl:w-16" />
     <slot />
   </div>
 </template>

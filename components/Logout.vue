@@ -1,9 +1,9 @@
 <template>
   <div
-    class="cursor-pointer text-white transition-all hover:text-gray-300"
+    class="flex cursor-pointer items-center text-white transition-all hover:text-gray-300"
     @click="handleLogout"
   >
-    <Icon v-if="showIcon" size="1.75rem" name="mdi:logout" />
+    <Icon v-if="showIcon" class="h-4 w-4 md:h-6 md:w-6" name="mdi:logout" />
     <slot />
   </div>
 </template>

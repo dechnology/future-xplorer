@@ -1,6 +1,6 @@
 <template>
   <h3
-    class="mb-2 w-full text-justify text-2xl font-bold leading-loose text-black"
+    class="w-full text-justify text-sm font-medium text-black xl:mb-2 xl:text-2xl xl:font-bold"
   >
     <slot />
   </h3>

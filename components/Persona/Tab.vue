@@ -107,7 +107,7 @@
       <CardGallery>
         <Card
           :active="!activePersona"
-          class="h-[350px]"
+          class="h-[200px] xl:h-[350px]"
           @click="() => (activePersona = null)"
         >
           <CardIcon :icon="{ name: 'mdi:plus', size: '5rem' }">
@@ -119,7 +119,7 @@
           v-for="p in personas"
           :key="p._id"
           :active="activeId === p._id"
-          class="h-[350px]"
+          class="h-[200px] xl:h-[350px]"
           @dblclick="() => openModel()"
           @click="() => (activePersona = p)"
         >

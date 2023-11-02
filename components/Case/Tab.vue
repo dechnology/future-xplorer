@@ -95,7 +95,7 @@
       <CardGallery>
         <Card
           :active="!activeCase"
-          class="h-[350px]"
+          class="h-[200px] xl:h-[350px]"
           @click="() => (activeCase = null)"
         >
           <CardIcon :icon="{ name: 'mdi:plus', size: '5rem' }">
@@ -107,7 +107,7 @@
           v-for="el in cases"
           :key="el._id"
           :active="activeId === el._id"
-          class="h-[350px]"
+          class="h-[200px] xl:h-[350px]"
           @dblclick="() => stores.modal.show()"
           @click="() => (activeCase = el)"
         >
@@ -124,9 +124,7 @@
           <template #image>
             <CardImage :url="el.image" />
           </template>
-          <CardDescription
-            input-classes="text-zinc-800 text-sm font-medium leading-snug"
-          >
+          <CardDescription input-classes="leading-snug">
             {{
               [
                 `標題：${el.title}`,

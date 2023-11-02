@@ -36,7 +36,7 @@
       <CardGallery>
         <Card
           :active="!activeId"
-          class="h-[300px]"
+          class="h-[200px] lg:h-[300px]"
           @click="() => stores.workshop.changeActiveIssue()"
         >
           <CardIcon :icon="{ name: 'mdi:plus', size: '5rem' }">
@@ -48,7 +48,7 @@
             v-for="i in issues"
             :key="i._id"
             :active="activeId === i._id"
-            class="h-[300px]"
+            class="h-[200px] lg:h-[300px]"
             @dblclick="() => handleDblclick(i._id)"
             @click="() => stores.workshop.changeActiveIssue(i)"
           >

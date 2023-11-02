@@ -1,6 +1,9 @@
 <template>
   <div class="flex gap-2">
-    <h2 v-if="$slots.title" class="pl-4 text-[32px] font-bold text-black">
+    <h2
+      v-if="$slots.title"
+      class="pl-2 text-xl font-bold text-black xl:pl-4 xl:text-[32px]"
+    >
       <slot name="title" />
     </h2>
     <Icon
@@ -12,7 +15,7 @@
   </div>
   <p
     v-if="$slots.description"
-    class="pl-4 text-base font-normal leading-relaxed text-black"
+    class="pl-2 text-xs font-normal leading-relaxed text-black xl:pl-4 xl:text-base"
   >
     <slot name="description" />
   </p>

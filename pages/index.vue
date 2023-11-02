@@ -31,7 +31,7 @@
               :disabled="formDisabled"
             />
             <div
-              class="text-center text-sm font-medium leading-snug text-black text-opacity-60"
+              class="text-center text-xs font-medium leading-snug text-black text-opacity-60 lg:text-sm"
             >
               預先設定工作坊POEMS分類
             </div>
@@ -76,7 +76,10 @@
             @click="() => stores.workshops.changeActiveWorkshop()"
           >
             <WorkshopTableData colspan="5">
-              <Icon name="mdi:plus-circle-outline" size="2rem" />
+              <Icon
+                name="mdi:plus-circle-outline"
+                class="h-4 w-4 lg:h-8 lg:w-8"
+              />
             </WorkshopTableData>
           </WorkshopTableRow>
           <ClientOnly>
@@ -117,8 +120,6 @@ const stores = {
 };
 const { currentWorkshop, activeId, state, formDisabled, currentFormCardProps } =
   storeToRefs(stores.workshops);
-
-const searchQuery = ref('');
 
 onMounted(() => {
   stores.breadcrumbs.clearAll();

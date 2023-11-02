@@ -1,7 +1,7 @@
 <template>
   <ClientOnly>
     <form
-      class="flex flex-col justify-start gap-5 rounded-lg bg-white p-8 shadow"
+      class="flex flex-col justify-start gap-2 rounded-lg bg-white p-4 shadow xl:gap-5 xl:p-8"
     >
       <div
         v-if="(formTitle && creatorName) || $slots['icon-actions']"
