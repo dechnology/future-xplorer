@@ -19,10 +19,9 @@
       >
         <Icon
           ref="dropdownIcon"
-          class="cursor-pointer transition-all duration-300"
+          class="h-4 w-4 cursor-pointer transition-all duration-300 xl:h-5 xl:w-5"
           :class="dropdownShown ? '-rotate-90' : 'rotate-90'"
           name="pepicons-pop:triangle-left-filled"
-          size="1.25rem"
           @click="() => (dropdownShown = !dropdownShown)"
         />
       </div>

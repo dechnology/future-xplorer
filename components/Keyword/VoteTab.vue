@@ -34,7 +34,7 @@
                 <KeywordCard
                   v-for="kw in slotProps.keywords"
                   :key="kw._id"
-                  class="h-40"
+                  class="min-h-20 xl:min-h-40"
                   @update:keyword="(body) => (kw.body = body)"
                 >
                   <template #favIcon>
@@ -76,7 +76,7 @@
                 <KeywordCard
                   v-for="kw in slotProps.keywords"
                   :key="kw._id"
-                  class="h-40"
+                  class="min-h-20 xl:min-h-40"
                   @update:keyword="(body) => (kw.body = body)"
                 >
                   <template #favIcon>

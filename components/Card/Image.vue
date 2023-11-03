@@ -14,8 +14,7 @@
     >
       <Icon
         name="mdi:download"
-        size="2rem"
-        class="cursor-pointer text-slate-700"
+        class="h-6 w-6 cursor-pointer text-slate-700 xl:h-8 xl:w-8"
       />
     </a>
   </div>

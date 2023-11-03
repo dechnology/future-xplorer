@@ -12,7 +12,7 @@
     title="故事內容"
     placeholder="故事內容"
     :disabled="formDisabled"
-    input-classes="h-[200px]"
+    input-classes="h-[100px] xl:h-[200px]"
   />
 </template>
 

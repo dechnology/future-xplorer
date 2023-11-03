@@ -38,7 +38,7 @@
               placeholder="模板物件"
               :disabled="formDisabled"
               :select-options="keywordOptions.O"
-              input-classes="h-[90px]"
+              input-classes="h-16 xl:h-[90px]"
             />
             <InputComponent
               v-model="currentPoemsTemplate.environment"
@@ -47,7 +47,7 @@
               placeholder="模板環境"
               :disabled="formDisabled"
               :select-options="keywordOptions.E"
-              input-classes="h-[90px]"
+              input-classes="h-16 xl:h-[90px]"
             />
             <InputComponent
               v-model="currentPoemsTemplate.message"
@@ -55,7 +55,7 @@
               title="訊息 (M)"
               placeholder="模板訊息"
               :disabled="formDisabled"
-              input-classes="h-[90px]"
+              input-classes="h-16 xl:h-[90px]"
               :select-options="keywordOptions.M"
             />
             <InputComponent
@@ -64,7 +64,7 @@
               title="服務 (S)"
               placeholder="模板服務"
               :disabled="formDisabled"
-              input-classes="h-[90px]"
+              input-classes="h-16 xl:h-[90px]"
               :select-options="keywordOptions.S"
             />
           </template>
@@ -86,7 +86,7 @@
     <CardGalleryPanel @search="handleSearch">
       <CardGallery :grid-cols="3">
         <Card
-          class="h-[350px]"
+          class="min-h-[150px] xl:min-h-[350px]"
           :active="!activePoemsTemplate"
           @click="() => (activePoemsTemplate = null)"
         >
@@ -107,7 +107,7 @@
             ].join()
           )"
           :key="el._id"
-          class="h-[350px]"
+          class="min-h-[150px] xl:min-h-[350px]"
           :active="activeId === el._id"
           @dblclick="() => handleDblclick()"
           @click="() => (activePoemsTemplate = el)"

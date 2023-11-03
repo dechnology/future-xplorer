@@ -16,10 +16,9 @@
       >
         <Icon
           ref="dropdownIcon"
-          class="cursor-pointer transition-all duration-300"
+          class="h-4 w-4 cursor-pointer transition-all duration-300 xl:h-5 xl:w-5"
           :class="dropdownShown ? '-rotate-90' : 'rotate-90'"
           name="pepicons-pop:triangle-left-filled"
-          size="1.25rem"
           @click="() => (dropdownShown = !dropdownShown)"
         />
       </div>
@@ -80,16 +79,20 @@ const inputProps = computed(() => {
       [
         'w-full',
         'rounded',
-        'pl-4',
-        'pr-4',
-        'py-4',
+        'pl-2',
+        'pr-2',
+        'py-2',
+        'xl:pl-4',
+        'xl:pr-4',
+        'xl:py-4',
+        'max-xl:text-xs',
         'border',
         'border-solid',
         'border-black',
         'text-black',
       ],
       props.inputClasses,
-      props.options && 'pr-12',
+      props.options && 'pr-8 xl:pr-12',
       props.disabled ? ['bg-slate-50'] : ['border-opacity-40']
     ),
     disabled: props.disabled,

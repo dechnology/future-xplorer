@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-2 gap-x-5 gap-y-7">
+  <div class="grid grid-cols-2 gap-2 xl:gap-x-5 xl:gap-y-7">
     <InputComponent
       v-model="currentStory.title"
       type="text"
@@ -39,7 +39,7 @@
     placeholder="故事物件"
     :disabled="formDisabled"
     :select-options="keywordOptions.O"
-    input-classes="h-[90px]"
+    input-classes="h-16 xl:h-[90px]"
   />
   <InputComponent
     v-model="currentContext.environment"
@@ -48,7 +48,7 @@
     placeholder="故事環境"
     :disabled="formDisabled"
     :select-options="keywordOptions.E"
-    input-classes="h-[90px]"
+    input-classes="h-16 xl:h-[90px]"
   />
   <InputComponent
     v-model="currentContext.message"
@@ -56,7 +56,7 @@
     title="訊息 (M)"
     placeholder="故事訊息"
     :disabled="formDisabled"
-    input-classes="h-[90px]"
+    input-classes="h-16 xl:h-[90px]"
     :select-options="keywordOptions.M"
   />
   <InputComponent
@@ -65,20 +65,19 @@
     title="服務 (S)"
     placeholder="故事服務"
     :disabled="formDisabled"
-    input-classes="h-[90px]"
+    input-classes="h-16 xl:h-[90px]"
     :select-options="keywordOptions.S"
   />
   <div class="flex flex-col items-center">
     <CardButton
-      class="rounded-lg bg-lime-500 px-8 py-3 text-white transition-all hover:bg-lime-700"
+      class="rounded-lg bg-lime-500 text-white transition-all hover:bg-lime-700"
       @click.prevent="handleStoryGeneration"
     >
       AI組成故事
     </CardButton>
     <Icon
       name="material-symbols:double-arrow"
-      size="4rem"
-      class="rotate-90 text-stone-500"
+      class="h-10 w-10 rotate-90 text-stone-500 xl:h-16 xl:w-16"
     />
   </div>
   <InputComponent
@@ -87,7 +86,7 @@
     title="故事內容"
     placeholder="故事內容"
     :disabled="formDisabled"
-    input-classes="h-[200px]"
+    input-classes="h-[100px] xl:h-[200px]"
   />
 </template>
 

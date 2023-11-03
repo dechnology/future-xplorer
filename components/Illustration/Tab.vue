@@ -11,7 +11,7 @@
         <FormCard>
           <template #body>
             <CardButton
-              class="mx-auto w-fit rounded-lg bg-indigo-500 px-8 py-3 text-white transition-all hover:bg-indigo-600"
+              class="mx-auto w-fit rounded-lg bg-indigo-500 text-white transition-all hover:bg-indigo-600"
               @click.prevent="() => stores.modal.show()"
             >
               選擇故事
@@ -22,19 +22,18 @@
               title="故事內容"
               placeholder="故事內容"
               :disabled="formDisabled"
-              input-classes="h-[200px]"
+              input-classes="h-[100px] xl:h-[200px]"
             />
             <div class="flex flex-col items-center">
               <CardButton
-                class="rounded-lg bg-lime-600 px-8 py-3 text-white transition-all hover:bg-lime-700"
+                class="rounded-lg bg-lime-600 font-medium text-white transition-all hover:bg-lime-700"
                 body="Prompt"
                 @click.prevent="handlePromptGeneration"
               >
                 <span>PROMPT</span>
                 <Icon
                   name="material-symbols:double-arrow"
-                  size="2.5rem"
-                  class="rotate-90"
+                  class="h-8 w-8 rotate-90 xl:h-14 xl:w-14"
                 />
               </CardButton>
             </div>
@@ -44,10 +43,10 @@
               type="textarea"
               title="Prompt"
               placeholder="情境圖 prompt"
-              input-classes="h-[200px]"
+              input-classes="h-[100px] xl:h-[200px]"
             />
             <div
-              class="flex w-full items-center justify-center gap-6 px-4 text-base font-normal leading-relaxed text-black"
+              class="flex w-full items-center justify-center gap-3 px-4 text-xs font-normal leading-relaxed text-black xl:gap-6 xl:text-base"
             >
               <div>使用這個Prompt一次新增</div>
               <InputRange
@@ -59,7 +58,7 @@
               <div>張圖</div>
             </div>
             <CardButton
-              class="mx-auto w-fit rounded-lg bg-indigo-500 px-8 py-3 text-white transition-all hover:bg-indigo-600"
+              class="mx-auto w-fit rounded-lg bg-indigo-500 text-white transition-all hover:bg-indigo-600"
               @click.prevent="handleImageGenerations"
             >
               情境圖生成
@@ -73,7 +72,7 @@
         <Card
           v-for="el in illustrations"
           :key="el._id"
-          class="h-[350px]"
+          class="min-h-[150px] xl:min-h-[350px]"
           @dblclick="() => handleDblclick()"
           @click="() => (currentIllustration = cloneDeep(el))"
         >

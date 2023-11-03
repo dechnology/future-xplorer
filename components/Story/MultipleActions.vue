@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center justify-around">
     <CardButton
-      class="rounded-lg bg-lime-600 px-8 py-3 text-white hover:bg-lime-700"
+      class="rounded-lg bg-lime-600 text-white hover:bg-lime-700"
       @click.prevent="handleCombineStory"
     >
       AI組合故事
