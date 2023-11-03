@@ -8,7 +8,7 @@
       :disabled="disabled"
       use-range
       separator=" - "
-      class="rounded-md text-xs lg:text-base"
+      class="rounded-md text-xs xl:text-base"
       :input-classes="
         disabled
           ? 'border-gray-200 bg-slate-50'

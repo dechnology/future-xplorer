@@ -38,18 +38,22 @@
             <InputChips
               v-model:chips="currentWorkshop.objects"
               title="Object - 物件 or 技術"
+              :disabled="formDisabled"
             />
             <InputChips
               v-model:chips="currentWorkshop.environments"
               title="Environment - 環境 or 場景"
+              :disabled="formDisabled"
             />
             <InputChips
               v-model:chips="currentWorkshop.messages"
               title="Message - 訊息 or 目標"
+              :disabled="formDisabled"
             />
             <InputChips
               v-model:chips="currentWorkshop.services"
               title="Service - 服務、行動 or 經驗"
+              :disabled="formDisabled"
             />
           </template>
           <template #actions>

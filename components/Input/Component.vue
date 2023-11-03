@@ -67,6 +67,10 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  title: undefined,
+  inputClasses: undefined,
+  selectOptions: undefined,
+
   placeholder: '',
   disabled: false,
   selectOnly: false,
@@ -121,7 +125,7 @@ const handleClick = (option: SelectOption<string>) => {
   dropdownShown.value = false;
 };
 
-onClickOutside(dropdownIcon, (e: PointerEvent) => {
+onClickOutside(dropdownIcon, () => {
   dropdownShown.value = false;
 });
 </script>

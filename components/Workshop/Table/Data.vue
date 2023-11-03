@@ -1,7 +1,5 @@
 <template>
-  <td
-    class="text-center text-[10px] font-medium leading-normal text-black lg:text-base"
-  >
+  <td class="text-center text-xs xl:text-base xl:font-medium">
     <slot />
   </td>
 </template>

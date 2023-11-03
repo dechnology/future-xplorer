@@ -1,6 +1,6 @@
 <template>
   <th
-    class="lg:text-xm text-center text-xs font-medium leading-tight text-gray-600 lg:font-semibold"
+    class="text-center text-sm font-medium leading-tight text-gray-600 xl:font-semibold"
   >
     <slot />
   </th>

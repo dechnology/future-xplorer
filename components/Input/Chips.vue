@@ -50,7 +50,10 @@ interface Props {
   disabled?: boolean;
 }
 
-const props = withDefaults(defineProps<Props>(), { disabled: false });
+const props = withDefaults(defineProps<Props>(), {
+  title: undefined,
+  disabled: false,
+});
 
 const emit = defineEmits<{
   (e: 'update:chips', chips: string[]): void;
@@ -61,7 +64,7 @@ const lastListItem = ref<HTMLLIElement | null>(null);
 const focusIndex = ref<number | null>(null);
 
 const handleClick = () => {
-  if (!lastListItem.value) {
+  if (!lastListItem.value || props.disabled) {
     return;
   }
 
