@@ -1,15 +1,17 @@
 <template>
   <div
+    v-if="keywords.length > 0"
     class="grid min-h-0 shrink grow basis-auto grid-cols-2 content-start gap-2 overflow-y-auto p-2"
     :style="{ gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))` }"
   >
-    <slot :keywords="keywords">
-      <p
-        class="justify-self-center text-2xl font-bold text-black text-opacity-30"
-      >
-        尚未有關鍵字資料
-      </p>
-    </slot>
+    <slot :keywords="keywords" />
+  </div>
+  <div v-else class="flex h-full items-center justify-center">
+    <p
+      class="text-lg font-medium text-black text-opacity-30 xl:text-2xl xl:font-bold"
+    >
+      尚未有關鍵字資料
+    </p>
   </div>
 </template>
 

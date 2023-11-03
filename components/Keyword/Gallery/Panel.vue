@@ -27,10 +27,7 @@ defineEmits<{
 }>();
 
 const classes = computed(() =>
-  twMerge(
-    'flex h-full min-h-0 shrink grow basis-auto flex-col gap-5 px-4 pt-4',
-    props.inputClasses
-  )
+  twMerge('flex h-full w-full flex-col gap-5 px-4 pt-4', props.inputClasses)
 );
 
 const searchQuery = ref('');
