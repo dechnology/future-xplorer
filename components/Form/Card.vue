@@ -17,12 +17,12 @@
       <slot name="body" />
       <div v-if="timestamps" class="flex justify-center gap-2">
         <div
-          class="text-center text-sm font-medium leading-snug text-black text-opacity-60"
+          class="text-center text-xs text-black text-opacity-60 xl:text-sm xl:font-medium"
         >
           建立時間：{{ format(timestamps.createdAt, 'yyyy-MM-dd') }}
         </div>
         <div
-          class="text-center text-sm font-medium leading-snug text-black text-opacity-60"
+          class="text-center text-xs text-black text-opacity-60 xl:text-sm xl:font-medium"
         >
           更新時間：{{ format(timestamps.updatedAt, 'yyyy-MM-dd') }}
         </div>
