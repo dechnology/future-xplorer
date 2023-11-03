@@ -2,18 +2,23 @@
   <div
     v-if="activeCase"
     ref="contentDiv"
-    class="relative flex min-h-0 shrink grow basis-auto flex-col gap-6 overflow-y-auto"
+    class="relative flex min-h-0 shrink grow basis-auto flex-col gap-2 overflow-y-auto xl:gap-6"
   >
-    <div class="flex flex-col gap-6" @mouseup.prevent="handleMouseup">
+    <div
+      class="flex flex-col gap-2 text-xs xl:gap-6"
+      @mouseup.prevent="handleMouseup"
+    >
       <slot :content="activeCaseContent" />
       <span
         ref="selectedTextMeasure"
-        style="position: absolute; visibility: hidden; white-space: nowrap"
+        class="absolute"
+        style="visibility: hidden; white-space: nowrap"
         >{{ selectedText }}</span
       >
       <span
         ref="selectedMaxTextMeasure"
-        style="position: absolute; top: 0; left: -9999px; white-space: nowrap"
+        class="absolute"
+        style="top: 0; left: -9999px; white-space: nowrap"
       >
         題與挑戰題與挑戰題與挑戰題與挑戰題與
       </span>

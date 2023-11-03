@@ -10,7 +10,7 @@
         </template>
         <FormCard v-bind="formCardProps">
           <template #body>
-            <div class="grid grid-cols-2 gap-x-5 gap-y-7">
+            <div class="grid grid-cols-2 gap-2 xl:gap-x-5 xl:gap-y-7">
               <InputComponent
                 v-model="currentPersona.role"
                 type="text"
@@ -55,7 +55,7 @@
               type="textarea"
               title="特徵"
               placeholder="特徵"
-              input-classes="h-32"
+              input-classes="h-16 xl:h-32"
               :disabled="formDisabled"
               :select-options="
                 PersonaPresets.trait.map((el) => ({ name: el, data: el }))
@@ -66,7 +66,7 @@
               type="textarea"
               title="其他"
               placeholder="其他"
-              input-classes="h-32"
+              input-classes="h-16 xl:h-32"
               :disabled="formDisabled"
             />
             <div class="flex flex-col overflow-hidden rounded-lg">

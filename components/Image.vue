@@ -1,6 +1,6 @@
 <template>
   <NuxtImg v-if="url" :src="url" alt="人物圖遺失" />
-  <div v-else class="flex h-72 w-full shrink-0 grow flex-col">
+  <div v-else class="flex h-48 w-full shrink-0 grow flex-col xl:h-72">
     <label
       class="flex h-full w-full flex-1 flex-col items-center justify-center bg-black bg-opacity-20"
       :class="
@@ -8,8 +8,13 @@
         'cursor-pointer transition-all hover:bg-opacity-30'
       "
     >
-      <Icon :name="ImageStates[imageState].iconName" size="5rem" />
-      <p>{{ ImageStates[imageState].hint }}</p>
+      <Icon
+        :name="ImageStates[imageState].iconName"
+        class="h-14 w-14 xl:h-20 xl:w-20"
+      />
+      <p class="text-xs lg:text-sm xl:text-base">
+        {{ ImageStates[imageState].hint }}
+      </p>
       <input type="file" class="hidden" @change.prevent="handleFileChange" />
     </label>
   </div>

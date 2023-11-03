@@ -22,7 +22,7 @@
               type="textarea"
               title="背景介紹"
               placeholder="案例背景"
-              input-classes="h-[100px]"
+              input-classes="h-24 xl:h-[100px]"
               :disabled="formDisabled"
             />
             <InputComponent
@@ -30,7 +30,7 @@
               type="textarea"
               title="作法"
               placeholder="案例作法"
-              input-classes="h-[100px]"
+              input-classes="h-24 xl:h-[100px]"
               :disabled="formDisabled"
             />
             <InputComponent
@@ -38,7 +38,7 @@
               type="textarea"
               title="目標"
               placeholder="案例目標"
-              input-classes="h-[100px]"
+              input-classes="h-24 xl:h-[100px]"
               :disabled="formDisabled"
             />
             <InputComponent
@@ -46,7 +46,7 @@
               type="textarea"
               title="問題與挑戰"
               placeholder="案例的問題與挑戰"
-              input-classes="h-[100px]"
+              input-classes="h-24 xl:h-[100px]"
               :disabled="formDisabled"
             />
             <InputComponent
@@ -54,7 +54,7 @@
               type="textarea"
               title="成果"
               placeholder="案例成果"
-              input-classes="h-[100px]"
+              input-classes="h-24 xl:h-[100px]"
               :disabled="formDisabled"
             />
             <InputComponent
@@ -62,7 +62,7 @@
               type="textarea"
               title="參考資料"
               placeholder="案例參考資料"
-              input-classes="h-[100px]"
+              input-classes="h-24 xl:h-[100px]"
               :disabled="formDisabled"
             />
             <InputComponent
@@ -70,7 +70,7 @@
               type="textarea"
               title="其他"
               placeholder="案例其他"
-              input-classes="h-[100px]"
+              input-classes="h-24 xl:h-[100px]"
               :disabled="formDisabled"
             />
 

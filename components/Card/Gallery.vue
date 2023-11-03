@@ -1,6 +1,6 @@
 <template>
   <div
-    class="grid gap-4 overflow-y-auto rounded-2xl p-2"
+    class="grid gap-2 overflow-y-auto rounded-xl p-2 xl:gap-4"
     :style="{
       gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))`,
     }"

@@ -19,7 +19,8 @@ const cardClasses = computed(() =>
   twMerge(
     [
       'overflow-hidden',
-      'rounded-2xl',
+      'rounded-lg',
+      'xl:rounded-xl',
       'border',
       'border-black',
       'border-opacity-50',

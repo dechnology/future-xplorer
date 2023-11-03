@@ -1,7 +1,7 @@
 <template>
   <dialog
     ref="modal"
-    class="h-5/6 w-11/12 rounded-2xl border-gray-300 p-8 focus:outline-slate-300"
+    class="h-5/6 w-11/12 rounded-2xl border-gray-300 p-4 focus:outline-slate-300 lg:p-6 xl:p-8"
     @click="(e) => onBackdropClick(e, stores.modal.close)"
   >
     <CaseDetailsModal v-if="activeCase" />
