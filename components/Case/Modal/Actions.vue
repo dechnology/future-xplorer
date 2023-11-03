@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-wrap items-center justify-center gap-6">
     <CardButton
-      class="h-12 rounded-lg bg-lime-600 text-white"
+      class="rounded-lg bg-lime-600 text-white"
       :class="!loading && 'hover:bg-lime-700'"
       :disabled="loading"
       @click.prevent="HandleKeywordsGeneration"
@@ -9,14 +9,14 @@
       AI生成關鍵字
     </CardButton>
     <CardButton
-      class="h-12 rounded-lg bg-black bg-opacity-40 text-white"
+      class="rounded-lg bg-black bg-opacity-40 text-white"
       :class="!loading && 'hover:bg-opacity-50'"
       :disabled="loading"
     >
       使用說明
     </CardButton>
     <CardButton
-      class="h-12 rounded-lg bg-black bg-opacity-40 text-white"
+      class="rounded-lg bg-black bg-opacity-40 text-white"
       :class="!loading && 'hover:bg-opacity-50'"
       :disabled="loading"
       @click.prevent="() => stores.modal.close()"

@@ -40,8 +40,7 @@
                   <template #favIcon>
                     <Icon
                       name="ic:round-star-border"
-                      size="20px"
-                      class="cursor-pointer"
+                      class="cursor-pointer xl:h-5 xl:w-5"
                       @click="() => vote(kw)"
                     />
                   </template>
@@ -82,8 +81,7 @@
                   <template #favIcon>
                     <Icon
                       name="ic:round-star-border"
-                      size="20px"
-                      class="cursor-pointer"
+                      class="cursor-pointer xl:h-5 xl:w-5"
                       @click="() => vote(kw)"
                     />
                   </template>
@@ -114,14 +112,12 @@
         <KeywordCard
           v-for="kw in slotProps.keywords"
           :key="kw._id"
-          class="h-32"
-          @update:keyword="(body) => (kw.body = body)"
+          class="xl:h-32"
         >
           <template #favIcon>
             <Icon
               name="ic:round-star"
-              size="20px"
-              class="cursor-pointer"
+              class="cursor-pointer xl:h-5 xl:w-5"
               @click="() => cancelVote(kw)"
             />
           </template>

@@ -60,6 +60,9 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  title: undefined,
+  placeholder: undefined,
+  inputClasses: undefined,
   disabled: false,
 });
 

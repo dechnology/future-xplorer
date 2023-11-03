@@ -18,7 +18,7 @@
             v-for="k in slotProps.keywords.filter((k) => !k.category)"
             :key="k._id"
             :draggable="true"
-            class="h-40"
+            class="xl:h-40"
             @update:keyword="(body) => (k.body = body)"
             @dragstart="() => (draggingKeyword = k)"
           >
@@ -52,7 +52,7 @@
         <KeywordCard
           v-for="k in slotProps.keywords"
           :key="k._id"
-          class="h-32"
+          class="xl:h-32"
           @update:keyword="(body) => (k.body = body)"
         >
           <template #category>{{ k.category }}</template>
