@@ -1,7 +1,7 @@
 <template>
   <dialog
     ref="modal"
-    class="h-5/6 w-11/12 rounded-2xl border-gray-300 p-16 focus:outline-slate-300"
+    class="h-5/6 w-11/12 rounded-2xl border-gray-300 p-4 focus:outline-slate-300 xl:p-16"
     @click="(e) => onBackdropClick(e, stores.modal.close)"
   >
     <div class="flex h-full flex-col gap-2">
@@ -11,7 +11,7 @@
             v-for="el in stories"
             :key="el._id"
             :active="selectedStory?._id === el._id"
-            class="h-[305px]"
+            class="min-h-[150px] xl:min-h-[305px]"
             @click="() => (selectedStory = el)"
           >
             <CardTitle>{{ el.title }}</CardTitle>

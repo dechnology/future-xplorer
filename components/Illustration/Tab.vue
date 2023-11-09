@@ -28,6 +28,7 @@
               <CardButton
                 class="rounded-lg bg-lime-600 font-medium text-white transition-all hover:bg-lime-700"
                 body="Prompt"
+                :disabled="formDisabled"
                 @click.prevent="handlePromptGeneration"
               >
                 <span>PROMPT</span>
@@ -59,6 +60,7 @@
             </div>
             <CardButton
               class="mx-auto w-fit rounded-lg bg-indigo-500 text-white transition-all hover:bg-indigo-600"
+              :disabled="formDisabled"
               @click.prevent="handleImageGenerations"
             >
               情境圖生成
