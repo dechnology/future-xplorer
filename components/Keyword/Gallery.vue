@@ -72,9 +72,13 @@ const updateKeywords = async (q: KeywordQuery) => {
   }
 };
 
-watchDeep(
-  () => ({ ...props }),
-  async ({ keywordQuery: q }) => {
+watch(
+  () => ({
+    keywordQuery: props.keywordQuery,
+    updateSignal: props.updateSignal,
+  }),
+  async ({ keywordQuery: q, updateSignal: u }) => {
+    console.log(u);
     await updateKeywords(q);
   }
 );
