@@ -145,43 +145,10 @@
       </CardGallery>
     </CardGalleryPanel>
   </NuxtLayout>
-  <PersonaModal v-if="activePersona">
-    <PersonaModalAvatar :current-persona-image="activePersona.image" />
-    <template #personaInfo>
-      <PersonaModalContent v-slot="slotProps">
-        <div
-          v-for="(content, title) in slotProps.content"
-          :key="`${content}_${title}`"
-        >
-          <p
-            class="font-['Roboto'] text-2xl font-bold leading-10 text-neutral-600"
-          >
-            <span class="font-semibold">{{ title }}：</span>
-            <span>{{ content }}</span>
-          </p>
-        </div>
-      </PersonaModalContent>
-    </template>
-    <template #actions>
-      <PersonaModalActions />
-      <PersonaModalFootnote>
-        <p>
-          <span class="font-regular text-base text-gray-400">
-            <br />{{ `建立者：${activePersona.creator.name}` }} <br />{{
-              `新增時間：${format(activePersona.createdAt, 'yyyy-MM-dd')}`
-            }}
-            <br />{{
-              `更新時間：${format(activePersona.updatedAt, 'yyyy-MM-dd')}`
-            }}
-          </span>
-        </p>
-      </PersonaModalFootnote>
-    </template>
-  </PersonaModal>
+  <PersonaModal />
 </template>
 
 <script setup lang="ts">
-import { format } from 'date-fns';
 import type { ConcreteComponent } from 'nuxt/dist/app/compat/capi';
 import type { FormStateKey } from '~/types';
 

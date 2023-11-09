@@ -133,6 +133,8 @@ const handleCreate = async () => {
     token = await getTokenSilently();
     stores.persona.update(token);
     stores.persona.resetForm();
+    imageUrl.value = null;
+    imageFile.value = null;
   } catch (e) {
     console.error(e);
   } finally {

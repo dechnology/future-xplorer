@@ -1,7 +1,7 @@
 <template>
-  <div class="flex flex-wrap items-center justify-center gap-6">
+  <div class="flex justify-center">
     <CardButton
-      class="h-12 rounded-lg bg-black bg-opacity-40 px-8 py-3 text-white hover:bg-opacity-50"
+      class="rounded-lg bg-black bg-opacity-40 text-white hover:bg-opacity-50"
       @click="() => stores.modal.close()"
     >
       關閉
