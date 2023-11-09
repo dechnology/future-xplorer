@@ -12,7 +12,7 @@
           <template #body>
             <CardButton
               class="mx-auto w-fit rounded-lg bg-indigo-500 text-white transition-all hover:bg-indigo-600"
-              @click.prevent="() => stores.modal.show()"
+              @click.prevent="handleStoryModalOpen"
             >
               選擇故事
             </CardButton>
@@ -90,9 +90,8 @@
       </CardGallery>
     </CardGalleryPanel>
   </NuxtLayout>
-  <IllustrationStoriesModal
-    @confirm="(el) => (currentIllustration.story = el)"
-  />
+  <IllustrationModal :modal-state="modalState" />
+  <!-- @confirm="(el) => (currentIllustration.story = el)" -->
 </template>
 
 <script setup lang="ts">
@@ -122,6 +121,7 @@ const {
 } = storeToRefs(stores.illustration);
 
 const numberToGenerate = ref(1);
+const modalState = ref<'stories' | 'illustration'>('stories');
 
 const handlePromptGeneration = async () => {
   try {
@@ -204,7 +204,13 @@ const handleImageGenerations = async () => {
   await Promise.all(promises);
 };
 
+const handleStoryModalOpen = () => {
+  modalState.value = 'stories';
+  stores.modal.show();
+};
+
 const handleDblclick = () => {
+  modalState.value = 'illustration';
   stores.modal.show();
 };
 
