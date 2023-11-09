@@ -75,7 +75,7 @@
           v-for="el in illustrations"
           :key="el._id"
           class="min-h-[150px] xl:min-h-[350px]"
-          @dblclick="() => handleDblclick()"
+          @dblclick="() => handleDblclick(el)"
           @click="() => (currentIllustration = cloneDeep(el))"
         >
           <template #image>
@@ -116,6 +116,7 @@ const {
   searchQuery,
   illustrations,
   currentIllustration,
+  activeIllustration,
   formDisabled,
   loading,
 } = storeToRefs(stores.illustration);
@@ -209,7 +210,8 @@ const handleStoryModalOpen = () => {
   stores.modal.show();
 };
 
-const handleDblclick = () => {
+const handleDblclick = (el: Illustration) => {
+  activeIllustration.value = cloneDeep(el);
   modalState.value = 'illustration';
   stores.modal.show();
 };

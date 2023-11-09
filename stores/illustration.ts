@@ -20,16 +20,6 @@ export const useIllustrationStore = definePiniaStore('illustration', () => {
     currentIllustration.value = getNewIllustration();
   }
 
-  function changeActiveIllustration(p?: Illustration | null) {
-    if (p) {
-      activeIllustration.value = { ...p };
-      currentIllustration.value = { ...p };
-    } else {
-      activeIllustration.value = null;
-      clearCurrentIllustration();
-    }
-  }
-
   async function update(token: string) {
     if (!issueStore.issueId) {
       throw new Error('no issue id');
@@ -76,6 +66,5 @@ export const useIllustrationStore = definePiniaStore('illustration', () => {
     init,
     update,
     clearCurrentIllustration,
-    changeActiveIllustration,
   };
 });
