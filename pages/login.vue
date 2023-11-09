@@ -1,6 +1,9 @@
 <template>
   <NuxtLayout>
-    <div class="m-auto flex flex-col gap-8 rounded-2xl bg-slate-100 p-8">
+    <form
+      class="m-auto flex flex-col gap-8 rounded-2xl bg-slate-100 p-8"
+      @submit.prevent="handleStart"
+    >
       <Logo class="m-auto w-1/3 fill-purple-500" />
       <InputComponent
         v-model="uid"
@@ -19,20 +22,17 @@
         :select-only="false"
       />
       <div class="flex justify-center gap-8">
-        <CardButton
-          class="w-48 rounded-lg bg-blue-500 py-3 text-2xl text-white"
-          @click="handleStart"
-        >
+        <CardButton class="rounded-lg bg-blue-500 text-2xl text-white">
           開始
         </CardButton>
         <CardButton
-          class="w-48 rounded-lg bg-gray-400 py-3 text-2xl text-white"
-          @click="() => (uid = generateUid())"
+          class="rounded-lg bg-gray-400 text-2xl text-white"
+          @click.prevent="() => (uid = generateUid())"
         >
           自動產生 UID
         </CardButton>
       </div>
-    </div>
+    </form>
   </NuxtLayout>
 </template>
 
@@ -50,6 +50,16 @@ const uid = ref('');
 const username = ref('');
 
 const handleStart = async () => {
+  if (!uid.value) {
+    alert('請輸入 UID');
+    return;
+  }
+
+  if (!username.value) {
+    alert('請輸入使用者名稱');
+    return;
+  }
+
   const { data, error } = await useFetch<LoginResponse>('/api/login', {
     method: 'post',
     body: {
