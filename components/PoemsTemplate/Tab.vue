@@ -72,13 +72,22 @@
             <component :is="ActionsComponents[state]" />
           </template>
           <template #icon-actions>
-            <Icon
-              v-if="state !== 'DETAILS'"
-              class="cursor-pointer text-blue-950"
-              name="game-icons:rolling-dices"
-              size="1.75rem"
-              @click="stores.poemsTemplate.randomizeContext"
-            />
+            <ClientOnly>
+              <Icon
+                v-if="state !== 'DETAILS'"
+                class="cursor-pointer text-blue-950"
+                name="game-icons:rolling-dices"
+                size="1.75rem"
+                @click="stores.poemsTemplate.randomizeContext"
+              />
+              <Icon
+                v-if="state == 'DETAILS'"
+                class="cursor-pointer text-blue-950"
+                name="material-symbols:open-in-full-rounded"
+                size="1.75rem"
+                @click="stores.modal.show"
+              />
+            </ClientOnly>
           </template>
         </FormCard>
       </FormPanel>
@@ -96,20 +105,10 @@
         </Card>
         <!-- Should be async component -->
         <Card
-          v-for="el in poemsTemplates.filter((el) =>
-            [
-              el.title,
-              el.persona?.role,
-              el.persona?.trait,
-              el.object,
-              el.environment,
-              el.service,
-            ].join()
-          )"
+          v-for="el in poemsTemplates"
           :key="el._id"
           class="min-h-[150px] xl:min-h-[350px]"
           :active="activeId === el._id"
-          @dblclick="() => handleDblclick()"
           @click="() => (activePoemsTemplate = el)"
         >
           <CardTitle>{{ el.title }}</CardTitle>
@@ -131,6 +130,7 @@
         <!-- Should be async component (end) -->
       </CardGallery>
     </CardGalleryPanel>
+    <PoemsTemplateModal />
   </NuxtLayout>
 </template>
 
@@ -170,10 +170,6 @@ const {
   personaOptions,
   keywordOptions,
 } = storeToRefs(stores.poemsTemplate);
-
-const handleDblclick = () => {
-  stores.modal.show();
-};
 
 const handleSearch = async (value: string) => {
   searchQuery.value = value;

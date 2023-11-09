@@ -96,7 +96,7 @@
                 class="cursor-pointer text-blue-950"
                 name="material-symbols:open-in-full-rounded"
                 size="1.75rem"
-                @click="() => openModel()"
+                @click="stores.modal.show"
               />
             </ClientOnly>
           </template>
@@ -120,7 +120,7 @@
           :key="p._id"
           :active="activeId === p._id"
           class="h-[200px] xl:h-[350px]"
-          @dblclick="() => openModel()"
+          @dblclick="stores.modal.show"
           @click="() => (activePersona = p)"
         >
           <template #image>
@@ -188,9 +188,6 @@ const {
 
 const imgaeUrl = computed(() => imageUrl.value || activePersona.value?.image);
 
-const openModel = () => {
-  stores.modal.show();
-};
 const handleSearch = async (value: string) => {
   searchQuery.value = value;
 
