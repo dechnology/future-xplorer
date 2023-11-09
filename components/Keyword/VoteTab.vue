@@ -34,6 +34,7 @@
                 <KeywordCard
                   v-for="kw in slotProps.keywords"
                   :key="kw._id"
+                  :editable="false"
                   class="min-h-20 xl:min-h-40"
                   @update:keyword="(body) => (kw.body = body)"
                 >
@@ -75,6 +76,7 @@
                 <KeywordCard
                   v-for="kw in slotProps.keywords"
                   :key="kw._id"
+                  :editable="false"
                   class="min-h-20 xl:min-h-40"
                   @update:keyword="(body) => (kw.body = body)"
                 >
@@ -112,6 +114,7 @@
         <KeywordCard
           v-for="kw in slotProps.keywords"
           :key="kw._id"
+          :editable="false"
           class="xl:h-32"
         >
           <template #favIcon>

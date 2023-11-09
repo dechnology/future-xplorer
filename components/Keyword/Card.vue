@@ -35,14 +35,15 @@
 </template>
 
 <script setup lang="ts">
-withDefaults(
-  defineProps<{
-    showCategory?: boolean;
-  }>(),
-  {
-    showCategory: true,
-  }
-);
+interface Props {
+  showCategory?: boolean;
+  editable?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  showCategory: true,
+  editable: true,
+});
 
 const emit = defineEmits<{
   (e: 'update:keyword', body: string): void;
@@ -52,11 +53,15 @@ const inputDivRef = ref<HTMLDivElement | null>(null);
 const editing = ref(false);
 
 const handleDblclick = () => {
+  if (!props.editable) return;
+
   editing.value = true;
   inputDivRef.value?.focus();
 };
 
 const handleKeywordUpdate = (e: KeyboardEvent | FocusEvent) => {
+  if (!props.editable) return;
+
   editing.value = false;
   emit('update:keyword', (e.target as HTMLDivElement).innerText);
 };
