@@ -1,63 +1,57 @@
-# Nuxt 3 Minimal Starter
+# TDRI - 未來情境探索輔助工具
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+This project is build with [Nuxt 3](https://v3.nuxtjs.org) and [Tailwind CSS](https://tailwindcss.com).
 
-## Setup
+## Prerequisites
 
-Make sure to install the dependencies:
+### Create a `.env` file
+
+Create a `.env` file in the root of the project with the following content:
 
 ```bash
-# npm
-npm install
+IMAGE_NAME=<IMAGE_NAME>
+MONGO_USER=<MONGO_USER>
+MONGO_PASSWORD=<MONGO_PASSWORD>
+MONGO_HOST=<MONGO_HOST>
+MONGO_PORT=<MONGO_PORT>
+MONGO_DB=<MONGO_DB>
+OPENAI_API_KEY=<OPENAI_API_KEY>
 
-# pnpm
-pnpm install
+S3_DOMAIN=<S3_DOMAIN>
+S3_ACCESS_KEY_ID=<S3_ACCESS_KEY_ID>
+S3_SECRET_ACCESS_KEY=<S3_SECRET_ACCESS_KEY>
+```
 
-# yarn
-yarn install
+## Usage with Docker
+
+### Build the Docker image for Nuxt 3 App
+
+```bash
+docker build -t <IMAGE_NAME> .
+```
+
+### Run the Docker compose with the `.env` file
+
+```bash
+docker compose --env-file .env.docker up -d
 ```
 
 ## Development Server
 
+### Install dependencies
+
+Make sure to install the dependencies:
+
+```bash
+yarn install
+```
+
+### Run the development server
+
 Start the development server on `http://localhost:3000`:
 
 ```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm run dev
-
-# yarn
 yarn dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
