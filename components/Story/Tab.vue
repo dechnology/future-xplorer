@@ -22,9 +22,8 @@
           <template #icon-actions>
             <Icon
               v-if="state === 'NEW' || state === 'EDITING'"
-              class="cursor-pointer text-blue-950"
+              class="h-5 w-5 cursor-pointer text-blue-950 xl:h-6 xl:w-6"
               name="game-icons:rolling-dices"
-              size="1.75rem"
               @click="handleDiceClick"
             />
           </template>
