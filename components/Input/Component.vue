@@ -97,14 +97,13 @@ const inputProps = computed(() => {
         'xl:pr-4',
         'xl:py-4',
         'max-xl:text-xs',
-        'border',
-        'border-solid',
-        'border-black',
       ],
       props.type === 'textarea' && 'resize-none',
       props.inputClasses,
       props.selectOptions && 'pr-8 xl:pr-12',
-      props.disabled ? ['bg-slate-50'] : ['border-opacity-40']
+      props.disabled
+        ? ['bg-slate-50', 'border-none', 'bg-transparent']
+        : ['border-opacity-40', 'border', 'border-solid', 'border-black']
     ),
     placeholder: props.placeholder,
     disabled: props.disabled,
