@@ -2,10 +2,11 @@
   <NuxtLayout>
     <ClientOnly>
       <form
-        class="m-auto flex flex-col gap-8 rounded-2xl bg-slate-100 p-8"
+        class="m-auto flex flex-col gap-8 bg-white p-8 shadow-lg"
         @submit.prevent="handleStart"
       >
         <Logo class="m-auto w-1/3 fill-purple-500" />
+        <h1 class="text-center text-2xl font-bold">未來情境探索輔助工具</h1>
         <InputComponent
           v-model="uid"
           type="text"
@@ -23,11 +24,13 @@
           :select-only="false"
         />
         <div class="flex justify-center gap-8">
-          <CardButton class="rounded-lg bg-blue-500 text-2xl text-white">
+          <CardButton
+            class="rounded-lg bg-indigo-500 text-white hover:bg-indigo-600"
+          >
             開始
           </CardButton>
           <CardButton
-            class="rounded-lg bg-gray-400 text-2xl text-white"
+            class="rounded-lg bg-lime-600 text-white hover:bg-lime-700"
             @click.prevent="() => (uid = generateUid())"
           >
             自動產生 UID
