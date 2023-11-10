@@ -44,7 +44,6 @@ We have released the Docker image to the GitHub Container Registry, you set the 
 docker compose --env-file .env.docker up -d
 ```
 
-
 ## Development Server
 
 ### Install dependencies
