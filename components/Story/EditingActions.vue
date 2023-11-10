@@ -37,7 +37,7 @@ const handleSaveEdit = async () => {
   try {
     loading.value = true;
 
-    if (isEqual(currentStory.value, activeStories.value)) {
+    if (isEqual(currentStory.value, activeStories.value[0])) {
       stores.story.resetForm();
       return;
     }
