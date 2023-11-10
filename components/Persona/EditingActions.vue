@@ -1,30 +1,38 @@
 <template>
-  <div class="flex items-center justify-around">
+  <div class="flex items-center justify-center gap-2 xl:gap-4">
     <CardButton
-      class="mx-auto rounded-lg bg-lime-600 px-8 text-white"
+      class="rounded-lg bg-lime-600 text-white"
       :class="!loading && 'hover:bg-lime-700'"
       :disabled="loading"
       @click.prevent="() => handlePortraitGeneration()"
     >
-      <span class="py-3"> AI生成圖片 </span>
+      AI生成圖片
+    </CardButton>
+    <CardButton
+      class="rounded-lg bg-red-400 text-white"
+      :class="!loading && 'hover:bg-red-500'"
+      :disabled="loading"
+      @click.prevent="() => handleImageRemove()"
+    >
+      刪除圖片
     </CardButton>
   </div>
   <div class="flex items-center justify-around">
     <CardButton
-      class="rounded-lg bg-red-400 px-8 text-white"
+      class="rounded-lg bg-red-400 text-white"
       :class="!loading && 'hover:bg-red-500'"
       :disabled="loading"
       @click.prevent="() => stores.persona.resetForm()"
     >
-      <span class="py-3"> 取消 </span>
+      取消
     </CardButton>
     <CardButton
-      class="rounded-lg bg-indigo-500 px-8 text-white"
+      class="rounded-lg bg-indigo-500 text-white"
       :class="!loading && 'hover:bg-indigo-600'"
       :disabled="loading"
       @click.prevent="handleSaveEdit"
     >
-      <span class="py-3"> 儲存 </span>
+      儲存
     </CardButton>
   </div>
 </template>
@@ -49,7 +57,6 @@ const {
   imageFile,
   imageUrl,
   loading,
-  formDisabled,
 } = storeToRefs(stores.persona);
 
 const handlePortraitGeneration = async () => {
@@ -85,6 +92,11 @@ const handlePortraitGeneration = async () => {
   }
 };
 
+const handleImageRemove = () => {
+  currentPersona.value.image = null;
+  stores.persona.resetImage();
+};
+
 const handleSaveEdit = async () => {
   try {
     loading.value = true;
@@ -96,19 +108,15 @@ const handleSaveEdit = async () => {
 
     let token = await getTokenSilently();
     const el = NewPersonaSchema.parse(currentPersona.value);
-    const { data: uploadedUrl } = await uploadImageToS3(
-      token,
-      imageUrl.value,
-      imageFile.value
-    );
-    el.image = uploadedUrl;
 
-    // if (imageUrl.value) {
-    //   el.image = imageFile.value
-    //     ? (await uploadImageFile(token, imageFile.value)).data
-    //     : (await uploadImageUrl(token, imageUrl.value)).data;
-    //   console.log(`image url: ${el.image}`);
-    // }
+    if (imageUrl.value) {
+      const { data: uploadedUrl } = await uploadImageToS3(
+        token,
+        imageUrl.value,
+        imageFile.value
+      );
+      el.image = uploadedUrl;
+    }
 
     console.log('Patching: ', el);
     token = await getTokenSilently();

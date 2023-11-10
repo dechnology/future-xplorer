@@ -1,4 +1,14 @@
 <template>
+  <div class="flex items-center justify-center">
+    <CardButton
+      class="rounded-lg bg-red-400 text-white"
+      :class="!loading && 'hover:bg-red-500'"
+      :disabled="loading"
+      @click.prevent="() => handleImageRemove()"
+    >
+      刪除圖片
+    </CardButton>
+  </div>
   <div class="flex items-center justify-around">
     <CardButton
       class="rounded-lg bg-red-400 text-white"
@@ -38,6 +48,11 @@ const {
   loading,
 } = storeToRefs(stores.case);
 
+const handleImageRemove = () => {
+  currentCase.value.image = null;
+  stores.case.resetImage();
+};
+
 const handleSaveEdit = async () => {
   try {
     loading.value = true;
@@ -64,7 +79,7 @@ const handleSaveEdit = async () => {
     token = await getTokenSilently();
     const { data: editedCase } = await fetchResource<Case>(
       token,
-      `/api/issues/${activeId.value}`,
+      `/api/cases/${activeId.value}`,
       { method: 'put', body: el }
     );
     console.log('Patched: ', editedCase);

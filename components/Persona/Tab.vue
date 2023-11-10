@@ -72,7 +72,7 @@
             <div class="flex flex-col overflow-hidden rounded-lg">
               <Image
                 v-model:file="imageFile"
-                :url="imgaeUrl"
+                :url="currentImgaeUrl"
                 :disabled="formDisabled"
                 :image-state="imageState"
                 @blob-url-created="(url) => (imageUrl = url)"
@@ -186,7 +186,9 @@ const {
   formCardProps,
 } = storeToRefs(stores.persona);
 
-const imgaeUrl = computed(() => imageUrl.value || activePersona.value?.image);
+const currentImgaeUrl = computed(
+  () => imageUrl.value || currentPersona.value?.image
+);
 
 const handleSearch = async (value: string) => {
   searchQuery.value = value;
