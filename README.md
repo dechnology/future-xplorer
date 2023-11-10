@@ -8,7 +8,7 @@ This project is build with [Nuxt 3](https://v3.nuxtjs.org) and [Tailwind CSS](ht
 
 Create a `.env` file in the root of the project with the following content:
 
-```bash
+```zsh
 IMAGE_NAME=<IMAGE_NAME>
 MONGO_USER=<MONGO_USER>
 MONGO_PASSWORD=<MONGO_PASSWORD>
@@ -22,19 +22,28 @@ S3_ACCESS_KEY_ID=<S3_ACCESS_KEY_ID>
 S3_SECRET_ACCESS_KEY=<S3_SECRET_ACCESS_KEY>
 ```
 
-## Usage with Docker
+## Usage with self-built Docker
 
 ### Build the Docker image for Nuxt 3 App
 
-```bash
+```zsh
 docker build -t <IMAGE_NAME> .
 ```
 
 ### Run the Docker compose with the `.env` file
 
-```bash
+```zsh
 docker compose --env-file .env.docker up -d
 ```
+
+## Usage released Docker registry
+
+We have released the Docker image to the GitHub Container Registry, you set the <IMAGE_NAME> to `ghcr.io/eesoymilk/future-xplorer:main` and run the Docker compose with the `.env` file:
+
+```zsh
+docker compose --env-file .env.docker up -d
+```
+
 
 ## Development Server
 
@@ -42,7 +51,7 @@ docker compose --env-file .env.docker up -d
 
 Make sure to install the dependencies:
 
-```bash
+```zsh
 yarn install
 ```
 
@@ -50,7 +59,7 @@ yarn install
 
 Start the development server on `http://localhost:3000`:
 
-```bash
+```zsh
 yarn dev
 ```
 
