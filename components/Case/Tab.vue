@@ -111,14 +111,14 @@
           @dblclick="() => stores.modal.show()"
           @click="() => (activeCase = el)"
         >
-          <template
-            v-if="el.keywords.flatMap((kw) => kw.votes).length > 0"
-            #absolute
-          >
+          <template #absolute>
             <Icon
-              name="mdi:star"
-              size="1.5rem"
-              class="absolute right-2 top-2 text-white"
+              :name="
+                el.keywords.flatMap((kw) => kw.votes).length
+                  ? 'mdi:star'
+                  : 'mdi:star-outline'
+              "
+              class="absolute left-1 top-1 z-10 text-sky-950 xl:left-2 xl:top-2 xl:h-6 xl:w-6"
             />
           </template>
           <template #image>

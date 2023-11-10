@@ -109,6 +109,7 @@
           :key="el._id"
           class="min-h-[150px] xl:min-h-[350px]"
           :active="activeId === el._id"
+          @dblclick="stores.modal.show"
           @click="() => (activePoemsTemplate = el)"
         >
           <CardTitle>{{ el.title }}</CardTitle>
