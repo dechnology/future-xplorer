@@ -25,21 +25,8 @@ interface Props {
   download?: boolean;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   url: undefined,
   download: false,
 });
-
-// const handleDownload = () => {
-//   if (!props.url) {
-//     return;
-//   }
-
-//   const link = document.createElement('a');
-//   link.href = props.url;
-//   link.setAttribute('download', '');
-//   document.body.appendChild(link);
-//   link.click();
-//   document.body.removeChild(link);
-// };
 </script>
