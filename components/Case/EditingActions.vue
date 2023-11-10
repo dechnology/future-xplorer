@@ -1,20 +1,30 @@
 <template>
+  <div class="flex items-center justify-center">
+    <CardButton
+      class="rounded-lg bg-red-400 text-white"
+      :class="!loading && 'hover:bg-red-500'"
+      :disabled="loading"
+      @click.prevent="() => handleImageRemove()"
+    >
+      刪除圖片
+    </CardButton>
+  </div>
   <div class="flex items-center justify-around">
     <CardButton
-      class="rounded-lg bg-red-400 px-8 text-white"
+      class="rounded-lg bg-red-400 text-white"
       :class="!loading && 'hover:bg-red-500'"
       :disabled="loading"
       @click.prevent="() => stores.case.resetForm()"
     >
-      <span class="py-3"> 取消 </span>
+      取消
     </CardButton>
     <CardButton
-      class="rounded-lg bg-indigo-500 px-8 text-white"
+      class="rounded-lg bg-indigo-500 text-white"
       :class="!loading && 'hover:bg-indigo-600'"
       :disabled="loading"
       @click.prevent="handleSaveEdit"
     >
-      <span class="py-3"> 儲存 </span>
+      儲存
     </CardButton>
   </div>
 </template>
@@ -37,6 +47,11 @@ const {
   state,
   loading,
 } = storeToRefs(stores.case);
+
+const handleImageRemove = () => {
+  currentCase.value.image = null;
+  stores.case.resetImage();
+};
 
 const handleSaveEdit = async () => {
   try {
@@ -64,7 +79,7 @@ const handleSaveEdit = async () => {
     token = await getTokenSilently();
     const { data: editedCase } = await fetchResource<Case>(
       token,
-      `/api/issues/${activeId.value}`,
+      `/api/cases/${activeId.value}`,
       { method: 'put', body: el }
     );
     console.log('Patched: ', editedCase);

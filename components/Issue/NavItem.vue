@@ -13,12 +13,18 @@ const classes = computed(() =>
   twMerge(
     [
       'flex',
-      'h-12',
-      'w-36',
+      'h-8',
+      'w-16',
+      'lg:w-24',
+      'xl:h-12',
+      'xl:w-36',
       'cursor-pointer',
       'items-center',
       'justify-center',
-      'font-medium transition-all',
+      'font-medium',
+      'text-xs',
+      'xl:text-base',
+      'transition-all',
     ],
     props.active
       ? ['border-b-2', 'border-solid', 'border-white', 'text-white']

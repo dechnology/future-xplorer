@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="flex h-[72px] shrink-0 grow-0 items-stretch overflow-x-auto rounded-lg bg-zinc-100"
-  >
+  <div class="flex shrink-0 overflow-x-auto rounded-lg bg-zinc-100">
     <slot />
   </div>
 </template>

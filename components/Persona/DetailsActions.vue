@@ -1,20 +1,20 @@
 <template>
   <div class="flex items-center justify-around">
     <CardButton
-      class="rounded-lg bg-red-400 px-8 text-white transition-all"
+      class="rounded-lg bg-red-400 text-white transition-all"
       :class="!loading && 'hover:bg-red-500'"
       :disabled="loading"
       @click.prevent="handleRemove"
     >
-      <span class="py-3"> 刪除 </span>
+      刪除
     </CardButton>
     <CardButton
-      class="rounded-lg bg-black bg-opacity-40 px-8 text-white transition-all"
+      class="rounded-lg bg-black bg-opacity-40 text-white transition-all"
       :class="!loading && 'hover:bg-opacity-50'"
       :disabled="loading"
       @click.prevent="handleEdit"
     >
-      <span class="py-3"> 編輯 </span>
+      編輯
     </CardButton>
   </div>
 </template>

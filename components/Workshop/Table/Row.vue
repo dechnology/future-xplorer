@@ -16,7 +16,8 @@ const props = withDefaults(defineProps<Props>(), {
 const trClasses = computed(() =>
   twMerge(
     [
-      'h-[77.5px]',
+      'h-12',
+      'xl:h-20',
       'ease-in-out',
       'cursor-pointer',
       'border-b',

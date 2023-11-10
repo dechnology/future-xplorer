@@ -11,8 +11,8 @@
         <FormCard>
           <template #body>
             <CardButton
-              class="mx-auto w-fit rounded-lg bg-indigo-500 px-8 py-3 text-white transition-all hover:bg-indigo-600"
-              @click.prevent="() => stores.modal.show()"
+              class="mx-auto w-fit rounded-lg bg-indigo-500 text-white transition-all hover:bg-indigo-600"
+              @click.prevent="handleStoryModalOpen"
             >
               選擇故事
             </CardButton>
@@ -22,19 +22,19 @@
               title="故事內容"
               placeholder="故事內容"
               :disabled="formDisabled"
-              input-classes="h-[200px]"
+              input-classes="h-[100px] xl:h-[200px]"
             />
             <div class="flex flex-col items-center">
               <CardButton
-                class="rounded-lg bg-lime-600 px-8 py-3 text-white transition-all hover:bg-lime-700"
+                class="rounded-lg bg-lime-600 font-medium text-white transition-all hover:bg-lime-700"
                 body="Prompt"
+                :disabled="formDisabled"
                 @click.prevent="handlePromptGeneration"
               >
                 <span>PROMPT</span>
                 <Icon
                   name="material-symbols:double-arrow"
-                  size="2.5rem"
-                  class="rotate-90"
+                  class="h-8 w-8 rotate-90 xl:h-14 xl:w-14"
                 />
               </CardButton>
             </div>
@@ -44,10 +44,10 @@
               type="textarea"
               title="Prompt"
               placeholder="情境圖 prompt"
-              input-classes="h-[200px]"
+              input-classes="h-[100px] xl:h-[200px]"
             />
             <div
-              class="flex w-full items-center justify-center gap-6 px-4 text-base font-normal leading-relaxed text-black"
+              class="flex w-full items-center justify-center gap-3 px-4 text-xs font-normal leading-relaxed text-black xl:gap-6 xl:text-base"
             >
               <div>使用這個Prompt一次新增</div>
               <InputRange
@@ -59,7 +59,8 @@
               <div>張圖</div>
             </div>
             <CardButton
-              class="mx-auto w-fit rounded-lg bg-indigo-500 px-8 py-3 text-white transition-all hover:bg-indigo-600"
+              class="mx-auto w-fit rounded-lg bg-indigo-500 text-white transition-all hover:bg-indigo-600"
+              :disabled="formDisabled"
               @click.prevent="handleImageGenerations"
             >
               情境圖生成
@@ -73,8 +74,8 @@
         <Card
           v-for="el in illustrations"
           :key="el._id"
-          class="h-[350px]"
-          @dblclick="() => handleDblclick()"
+          class="max-h-[200px] min-h-[150px] xl:max-h-[400px] xl:min-h-[350px]"
+          @dblclick="() => handleDblclick(el)"
           @click="() => (currentIllustration = cloneDeep(el))"
         >
           <template #image>
@@ -89,9 +90,7 @@
       </CardGallery>
     </CardGalleryPanel>
   </NuxtLayout>
-  <IllustrationStoriesModal
-    @confirm="(el) => (currentIllustration.story = el)"
-  />
+  <IllustrationModal :modal-state="modalState" />
 </template>
 
 <script setup lang="ts">
@@ -116,11 +115,13 @@ const {
   searchQuery,
   illustrations,
   currentIllustration,
+  activeIllustration,
   formDisabled,
   loading,
 } = storeToRefs(stores.illustration);
 
 const numberToGenerate = ref(1);
+const modalState = ref<'stories' | 'illustration'>('stories');
 
 const handlePromptGeneration = async () => {
   try {
@@ -203,7 +204,14 @@ const handleImageGenerations = async () => {
   await Promise.all(promises);
 };
 
-const handleDblclick = () => {
+const handleStoryModalOpen = () => {
+  modalState.value = 'stories';
+  stores.modal.show();
+};
+
+const handleDblclick = (el: Illustration) => {
+  activeIllustration.value = cloneDeep(el);
+  modalState.value = 'illustration';
   stores.modal.show();
 };
 

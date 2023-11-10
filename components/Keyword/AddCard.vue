@@ -21,7 +21,10 @@
       class="flex h-full cursor-pointer items-center"
       @click="handleClick"
     >
-      <Icon class="text-gray-400" name="mdi:plus" size="5rem" />
+      <Icon
+        class="h-10 w-10 text-gray-400 lg:h-16 lg:w-16 xl:h-24 xl:w-24"
+        name="mdi:plus"
+      />
     </div>
   </div>
 </template>

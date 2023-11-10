@@ -2,12 +2,11 @@
   <div :class="classes">
     <InputSearchBar
       v-if="includeSearchBar"
-      v-model="searchQuery"
       placeholder="輸入關鍵字"
       button-text="搜尋"
-      @search="$emit('search', searchQuery)"
+      @search="(value) => $emit('search', value)"
     />
-    <slot :search-query="searchQuery" />
+    <slot />
   </div>
 </template>
 
@@ -27,11 +26,6 @@ defineEmits<{
 }>();
 
 const classes = computed(() =>
-  twMerge(
-    'flex h-full min-h-0 shrink grow basis-auto flex-col gap-5 px-4 pt-4',
-    props.inputClasses
-  )
+  twMerge('flex h-full w-full flex-col gap-5 px-4 pt-4', props.inputClasses)
 );
-
-const searchQuery = ref('');
 </script>

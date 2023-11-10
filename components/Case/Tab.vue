@@ -22,7 +22,7 @@
               type="textarea"
               title="背景介紹"
               placeholder="案例背景"
-              input-classes="h-[100px]"
+              input-classes="h-24 xl:h-[100px]"
               :disabled="formDisabled"
             />
             <InputComponent
@@ -30,7 +30,7 @@
               type="textarea"
               title="作法"
               placeholder="案例作法"
-              input-classes="h-[100px]"
+              input-classes="h-24 xl:h-[100px]"
               :disabled="formDisabled"
             />
             <InputComponent
@@ -38,7 +38,7 @@
               type="textarea"
               title="目標"
               placeholder="案例目標"
-              input-classes="h-[100px]"
+              input-classes="h-24 xl:h-[100px]"
               :disabled="formDisabled"
             />
             <InputComponent
@@ -46,7 +46,7 @@
               type="textarea"
               title="問題與挑戰"
               placeholder="案例的問題與挑戰"
-              input-classes="h-[100px]"
+              input-classes="h-24 xl:h-[100px]"
               :disabled="formDisabled"
             />
             <InputComponent
@@ -54,7 +54,7 @@
               type="textarea"
               title="成果"
               placeholder="案例成果"
-              input-classes="h-[100px]"
+              input-classes="h-24 xl:h-[100px]"
               :disabled="formDisabled"
             />
             <InputComponent
@@ -62,7 +62,7 @@
               type="textarea"
               title="參考資料"
               placeholder="案例參考資料"
-              input-classes="h-[100px]"
+              input-classes="h-24 xl:h-[100px]"
               :disabled="formDisabled"
             />
             <InputComponent
@@ -70,14 +70,14 @@
               type="textarea"
               title="其他"
               placeholder="案例其他"
-              input-classes="h-[100px]"
+              input-classes="h-24 xl:h-[100px]"
               :disabled="formDisabled"
             />
 
             <div class="flex flex-col overflow-hidden rounded-lg">
               <Image
                 v-model:file="imageFile"
-                :url="imgaeUrl"
+                :url="currentImageUrl"
                 :disabled="formDisabled"
                 :image-state="imageState"
                 @blob-url-created="(url) => (imageUrl = url)"
@@ -95,7 +95,7 @@
       <CardGallery>
         <Card
           :active="!activeCase"
-          class="h-[350px]"
+          class="h-[200px] xl:h-[350px]"
           @click="() => (activeCase = null)"
         >
           <CardIcon :icon="{ name: 'mdi:plus', size: '5rem' }">
@@ -107,26 +107,24 @@
           v-for="el in cases"
           :key="el._id"
           :active="activeId === el._id"
-          class="h-[350px]"
+          class="h-[200px] xl:h-[350px]"
           @dblclick="() => stores.modal.show()"
           @click="() => (activeCase = el)"
         >
-          <template
-            v-if="el.keywords.flatMap((kw) => kw.votes).length > 0"
-            #absolute
-          >
+          <template #absolute>
             <Icon
-              name="mdi:star"
-              size="1.5rem"
-              class="absolute right-2 top-2 text-white"
+              :name="
+                el.keywords.flatMap((kw) => kw.votes).length
+                  ? 'mdi:star'
+                  : 'mdi:star-outline'
+              "
+              class="absolute left-1 top-1 z-10 text-sky-950 xl:left-2 xl:top-2 xl:h-6 xl:w-6"
             />
           </template>
           <template #image>
             <CardImage :url="el.image" />
           </template>
-          <CardDescription
-            input-classes="text-zinc-800 text-sm font-medium leading-snug"
-          >
+          <CardDescription input-classes="leading-snug">
             {{
               [
                 `標題：${el.title}`,
@@ -185,7 +183,9 @@ const {
   formCardProps,
 } = storeToRefs(stores.case);
 
-const imgaeUrl = computed(() => imageUrl.value || activeCase.value?.image);
+const currentImageUrl = computed(
+  () => imageUrl.value || currentCase.value?.image
+);
 
 const handleSearch = async (value: string) => {
   searchQuery.value = value;

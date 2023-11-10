@@ -14,7 +14,9 @@
           :key="`${content}_${title}`"
         >
           <p>
-            <span class="text-base font-semibold text-gray-700">
+            <span
+              class="text-sm font-medium text-gray-700 xl:text-base xl:font-semibold"
+            >
               {{ title }}：
             </span>
             <span>

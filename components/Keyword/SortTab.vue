@@ -8,24 +8,34 @@
             <template #description>{{ formPanelProps.description }}</template>
           </PanelHeader>
         </template>
-        <KeywordGallery
-          v-slot="slotProps"
-          :update-signal="updateSignal"
-          :keyword-query="{ ...keywordQuery, category: undefined }"
-          :grid-cols="2"
+        <KeywordGalleryPanel
+          include-search-bar
+          input-classes="px-0 pt-0"
+          @search="handleSearch"
         >
-          <KeywordCard
-            v-for="k in slotProps.keywords.filter((k) => !k.category)"
-            :key="k._id"
-            :draggable="true"
-            class="h-40"
-            @update:keyword="(body) => (k.body = body)"
-            @dragstart="() => (draggingKeyword = k)"
+          <KeywordGallery
+            v-slot="slotProps"
+            :update-signal="updateSignal"
+            :keyword-query="{
+              ...keywordQuery,
+              category: undefined,
+              searchQuery: searchQuery,
+            }"
+            :grid-cols="2"
           >
-            <template v-if="k.category" #category>{{ k.category }}</template>
-            {{ k.body }}
-          </KeywordCard>
-        </KeywordGallery>
+            <KeywordCard
+              v-for="k in slotProps.keywords.filter((k) => !k.category)"
+              :key="k._id"
+              :draggable="true"
+              class="xl:h-40"
+              @update:keyword="(body) => (k.body = body)"
+              @dragstart="() => (draggingKeyword = k)"
+            >
+              <template v-if="k.category" #category>{{ k.category }}</template>
+              {{ k.body }}
+            </KeywordCard>
+          </KeywordGallery>
+        </KeywordGalleryPanel>
       </FormPanel>
     </template>
     <KeywordGalleryPanel>
@@ -52,7 +62,7 @@
         <KeywordCard
           v-for="k in slotProps.keywords"
           :key="k._id"
-          class="h-32"
+          class="xl:h-32"
           @update:keyword="(body) => (k.body = body)"
         >
           <template #category>{{ k.category }}</template>
@@ -113,6 +123,7 @@ const getCurrentElement = (
 
 const draggingKeyword = ref<Keyword | null>(null);
 const currentElement = ref<WorkshopElement | undefined>(getCurrentElement());
+const searchQuery = ref('');
 const loading = ref(false);
 const updateSignal = ref(false);
 
@@ -121,6 +132,10 @@ const keywordQuery = computed<KeywordQuery>(() => ({
   userId: userId.value,
   category: currentElement.value?.name,
 }));
+
+const handleSearch = (query: string) => {
+  searchQuery.value = query;
+};
 
 const patchKeyword = async (
   el: Pick<Keyword, '_id' | 'body' | 'category' | 'type'>

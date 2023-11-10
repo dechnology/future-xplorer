@@ -1,5 +1,7 @@
 <template>
-  <th class="text-center text-sm font-semibold leading-tight text-gray-600">
+  <th
+    class="text-center text-sm font-medium leading-tight text-gray-600 xl:font-semibold"
+  >
     <slot />
   </th>
 </template>

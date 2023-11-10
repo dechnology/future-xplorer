@@ -31,25 +31,29 @@
               :disabled="formDisabled"
             />
             <div
-              class="text-center text-sm font-medium leading-snug text-black text-opacity-60"
+              class="text-center text-xs font-medium leading-snug text-black text-opacity-60 lg:text-sm"
             >
               預先設定工作坊POEMS分類
             </div>
             <InputChips
               v-model:chips="currentWorkshop.objects"
               title="Object - 物件 or 技術"
+              :disabled="formDisabled"
             />
             <InputChips
               v-model:chips="currentWorkshop.environments"
               title="Environment - 環境 or 場景"
+              :disabled="formDisabled"
             />
             <InputChips
               v-model:chips="currentWorkshop.messages"
               title="Message - 訊息 or 目標"
+              :disabled="formDisabled"
             />
             <InputChips
               v-model:chips="currentWorkshop.services"
               title="Service - 服務、行動 or 經驗"
+              :disabled="formDisabled"
             />
           </template>
           <template #actions>
@@ -76,7 +80,10 @@
             @click="() => stores.workshops.changeActiveWorkshop()"
           >
             <WorkshopTableData colspan="5">
-              <Icon name="mdi:plus-circle-outline" size="2rem" />
+              <Icon
+                name="mdi:plus-circle-outline"
+                class="h-4 w-4 lg:h-8 lg:w-8"
+              />
             </WorkshopTableData>
           </WorkshopTableRow>
           <ClientOnly>
@@ -117,8 +124,6 @@ const stores = {
 };
 const { currentWorkshop, activeId, state, formDisabled, currentFormCardProps } =
   storeToRefs(stores.workshops);
-
-const searchQuery = ref('');
 
 onMounted(() => {
   stores.breadcrumbs.clearAll();

@@ -10,7 +10,7 @@
         </template>
         <FormCard v-bind="formCardProps">
           <template #body>
-            <div class="grid grid-cols-2 gap-x-5 gap-y-7">
+            <div class="grid grid-cols-2 gap-2 xl:gap-x-5 xl:gap-y-7">
               <InputComponent
                 v-model="currentPersona.role"
                 type="text"
@@ -55,7 +55,7 @@
               type="textarea"
               title="特徵"
               placeholder="特徵"
-              input-classes="h-32"
+              input-classes="h-16 xl:h-32"
               :disabled="formDisabled"
               :select-options="
                 PersonaPresets.trait.map((el) => ({ name: el, data: el }))
@@ -66,13 +66,13 @@
               type="textarea"
               title="其他"
               placeholder="其他"
-              input-classes="h-32"
+              input-classes="h-16 xl:h-32"
               :disabled="formDisabled"
             />
             <div class="flex flex-col overflow-hidden rounded-lg">
               <Image
                 v-model:file="imageFile"
-                :url="imgaeUrl"
+                :url="currentImgaeUrl"
                 :disabled="formDisabled"
                 :image-state="imageState"
                 @blob-url-created="(url) => (imageUrl = url)"
@@ -96,7 +96,7 @@
                 class="cursor-pointer text-blue-950"
                 name="material-symbols:open-in-full-rounded"
                 size="1.75rem"
-                @click="() => openModel()"
+                @click="stores.modal.show"
               />
             </ClientOnly>
           </template>
@@ -107,7 +107,7 @@
       <CardGallery>
         <Card
           :active="!activePersona"
-          class="h-[350px]"
+          class="h-[200px] xl:h-[350px]"
           @click="() => (activePersona = null)"
         >
           <CardIcon :icon="{ name: 'mdi:plus', size: '5rem' }">
@@ -119,8 +119,8 @@
           v-for="p in personas"
           :key="p._id"
           :active="activeId === p._id"
-          class="h-[350px]"
-          @dblclick="() => openModel()"
+          class="h-[200px] xl:h-[350px]"
+          @dblclick="stores.modal.show"
           @click="() => (activePersona = p)"
         >
           <template #image>
@@ -145,43 +145,10 @@
       </CardGallery>
     </CardGalleryPanel>
   </NuxtLayout>
-  <PersonaModal v-if="activePersona">
-    <PersonaModalAvatar :current-persona-image="activePersona.image" />
-    <template #personaInfo>
-      <PersonaModalContent v-slot="slotProps">
-        <div
-          v-for="(content, title) in slotProps.content"
-          :key="`${content}_${title}`"
-        >
-          <p
-            class="font-['Roboto'] text-2xl font-bold leading-10 text-neutral-600"
-          >
-            <span class="font-semibold">{{ title }}：</span>
-            <span>{{ content }}</span>
-          </p>
-        </div>
-      </PersonaModalContent>
-    </template>
-    <template #actions>
-      <PersonaModalActions />
-      <PersonaModalFootnote>
-        <p>
-          <span class="font-regular text-base text-gray-400">
-            <br />{{ `建立者：${activePersona.creator.name}` }} <br />{{
-              `新增時間：${format(activePersona.createdAt, 'yyyy-MM-dd')}`
-            }}
-            <br />{{
-              `更新時間：${format(activePersona.updatedAt, 'yyyy-MM-dd')}`
-            }}
-          </span>
-        </p>
-      </PersonaModalFootnote>
-    </template>
-  </PersonaModal>
+  <PersonaModal />
 </template>
 
 <script setup lang="ts">
-import { format } from 'date-fns';
 import type { ConcreteComponent } from 'nuxt/dist/app/compat/capi';
 import type { FormStateKey } from '~/types';
 
@@ -219,11 +186,10 @@ const {
   formCardProps,
 } = storeToRefs(stores.persona);
 
-const imgaeUrl = computed(() => imageUrl.value || activePersona.value?.image);
+const currentImgaeUrl = computed(
+  () => imageUrl.value || currentPersona.value?.image
+);
 
-const openModel = () => {
-  stores.modal.show();
-};
 const handleSearch = async (value: string) => {
   searchQuery.value = value;
 

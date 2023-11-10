@@ -1,19 +1,19 @@
 <template>
   <div class="flex items-center justify-around">
     <CardButton
-      class="rounded-lg bg-red-400 px-8 py-3 text-white transition-all hover:bg-red-500"
+      class="rounded-lg bg-red-400 text-white transition-all hover:bg-red-500"
       @click.prevent="handleRemove"
     >
       刪除
     </CardButton>
     <CardButton
-      class="rounded-lg bg-lime-600 px-8 py-3 text-white hover:bg-lime-700"
+      class="rounded-lg bg-lime-600 text-white hover:bg-lime-700"
       @click.prevent="handleRemakeStory"
     >
       AI編輯故事
     </CardButton>
     <CardButton
-      class="rounded-lg bg-indigo-500 px-8 py-3 text-white hover:bg-indigo-600"
+      class="rounded-lg bg-indigo-500 text-white hover:bg-indigo-600"
       @click.prevent="handleEdit"
     >
       編輯

@@ -4,7 +4,7 @@
     <ul
       ref="ulRef"
       :class="disabled ? 'border-gray-200 bg-gray-50' : 'border-gray-500'"
-      class="flex min-h-[56px] items-center gap-2 rounded border border-solid p-3"
+      class="flex min-h-[43.6px] items-center gap-2 rounded border border-solid p-3 text-xs xl:min-h-[56px] xl:text-base"
       @click="handleClick"
     >
       <li
@@ -13,7 +13,7 @@
         :contenteditable="!disabled && idx === focusIndex"
         :class="idx === focusIndex ? 'bg-slate-300' : 'bg-slate-200'"
         tabindex="-1"
-        class="flex w-fit items-center gap-2 whitespace-nowrap rounded-2xl px-3 py-1"
+        class="flex w-fit items-center gap-2 whitespace-nowrap rounded-2xl px-2 xl:px-3 xl:py-1"
         @dblclick="(e) => handleDblClick(e, idx)"
         @keypress.enter.prevent="
           (e) => editChipsByIndex(idx, (e.target as HTMLLIElement).innerText)
@@ -25,7 +25,7 @@
         <div v-if="!disabled">
           <Icon
             name="typcn:delete-outline"
-            size="2rem"
+            class="h-4 w-4 xl:h-8 xl:w-8"
             @click="() => !disabled && deleteChipsByIndex(idx)"
           />
         </div>
@@ -50,7 +50,10 @@ interface Props {
   disabled?: boolean;
 }
 
-const props = withDefaults(defineProps<Props>(), { disabled: false });
+const props = withDefaults(defineProps<Props>(), {
+  title: undefined,
+  disabled: false,
+});
 
 const emit = defineEmits<{
   (e: 'update:chips', chips: string[]): void;
@@ -61,7 +64,7 @@ const lastListItem = ref<HTMLLIElement | null>(null);
 const focusIndex = ref<number | null>(null);
 
 const handleClick = () => {
-  if (!lastListItem.value) {
+  if (!lastListItem.value || props.disabled) {
     return;
   }
 

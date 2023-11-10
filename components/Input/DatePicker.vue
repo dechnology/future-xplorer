@@ -1,11 +1,6 @@
 <template>
   <div class="flex w-full flex-col gap-4">
-    <label
-      v-if="title"
-      class="bg-white px-1 text-lg font-semibold text-gray-700"
-    >
-      {{ title }}
-    </label>
+    <InputLabel v-if="title">{{ title }}</InputLabel>
     <VueTailwindDatepicker
       :key="`${dateModelValue.start} - ${dateModelValue.end}`"
       v-model="dateModelValue"
@@ -13,7 +8,7 @@
       :disabled="disabled"
       use-range
       separator=" - "
-      class="h-16 rounded-md"
+      class="rounded-md text-xs xl:text-base"
       :input-classes="
         disabled
           ? 'border-gray-200 bg-slate-50'

@@ -6,7 +6,7 @@
     type="textarea"
     :title="`故事 #${idx}: ${story.title}`"
     placeholder="故事內容"
-    input-classes="h-[200px]"
+    input-classes="h-[100px] xl:h-[200px]"
     disabled
   />
 </template>

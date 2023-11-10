@@ -1,28 +1,28 @@
 <template>
   <CardButton
-    class="mx-auto rounded-lg bg-lime-600 px-8 text-white"
+    class="mx-auto rounded-lg bg-lime-600 text-white"
     :class="!loading && 'hover:bg-lime-700'"
     :disabled="loading"
     @click.prevent="() => handlePortraitGeneration()"
   >
-    <span class="py-3"> AI生成圖片 </span>
+    AI生成圖片
   </CardButton>
   <div class="flex items-center justify-around">
     <CardButton
-      class="rounded-lg bg-red-400 px-8 text-white"
+      class="rounded-lg bg-red-400 text-white"
       :class="!loading && 'hover:bg-red-500'"
       :disabled="loading"
       @click.prevent="() => stores.persona.resetForm()"
     >
-      <span class="py-3"> 清除 </span>
+      清除
     </CardButton>
     <CardButton
-      class="rounded-lg bg-indigo-500 px-8 text-white"
+      class="rounded-lg bg-indigo-500 text-white"
       :class="!loading && 'hover:bg-indigo-600'"
       :disabled="loading"
       @click.prevent="handleCreate"
     >
-      <span class="py-3"> 新增 </span>
+      新增
     </CardButton>
   </div>
 </template>
@@ -133,6 +133,8 @@ const handleCreate = async () => {
     token = await getTokenSilently();
     stores.persona.update(token);
     stores.persona.resetForm();
+    imageUrl.value = null;
+    imageFile.value = null;
   } catch (e) {
     console.error(e);
   } finally {

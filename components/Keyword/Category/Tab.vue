@@ -1,13 +1,11 @@
 <template>
   <div
-    class="flex min-w-fit cursor-pointer items-center px-6 py-3 text-xl font-medium leading-7 transition-all"
+    class="w-fit min-w-fit cursor-pointer px-4 py-2 transition-all xl:px-6 xl:py-3 xl:text-xl xl:font-medium"
     :class="
       active ? 'bg-indigo-500 text-white' : ' text-black hover:bg-indigo-100'
     "
   >
-    <div>
-      <slot />
-    </div>
+    <slot />
   </div>
 </template>
 

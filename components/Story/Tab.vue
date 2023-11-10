@@ -35,7 +35,7 @@
       <CardGallery :grid-cols="3">
         <Card
           :active="!activeStories"
-          class="h-[350px]"
+          class="min-h-[200px] xl:min-h-[350px]"
           @click="() => (activeStories = [])"
         >
           <CardIcon :icon="{ name: 'mdi:plus', size: '5rem' }">
@@ -45,7 +45,7 @@
         <Card
           v-for="el in stories"
           :key="el._id"
-          class="h-[350px]"
+          class="min-h-[200px] xl:min-h-[350px]"
           :active="activeIds.includes(el._id)"
           @dblclick="() => handleDblclick()"
           @click="() => stores.story.toggleActiveStory(el)"

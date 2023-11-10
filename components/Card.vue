@@ -3,7 +3,7 @@
     <slot name="absolute" />
     <slot name="image" />
     <div
-      class="relative flex shrink grow basis-auto flex-col items-center justify-center p-5"
+      class="relative flex shrink grow basis-auto flex-col items-center justify-center p-2 xl:p-5"
     >
       <slot />
     </div>
@@ -19,7 +19,8 @@ const cardClasses = computed(() =>
   twMerge(
     [
       'overflow-hidden',
-      'rounded-2xl',
+      'rounded-lg',
+      'xl:rounded-xl',
       'border',
       'border-black',
       'border-opacity-50',

@@ -2,11 +2,9 @@
   <div
     v-if="activePersona"
     ref="contentDiv"
-    class="relative flex min-h-0 shrink grow basis-auto flex-col gap-6"
+    class="relative flex min-h-0 shrink grow basis-auto flex-col p-4 xl:gap-6 xl:p-8"
   >
-    <div class="flex flex-col gap-6">
-      <slot :content="activePersonaContent" />
-    </div>
+    <slot :content="activePersonaContent" />
   </div>
 </template>
 
