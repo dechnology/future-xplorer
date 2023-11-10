@@ -7,10 +7,9 @@
     <a
       v-if="download && url"
       class="absolute bottom-2 right-2 origin-bottom-right transition-all hover:scale-125"
-      download
-      :href="url"
+      download="illustration.png"
       target="_blank"
-      @click.stop.prevent
+      :href="url"
     >
       <Icon
         name="mdi:download"
@@ -25,6 +24,7 @@ interface Props {
   url?: string | null;
   download?: boolean;
 }
+
 withDefaults(defineProps<Props>(), {
   url: undefined,
   download: false,
