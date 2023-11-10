@@ -30,6 +30,7 @@ const { currentStory, activeStories, activeId, loading } = storeToRefs(
 
 const handleCancel = () => {
   currentStory.value = { ...activeStories.value[0] };
+  stores.story.resetForm();
 };
 
 const handleSaveEdit = async () => {

@@ -107,7 +107,7 @@
         <Card
           v-for="el in poemsTemplates"
           :key="el._id"
-          class="min-h-[150px] xl:min-h-[350px]"
+          class="max-h-[200px] min-h-[150px] xl:max-h-[400px] xl:min-h-[350px]"
           :active="activeId === el._id"
           @dblclick="stores.modal.show"
           @click="() => (activePoemsTemplate = el)"

@@ -74,7 +74,7 @@
         <Card
           v-for="el in illustrations"
           :key="el._id"
-          class="min-h-[150px] xl:min-h-[350px]"
+          class="max-h-[200px] min-h-[150px] xl:max-h-[400px] xl:min-h-[350px]"
           @dblclick="() => handleDblclick(el)"
           @click="() => (currentIllustration = cloneDeep(el))"
         >
@@ -91,7 +91,6 @@
     </CardGalleryPanel>
   </NuxtLayout>
   <IllustrationModal :modal-state="modalState" />
-  <!-- @confirm="(el) => (currentIllustration.story = el)" -->
 </template>
 
 <script setup lang="ts">

@@ -4,7 +4,7 @@
     class="flex h-full gap-4 overflow-y-auto xl:gap-8"
   >
     <div class="flex h-fit basis-1/2 flex-col overflow-hidden rounded-lg">
-      <NuxtImg :src="activeIllustration.image" :placeholder="[50, 25]" />
+      <NuxtImg :src="activeIllustration.image" placeholder />
     </div>
     <div
       class="flex h-full basis-1/2 flex-col gap-4 font-['Roboto'] text-sm text-neutral-600 xl:gap-8 xl:text-base"
