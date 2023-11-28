@@ -62,10 +62,12 @@ export default defineEventHandler(
     }
 
     console.log(filter);
-    const el = await KeywordModel.find(filter).populate([
-      'creator',
-      { path: 'votes', populate: ['creator', 'keyword'] },
-    ]);
+    const el = await KeywordModel.find(filter)
+      .sort({ createdAt: -1 })
+      .populate([
+        'creator',
+        { path: 'votes', populate: ['creator', 'keyword'] },
+      ]);
 
     if (!el) {
       throw createError({

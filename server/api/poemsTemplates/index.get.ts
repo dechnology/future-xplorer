@@ -25,13 +25,15 @@ export default defineEventHandler(
       filter.$text = { $search: searchQuery };
     }
 
-    const el = await PoemsTemplateModel.find(filter).populate([
-      'creator',
-      {
-        path: 'persona',
-        populate: 'creator',
-      },
-    ]);
+    const el = await PoemsTemplateModel.find(filter)
+      .sort({ createdAt: -1 })
+      .populate([
+        'creator',
+        {
+          path: 'persona',
+          populate: 'creator',
+        },
+      ]);
 
     if (!el) {
       throw createError({

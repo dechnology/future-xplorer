@@ -25,7 +25,9 @@ export default defineEventHandler(
       filter.$text = { $search: searchQuery };
     }
 
-    const el = await IllustrationModel.find(filter).populate('creator');
+    const el = await IllustrationModel.find(filter)
+      .sort({ createdAt: -1 })
+      .populate('creator');
 
     if (!el) {
       throw createError({
