@@ -22,7 +22,14 @@ export default defineEventHandler(
 
     const filter: FilterQuery<PoemsTemplate> = { issue: issueId };
     if (searchQuery) {
-      filter.$text = { $search: searchQuery };
+      const searchRegex = new RegExp(searchQuery, 'i');
+      filter.$or = [
+        { title: searchRegex },
+        { object: searchRegex },
+        { environment: searchRegex },
+        { message: searchRegex },
+        { service: searchRegex },
+      ];
     }
 
     const el = await PoemsTemplateModel.find(filter)

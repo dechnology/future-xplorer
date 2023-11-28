@@ -22,7 +22,12 @@ export default defineEventHandler(
 
     const filter: FilterQuery<Illustration> = { issue: issueId };
     if (searchQuery) {
-      filter.$text = { $search: searchQuery };
+      const searchRegex = new RegExp(searchQuery, 'i');
+      filter.$or = [
+        { prompt: searchRegex },
+        { story: searchRegex },
+        { image: searchRegex },
+      ];
     }
 
     const el = await IllustrationModel.find(filter)
