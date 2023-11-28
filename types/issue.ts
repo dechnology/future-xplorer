@@ -49,7 +49,7 @@ export interface IssueTab {
 export const IssueTabs: Record<IssueTabKeys, IssueTab> = {
   persona: { name: 'persona', title: '人物清單' },
   case: { name: 'case', title: '案例清單' },
-  keywordSort: { name: 'keywordSort', title: '案例整理' },
+  keywordSort: { name: 'keywordSort', title: '關鍵字整理' },
   keywordVote: { name: 'keywordVote', title: '關鍵字分享' },
   poemsTemplate: { name: 'poemsTemplate', title: '模板設計' },
   story: { name: 'story', title: '情境故事' },
