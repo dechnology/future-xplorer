@@ -73,13 +73,13 @@
           </template>
           <template #icon-actions>
             <ClientOnly>
-              <Icon
+              <!-- <Icon
                 v-if="state !== 'DETAILS'"
                 class="cursor-pointer text-blue-950"
                 name="game-icons:rolling-dices"
                 size="1.75rem"
                 @click="stores.poemsTemplate.randomizeContext"
-              />
+              /> -->
               <Icon
                 v-if="state == 'DETAILS'"
                 class="cursor-pointer text-blue-950"
