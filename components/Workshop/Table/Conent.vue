@@ -1,13 +1,13 @@
 <template>
   <WorkshopTableRow
-    v-for="w in workshops"
-    :key="w._id"
-    :active="w._id === activeId"
-    @dblclick="() => handleDblclick(w._id)"
-    @click="() => stores.workshops.changeActiveWorkshop(w)"
+    v-for="el in workshops"
+    :key="el._id"
+    :active="el._id === activeId"
+    @dblclick="() => handleDblclick(el._id)"
+    @click="() => (activeWorkshop = el)"
   >
     <WorkshopTableData
-      v-for="(datum, idx) in getWorkshopData(w)"
+      v-for="(datum, idx) in getWorkshopData(el)"
       :key="`${idx}_${datum}`"
     >
       {{ datum }}
@@ -22,7 +22,7 @@ const { getTokenSilently } = useAuth();
 const stores = {
   workshops: useWorkshopsStore(),
 };
-const { workshops, activeId } = storeToRefs(stores.workshops);
+const { workshops, activeWorkshop, activeId } = storeToRefs(stores.workshops);
 
 const getWorkshopData = (w: Workshop) => [
   w.name,
