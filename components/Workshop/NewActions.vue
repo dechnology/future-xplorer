@@ -27,7 +27,7 @@ const stores = { workshops: useWorkshopsStore() };
 const { currentWorkshop, loading } = storeToRefs(stores.workshops);
 
 const handleClear = () => {
-  stores.workshops.clearCurrentWorkshop();
+  stores.workshops.resetForm();
 };
 
 const handleCreate = async () => {
@@ -57,6 +57,7 @@ const handleCreate = async () => {
 
     token = await getTokenSilently();
     await stores.workshops.update(token);
+    stores.workshops.resetForm();
   } catch (e) {
     console.error(e);
   } finally {

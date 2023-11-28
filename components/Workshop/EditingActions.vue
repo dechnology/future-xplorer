@@ -29,7 +29,7 @@ const { currentWorkshop, activeId, activeWorkshop, state, loading } =
   storeToRefs(stores.workshops);
 
 const handleCancel = () => {
-  stores.workshops.changeActiveWorkshop(activeWorkshop.value);
+  stores.workshops.resetForm();
 };
 
 const handleSaveEdit = async () => {

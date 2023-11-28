@@ -20,12 +20,12 @@
             <component :is="ActionsComponents[state]" />
           </template>
           <template #icon-actions>
-            <Icon
+            <!-- <Icon
               v-if="state === 'NEW' || state === 'EDITING'"
               class="h-5 w-5 cursor-pointer text-blue-950 xl:h-6 xl:w-6"
               name="game-icons:rolling-dices"
               @click="handleDiceClick"
-            />
+            /> -->
           </template>
         </FormCard>
       </FormPanel>

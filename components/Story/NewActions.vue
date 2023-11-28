@@ -1,11 +1,11 @@
 <template>
   <div class="flex items-center justify-around">
-    <CardButton
+    <!-- <CardButton
       class="rounded-lg bg-red-400 text-white hover:bg-red-500"
       @click.prevent="() => stores.story.resetForm()"
     >
       清除
-    </CardButton>
+    </CardButton> -->
     <CardButton
       class="rounded-lg bg-indigo-500 text-white hover:bg-indigo-600"
       @click.prevent="handleCreate"

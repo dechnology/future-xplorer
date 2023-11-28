@@ -32,21 +32,16 @@ export const useWorkshopsStore = definePiniaStore('workshops', () => {
     await update(token);
   }
 
-  function clearCurrentWorkshop() {
-    currentWorkshop.value = getNewWorkshop();
+  function resetForm() {
+    state.value = activeWorkshop.value ? 'DETAILS' : 'NEW';
+    currentWorkshop.value = activeWorkshop.value
+      ? cloneDeep(activeWorkshop.value)
+      : getNewWorkshop();
   }
 
-  function changeActiveWorkshop(el?: Workshop | null) {
-    if (el) {
-      activeWorkshop.value = el;
-      currentWorkshop.value = cloneDeep(el);
-      state.value = 'DETAILS';
-    } else {
-      activeWorkshop.value = null;
-      clearCurrentWorkshop();
-      state.value = 'NEW';
-    }
-  }
+  watch(activeWorkshop, () => {
+    resetForm();
+  });
 
   return {
     workshops,
@@ -62,7 +57,6 @@ export const useWorkshopsStore = definePiniaStore('workshops', () => {
     update,
     init,
 
-    clearCurrentWorkshop,
-    changeActiveWorkshop,
+    resetForm,
   };
 });

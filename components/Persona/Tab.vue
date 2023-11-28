@@ -84,13 +84,13 @@
           </template>
           <template #icon-actions>
             <ClientOnly>
-              <Icon
+              <!-- <Icon
                 v-if="state !== 'DETAILS'"
                 class="cursor-pointer text-blue-950"
                 name="game-icons:rolling-dices"
                 size="1.75rem"
                 @click="() => (currentPersona = getRandomNewPersona())"
-              />
+              /> -->
               <Icon
                 v-if="state == 'DETAILS'"
                 class="cursor-pointer text-blue-950"

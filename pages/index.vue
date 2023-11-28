@@ -75,10 +75,7 @@
           </tr>
         </WorkshopTableHead>
         <tbody>
-          <WorkshopTableRow
-            :active="!activeId"
-            @click="() => stores.workshops.changeActiveWorkshop()"
-          >
+          <WorkshopTableRow :active="!activeId" @click="activeWorkshop = null">
             <WorkshopTableData colspan="5">
               <Icon
                 name="mdi:plus-circle-outline"
@@ -122,8 +119,14 @@ const stores = {
   workshops: useWorkshopsStore(),
   breadcrumbs: useBreadcrumbsStore(),
 };
-const { currentWorkshop, activeId, state, formDisabled, currentFormCardProps } =
-  storeToRefs(stores.workshops);
+const {
+  currentWorkshop,
+  activeWorkshop,
+  activeId,
+  state,
+  formDisabled,
+  currentFormCardProps,
+} = storeToRefs(stores.workshops);
 
 onMounted(() => {
   stores.breadcrumbs.clearAll();
