@@ -4,7 +4,7 @@
       class="rounded-lg bg-red-400 text-white transition-all"
       :class="!loading && 'hover:bg-red-500'"
       :disabled="loading"
-      @click.prevent="handleRemove"
+      @click.prevent="modalSignal = !modalSignal"
     >
       刪除
     </CardButton>
@@ -25,6 +25,11 @@
       關鍵字
     </CardButton>
   </div>
+  <ConfirmationModal
+    :loading="loading"
+    :signal="modalSignal"
+    @confirm="handelConfirm"
+  />
 </template>
 
 <script setup lang="ts">
@@ -36,6 +41,15 @@ const stores = {
   modal: useModalStore(),
 };
 const { activeId, state, loading } = storeToRefs(stores.case);
+
+const modalSignal = ref(false);
+
+const handelConfirm = async (status: boolean) => {
+  if (status) {
+    await handleRemove();
+  }
+  modalSignal.value = !modalSignal.value;
+};
 
 const handleRemove = async () => {
   try {

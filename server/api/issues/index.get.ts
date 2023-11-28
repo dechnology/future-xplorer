@@ -23,7 +23,9 @@ export default defineEventHandler(
     const el = await IssueModel.find({
       workshop,
       $or: [{ title: searchRegex }, { description: searchRegex }],
-    }).populate('creator');
+    })
+      .sort({ createdAt: -1 })
+      .populate('creator');
 
     if (!el) {
       throw createError({

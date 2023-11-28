@@ -1,4 +1,4 @@
-import type { Workshop, Issue, IssueTab, WorkshopElement } from '@/types';
+import type { Workshop, IssueTab, WorkshopElement, BaseIssue } from '@/types';
 
 export const useIssueStore = definePiniaStore('issue', () => {
   const workshop = ref<Workshop | null>(null);
@@ -45,7 +45,7 @@ export const useIssueStore = definePiniaStore('issue', () => {
       : []
   );
 
-  const issue = ref<Issue | null>(null);
+  const issue = ref<BaseIssue | null>(null);
   const issueId = computed(() => issue.value?._id);
   const currentTab = ref<IssueTab>(readCurrentTab());
 
@@ -69,10 +69,10 @@ export const useIssueStore = definePiniaStore('issue', () => {
       throw new Error('no issue id');
     }
 
-    const { data } = await fetchResource<Issue>(
+    const { data } = await fetchResource<BaseIssue>(
       token,
       `/api/issues/${issueId.value}`,
-      { deserializer: deserializeIssue }
+      { deserializer: deserializeBaseIssue }
     );
 
     issue.value = data;
@@ -81,8 +81,8 @@ export const useIssueStore = definePiniaStore('issue', () => {
   async function init(token: string, workshopId: string, issueId: string) {
     const [workshopResponse, issuesResponse] = await Promise.all([
       fetchResource<Workshop>(token, `/api/workshops/${workshopId}`),
-      fetchResource<Issue>(token, `/api/issues/${issueId}`, {
-        deserializer: deserializeIssue,
+      fetchResource<BaseIssue>(token, `/api/issues/${issueId}`, {
+        deserializer: deserializeBaseIssue,
       }),
     ]);
 

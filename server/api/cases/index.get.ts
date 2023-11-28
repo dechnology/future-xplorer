@@ -35,16 +35,18 @@ export default defineEventHandler(
       ];
     }
 
-    const el = await CaseModel.find(filter).populate([
-      'creator',
-      {
-        path: 'keywords',
-        populate: [
-          'creator',
-          { path: 'votes', populate: ['creator', 'keyword'] },
-        ],
-      },
-    ]);
+    const el = await CaseModel.find(filter)
+      .sort({ createdAt: -1 })
+      .populate([
+        'creator',
+        {
+          path: 'keywords',
+          populate: [
+            'creator',
+            { path: 'votes', populate: ['creator', 'keyword'] },
+          ],
+        },
+      ]);
 
     if (!el) {
       throw createError({

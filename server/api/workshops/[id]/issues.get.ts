@@ -5,7 +5,9 @@ export default defineEventHandler(
   async (event): Promise<ResourceObject<BaseIssue[]>> => {
     authenticate(event.context);
     const workshop = getRouterParam(event, 'id');
-    const issues = await IssueModel.find({ workshop }).sort({ updatedAt: -1 }).populate('creator');
+    const issues = await IssueModel.find({ workshop })
+      .sort({ updatedAt: -1 })
+      .populate('creator');
 
     if (!issues) {
       throw createError({

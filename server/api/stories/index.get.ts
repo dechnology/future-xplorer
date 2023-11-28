@@ -22,9 +22,9 @@ export default defineEventHandler(
 
     const filter: FilterQuery<Story> = { issue: issueId };
     if (searchQuery) {
-      filter.$text = { $search: searchQuery };
+      const searchRegex = new RegExp(searchQuery, 'i');
+      filter.$or = [{ title: searchRegex }, { content: searchRegex }];
     }
-
     const el = await StoryModel.find(filter).populate('creator');
 
     if (!el) {

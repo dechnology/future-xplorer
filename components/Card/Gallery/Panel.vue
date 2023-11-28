@@ -4,12 +4,11 @@
   >
     <InputSearchBar
       v-if="includeSearchBar"
-      v-model="searchQuery"
       placeholder="輸入關鍵字"
       button-text="搜尋"
-      @search="$emit('search', searchQuery)"
+      @search="(value) => $emit('search', value)"
     />
-    <slot :search-query="searchQuery" />
+    <slot />
   </div>
 </template>
 
@@ -25,6 +24,4 @@ withDefaults(defineProps<Props>(), {
 defineEmits<{
   (e: 'search', value: string): void;
 }>();
-
-const searchQuery = ref('');
 </script>

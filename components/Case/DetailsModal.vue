@@ -52,7 +52,7 @@
                 name="mdi:bin"
                 size="20px"
                 class="cursor-pointer text-red-400 transition-all hover:text-red-600"
-                @click="() => removeKeyword(el)"
+                @click="() => handleRemoveClick(el)"
               />
             </template>
           </KeywordCard>
@@ -60,6 +60,11 @@
       </KeywordGalleryPanel>
     </div>
   </div>
+  <ConfirmationModal
+    :loading="loading"
+    :signal="modalSignal"
+    @confirm="handelConfirm"
+  />
 </template>
 
 <script setup lang="ts">
@@ -77,6 +82,23 @@ const { ignoreNextClose } = storeToRefs(stores.modal);
 
 const searchQuery = ref();
 const updateSignal = ref(false);
+
+const modalSignal = ref(false);
+const keywordToRemove = ref<Keyword | null>(null);
+
+const handleRemoveClick = (kw: Keyword) => {
+  keywordToRemove.value = kw;
+  ignoreNextClose.value = true;
+  modalSignal.value = !modalSignal.value;
+};
+
+const handelConfirm = async (status: boolean) => {
+  if (status && keywordToRemove.value) {
+    await removeKeyword(keywordToRemove.value);
+    keywordToRemove.value = null;
+  }
+  modalSignal.value = !modalSignal.value;
+};
 
 const keywordQuery = computed<KeywordQuery>(() => ({
   caseId: activeId.value,

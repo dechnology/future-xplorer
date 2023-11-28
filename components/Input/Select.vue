@@ -96,7 +96,9 @@ const inputProps = computed(() => {
       ],
       props.inputClasses,
       props.options && 'pr-8 xl:pr-12',
-      props.disabled ? ['bg-slate-50'] : ['border-opacity-40']
+      props.disabled
+        ? ['bg-slate-50', 'border-none', 'bg-transparent']
+        : ['border-opacity-40', 'border', 'border-solid', 'border-black']
     ),
     disabled: props.disabled,
     value: props.modelValue,
