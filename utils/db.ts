@@ -166,3 +166,23 @@ export const fetchHistoryCases = async (
 
   return data.value.data;
 };
+
+export const fetchIllustrationBlob = async (
+  token: string,
+  id: string
+): Promise<Blob> => {
+  const { data, error } = await useFetch(`/api/illustrations/${id}/download`, {
+    method: 'get',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (error.value) {
+    throw error.value;
+  }
+
+  if (!data.value) {
+    throw new Error('data are null');
+  }
+
+  return data.value;
+};

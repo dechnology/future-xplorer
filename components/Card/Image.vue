@@ -4,18 +4,7 @@
     <div v-else class="flex h-full items-center justify-center bg-gray-300">
       <Icon name="mdi:image" size="5rem" />
     </div>
-    <a
-      v-if="download && url"
-      class="absolute bottom-2 right-2 origin-bottom-right transition-all hover:scale-125"
-      download="illustration.png"
-      target="_blank"
-      :href="url"
-    >
-      <Icon
-        name="mdi:download"
-        class="h-6 w-6 cursor-pointer text-slate-700 xl:h-8 xl:w-8"
-      />
-    </a>
+    <slot />
   </div>
 </template>
 
@@ -27,6 +16,5 @@ interface Props {
 
 withDefaults(defineProps<Props>(), {
   url: undefined,
-  download: false,
 });
 </script>

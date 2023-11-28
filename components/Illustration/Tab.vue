@@ -79,7 +79,18 @@
           @click="() => (currentIllustration = cloneDeep(el))"
         >
           <template #image>
-            <CardImage :url="el.image" :download="true" />
+            <CardImage :url="el.image" :download="true">
+              <button
+                v-if="el.image"
+                class="absolute bottom-2 right-2 origin-bottom-right transition-all hover:scale-125"
+                @click="() => downloadImage(el)"
+              >
+                <Icon
+                  name="mdi:download"
+                  class="h-6 w-6 cursor-pointer text-slate-700 xl:h-8 xl:w-8"
+                />
+              </button>
+            </CardImage>
           </template>
           <CardDescription classes="text-sm font-medium">
             {{
@@ -96,6 +107,7 @@
 <script setup lang="ts">
 import cloneDeep from 'lodash/cloneDeep';
 import { Illustration, NewIllustrationSchema } from '~/types';
+import { fetchIllustrationBlob } from '~/utils/db';
 
 const formPanelProps = {
   title: '情境圖',
@@ -220,6 +232,32 @@ const handleSearch = async (value: string) => {
 
   const token = await getTokenSilently();
   stores.illustration.update(token);
+};
+
+const downloadImage = async (el: Illustration) => {
+  const token = await getTokenSilently();
+
+  const blobImage = await fetchIllustrationBlob(token, el._id);
+
+  console.log('Blob image: ', blobImage);
+
+  const nameOfDownload = el.image.split('/').pop();
+
+  if (!blobImage || !nameOfDownload) {
+    throw new Error('No image data or name of download');
+  }
+
+  const href = URL.createObjectURL(blobImage);
+
+  const anchorElement = document.createElement('a');
+  anchorElement.href = href;
+  anchorElement.download = nameOfDownload;
+
+  document.body.appendChild(anchorElement);
+  anchorElement.click();
+
+  document.body.removeChild(anchorElement);
+  window.URL.revokeObjectURL(href);
 };
 
 onMounted(async () => {
