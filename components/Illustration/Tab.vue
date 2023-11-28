@@ -87,7 +87,7 @@
               >
                 <Icon
                   name="mdi:download"
-                  class="h-6 w-6 cursor-pointer text-slate-700 xl:h-8 xl:w-8"
+                  class="h-6 w-6 cursor-pointer stroke-white text-slate-700 xl:h-8 xl:w-8"
                 />
               </button>
             </CardImage>
