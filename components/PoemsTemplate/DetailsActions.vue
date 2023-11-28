@@ -2,7 +2,7 @@
   <div class="flex items-center justify-around">
     <CardButton
       class="rounded-lg bg-red-400 text-white transition-all hover:bg-red-500"
-      @click.prevent="handleRemove"
+      @click.prevent="modalSignal = !modalSignal"
     >
       刪除
     </CardButton>
@@ -13,6 +13,11 @@
       編輯
     </CardButton>
   </div>
+  <ConfirmationModal
+    :loading="loading"
+    :signal="modalSignal"
+    @confirm="handelConfirm"
+  />
 </template>
 
 <script setup lang="ts">
@@ -23,6 +28,15 @@ const stores = {
   poemsTemplate: usePoemsTemplateStore(),
 };
 const { activeId, state, loading } = storeToRefs(stores.poemsTemplate);
+
+const modalSignal = ref(false);
+
+const handelConfirm = async (status: boolean) => {
+  if (status) {
+    await handleRemove();
+  }
+  modalSignal.value = !modalSignal.value;
+};
 
 const handleRemove = async () => {
   try {
