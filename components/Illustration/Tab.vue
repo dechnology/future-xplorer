@@ -176,7 +176,7 @@ const imageGeneration = async () => {
     token = await getTokenSilently();
     const { data: createdIllustration } = await fetchResource<Illustration>(
       token,
-      `/api/issues/${issueId.value}/illustrations`,
+      `/api/issues/${issueId.value}/illustrations?now=${Date.now()}`,
       {
         method: 'post',
         body: {
@@ -186,9 +186,6 @@ const imageGeneration = async () => {
       }
     );
     console.log('Created: ', createdIllustration);
-
-    token = await getTokenSilently();
-    await stores.illustration.update(token);
   } catch (e) {
     console.error(e);
   } finally {
@@ -197,23 +194,33 @@ const imageGeneration = async () => {
 };
 
 const handleImageGenerations = async () => {
-  if (currentIllustration.value.prompt.trim() === '') {
-    console.error('no prompt');
-    return;
+  try {
+    loading.value = true;
+    if (currentIllustration.value.prompt.trim() === '') {
+      console.error('no prompt');
+      return;
+    }
+
+    const promises: Promise<void>[] = [];
+
+    console.log(
+      `Creating ${numberToGenerate.value} illustration with prompt: `,
+      currentIllustration.value.prompt
+    );
+
+    for (let i = 0; i < numberToGenerate.value; i++) {
+      promises.push(imageGeneration());
+    }
+
+    await Promise.all(promises);
+
+    const token = await getTokenSilently();
+    await stores.illustration.update(token);
+  } catch (e) {
+    console.error(e);
+  } finally {
+    loading.value = false;
   }
-
-  const promises: Promise<void>[] = [];
-
-  console.log(
-    `Creating ${numberToGenerate.value} illustration with prompt: `,
-    currentIllustration.value.prompt
-  );
-
-  for (let i = 0; i < numberToGenerate.value; i++) {
-    promises.push(imageGeneration());
-  }
-
-  await Promise.all(promises);
 };
 
 const handleStoryModalOpen = () => {
