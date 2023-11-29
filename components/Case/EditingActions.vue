@@ -1,5 +1,8 @@
 <template>
-  <div class="flex items-center justify-center">
+  <div
+    v-if="currentCase.image || imageUrl"
+    class="flex items-center justify-center"
+  >
     <CardButton
       class="rounded-lg bg-red-400 text-white"
       :class="!loading && 'hover:bg-red-500'"
@@ -57,7 +60,7 @@ const handleSaveEdit = async () => {
   try {
     loading.value = true;
 
-    if (isEqual(currentCase.value, activeCase.value)) {
+    if (isEqual(currentCase.value, activeCase.value) && !imageUrl.value) {
       state.value = 'DETAILS';
       return;
     }
@@ -86,6 +89,7 @@ const handleSaveEdit = async () => {
 
     token = await getTokenSilently();
     stores.case.update(token);
+    state.value = 'DETAILS';
   } catch (e) {
     console.error(e);
   } finally {
