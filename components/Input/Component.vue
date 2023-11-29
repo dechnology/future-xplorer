@@ -6,6 +6,7 @@
         v-if="type === 'text'"
         type="text"
         v-bind="inputProps"
+        @keypress.enter.prevent=""
         @input="handleInputChange"
       />
       <textarea
