@@ -1,7 +1,7 @@
 <template>
   <dialog
     ref="modal"
-    class="h-1/3 w-1/2 rounded-2xl border-gray-300 p-4 focus:outline-slate-300 xl:p-16"
+    class="h-1/2 w-1/2 rounded-2xl border-gray-300 p-4 focus:outline-slate-300 xl:p-8"
     @click="(e) => onBackdropClick(e, handleBackdropClick)"
   >
     <div class="flex h-full flex-col gap-4 overflow-y-auto xl:gap-8">

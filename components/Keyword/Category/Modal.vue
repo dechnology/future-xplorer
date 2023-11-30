@@ -1,7 +1,7 @@
 <template>
   <dialog
     ref="modal"
-    class="max-h-2/3 w-1/4 rounded-2xl border-gray-300 focus:outline-slate-300"
+    class="max-h-2/3 max-w-1/3 rounded-2xl border-gray-300 focus:outline-slate-300"
     @click="(e) => onBackdropClick(e, stores.modal.close)"
   >
     <ClientOnly>
@@ -27,20 +27,20 @@
         />
         <div class="flex items-center justify-around">
           <CardButton
-            class="rounded-lg bg-red-400 px-8 text-white"
+            class="rounded-lg bg-red-400 text-white"
             :class="!loading && 'hover:bg-red-500'"
             :disabled="loading"
             @click.prevent="() => stores.modal.close()"
           >
-            <span class="py-3"> 取消 </span>
+            取消
           </CardButton>
           <CardButton
-            class="rounded-lg bg-indigo-500 px-8 text-white"
+            class="rounded-lg bg-indigo-500 text-white"
             :class="!loading && 'hover:bg-indigo-600'"
             :disabled="loading"
             @click.prevent="handleSave"
           >
-            <span class="py-3"> 儲存 </span>
+            儲存
           </CardButton>
         </div>
       </div>

@@ -26,7 +26,7 @@
           <Icon
             name="typcn:delete-outline"
             class="h-4 w-4 xl:h-8 xl:w-8"
-            @click="() => !disabled && deleteChipsByIndex(idx)"
+            @click="() => handleRemove(idx)"
           />
         </div>
       </li>
@@ -59,6 +59,12 @@ const emit = defineEmits<{
   (e: 'update:chips', chips: string[]): void;
 }>();
 
+const stores = {
+  modal: useModalStore(),
+};
+
+const { ignoreNextClose } = storeToRefs(stores.modal);
+
 const ulRef = ref<HTMLUListElement | null>(null);
 const lastListItem = ref<HTMLLIElement | null>(null);
 const focusIndex = ref<number | null>(null);
@@ -70,6 +76,16 @@ const handleClick = () => {
 
   focusIndex.value = props.chips.length;
   lastListItem.value?.focus();
+};
+
+const handleRemove = (idx: number) => {
+  if (props.disabled) {
+    return;
+  }
+
+  // This line prevents the modal from closing in Keyword Sharing Tab.
+  ignoreNextClose.value = true;
+  deleteChipsByIndex(idx);
 };
 
 const editChipsByIndex = (idx: number, chip: string) => {

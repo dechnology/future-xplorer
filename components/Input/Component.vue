@@ -6,6 +6,7 @@
         v-if="type === 'text'"
         type="text"
         v-bind="inputProps"
+        @keypress.enter.prevent=""
         @input="handleInputChange"
       />
       <textarea
@@ -85,6 +86,18 @@ const dropdownIcon = ref<HTMLDivElement | null>(null);
 const dropdownDiv = ref<HTMLDivElement | null>(null);
 
 const inputProps = computed(() => {
+  let value = props.modelValue;
+
+  if (props.selectOptions) {
+    const opt = props.selectOptions.find(
+      (opt) => opt.data === props.modelValue
+    );
+
+    if (opt) {
+      value = opt.name;
+    }
+  }
+
   return {
     class: twMerge(
       [
@@ -107,8 +120,8 @@ const inputProps = computed(() => {
     ),
     placeholder: props.placeholder,
     disabled: props.disabled,
-    value: props.modelValue,
     readonly: props.selectOnly || props.readOnly,
+    value,
   };
 });
 

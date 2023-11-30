@@ -1,13 +1,17 @@
 <template>
   <div class="flex items-center justify-around">
     <CardButton
-      class="rounded-lg bg-red-400 text-white hover:bg-red-500"
+      class="rounded-lg bg-red-400 text-white transition-all"
+      :class="!loading && 'hover:bg-red-500'"
+      :disabled="loading"
       @click.prevent="handleCancel"
     >
       取消
     </CardButton>
     <CardButton
-      class="rounded-lg bg-indigo-500 text-white hover:bg-indigo-600"
+      class="rounded-lg bg-indigo-500 text-white transition-all"
+      :class="!loading && 'hover:bg-indigo-600'"
+      :disabled="loading"
       @click.prevent="handleSaveEdit"
     >
       儲存

@@ -1,7 +1,9 @@
 <template>
   <div class="flex items-center justify-around">
     <CardButton
-      class="rounded-lg bg-lime-600 text-white hover:bg-lime-700"
+      class="rounded-lg bg-lime-600 text-white transition-all"
+      :class="!loading && 'hover:bg-lime-700'"
+      :disabled="loading"
       @click.prevent="handleCombineStory"
     >
       AI組合故事
@@ -18,7 +20,7 @@ const stores = {
   story: useStoryStore(),
 };
 const { workshop, issue, issueId } = storeToRefs(stores.issue);
-const { activeStories } = storeToRefs(stores.story);
+const { activeStories, loading } = storeToRefs(stores.story);
 
 const handleCombineStory = async () => {
   try {

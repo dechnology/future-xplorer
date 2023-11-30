@@ -33,6 +33,7 @@ export const useWorkshopsStore = definePiniaStore('workshops', () => {
   }
 
   function resetForm() {
+    console.log('resetting form');
     state.value = activeWorkshop.value ? 'DETAILS' : 'NEW';
     currentWorkshop.value = activeWorkshop.value
       ? cloneDeep(activeWorkshop.value)

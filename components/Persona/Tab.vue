@@ -44,9 +44,7 @@
                 title="性別"
                 placeholder="性別"
                 :disabled="formDisabled"
-                :select-options="
-                  PersonaPresets.gender.map((el) => ({ name: el, data: el }))
-                "
+                :select-options="PersonaPresets.gender.map((el) => el)"
                 select-only
               />
             </div>

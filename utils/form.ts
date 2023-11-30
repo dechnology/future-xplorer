@@ -113,7 +113,10 @@ export const getNewPersona = (): NewPersona => ({
 
 export const PersonaPresets = {
   role: ['教師', '學生', '媽媽', '爸爸'],
-  gender: ['male', 'female'],
+  gender: [
+    { name: '男', data: 'male' },
+    { name: '女', data: 'female' },
+  ],
   age: ['青少年', 'Z世代 (Gen Z)', '老人'],
   trait: [
     '行為數位化',
@@ -129,7 +132,9 @@ export const getRandomNewPersona = (): NewPersona => ({
   name: fakerZH_TW.person.fullName(),
   age: fakerZH_TW.helpers.arrayElement(PersonaPresets.age),
   trait: fakerZH_TW.helpers.arrayElement(PersonaPresets.trait),
-  gender: fakerZH_TW.helpers.arrayElement(PersonaPresets.gender),
+  gender: fakerZH_TW.helpers.arrayElement(
+    PersonaPresets.gender.map((g) => g.data)
+  ),
   other: '',
   image: null,
 });
