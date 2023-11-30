@@ -8,6 +8,8 @@
     </CardButton> -->
     <CardButton
       class="rounded-lg bg-indigo-500 text-white hover:bg-indigo-600"
+      :class="!loading && 'hover:bg-indigo-700'"
+      :disabled="loading"
       @click.prevent="handleCreate"
     >
       新增

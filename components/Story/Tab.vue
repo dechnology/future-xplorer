@@ -89,7 +89,7 @@ const stores = {
 const {
   searchQuery,
   stories,
-  currentContext,
+  // currentContext,
   activeStories,
   activeIds,
   state,
@@ -100,9 +100,9 @@ const handleDblclick = () => {
   stores.modal.show();
 };
 
-const handleDiceClick = () => {
-  currentContext.value = stores.poemsTemplate.getRandomContext();
-};
+// const handleDiceClick = () => {
+//   currentContext.value = stores.poemsTemplate.getRandomContext();
+// };
 
 const handleSearch = async (value: string) => {
   searchQuery.value = value;
