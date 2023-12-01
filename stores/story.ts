@@ -12,7 +12,7 @@ export const useStoryStore = definePiniaStore('story', () => {
   const issueStore = useIssueStore();
   const poemsTemplateStore = usePoemsTemplateStore();
 
-  const searchQuery = ref<string>();
+  const searchQuery = ref<string>('');
   const stories = ref<Story[]>([]);
 
   const currentStory = ref<Story | NewStory>(getNewStory());

@@ -14,7 +14,7 @@ export const usePoemsTemplateStore = definePiniaStore('poems template', () => {
   const personaStore = usePersonaStore();
   const keywordStore = useKeywordStore();
 
-  const searchQuery = ref<string>();
+  const searchQuery = ref<string>('');
   const poemsTemplates = ref<PoemsTemplate[]>([]);
 
   const currentPoemsTemplate = ref<PoemsTemplate | NewPoemsTemplate>(

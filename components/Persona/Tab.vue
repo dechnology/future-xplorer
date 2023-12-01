@@ -101,7 +101,8 @@
         </FormCard>
       </FormPanel>
     </template>
-    <CardGalleryPanel @search="handleSearch">
+    <CardGalleryPanel>
+      <InputSearchBar v-model="searchQuery" @search="handleSearch" />
       <CardGallery>
         <Card
           :active="!activePersona"
@@ -188,9 +189,7 @@ const currentImgaeUrl = computed(
   () => imageUrl.value || currentPersona.value?.image
 );
 
-const handleSearch = async (value: string) => {
-  searchQuery.value = value;
-
+const handleSearch = async () => {
   const token = await getTokenSilently();
   await stores.persona.update(token);
 };

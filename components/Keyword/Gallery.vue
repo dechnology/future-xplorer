@@ -16,6 +16,7 @@
 </template>
 
 <script setup lang="ts">
+import isEqual from 'lodash/isEqual';
 import { Keyword, KeywordQuery } from '~/types';
 
 interface Props {
@@ -34,8 +35,6 @@ const keywords = ref<Keyword[]>([]);
 const loading = ref(false);
 
 const updateKeywords = async (q: KeywordQuery) => {
-  console.log(q);
-
   try {
     loading.value = true;
     const { issueId, caseId, userId, category, searchQuery, voterId, voted } =
@@ -73,13 +72,18 @@ const updateKeywords = async (q: KeywordQuery) => {
 };
 
 watch(
-  () => ({
-    keywordQuery: props.keywordQuery,
-    updateSignal: props.updateSignal,
-  }),
-  async ({ keywordQuery: q, updateSignal: u }) => {
-    console.log(u);
-    await updateKeywords(q);
+  () => props.keywordQuery,
+  async (q, oldQ) => {
+    if (!isEqual(q, oldQ)) {
+      await updateKeywords(q);
+    }
+  }
+);
+
+watch(
+  () => props.updateSignal,
+  async () => {
+    await updateKeywords(props.keywordQuery);
   }
 );
 

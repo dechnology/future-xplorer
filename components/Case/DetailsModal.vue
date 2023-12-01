@@ -28,7 +28,11 @@
       <CaseModalActions @ai-generation="updateSignal = !updateSignal" />
     </div>
     <div class="basis-1/2">
-      <KeywordGalleryPanel :include-search-bar="true" @search="handleSearch">
+      <KeywordGalleryPanel>
+        <InputSearchBar
+          v-model="searchQueryBuffer"
+          @search="searchQuery = searchQueryBuffer"
+        />
         <KeywordGallery
           v-slot="slotProps"
           :update-signal="updateSignal"
@@ -80,7 +84,8 @@ const { activeCase, activeId, loading } = storeToRefs(stores.case);
 
 const { ignoreNextClose } = storeToRefs(stores.modal);
 
-const searchQuery = ref();
+const searchQuery = ref('');
+const searchQueryBuffer = ref('');
 const updateSignal = ref(false);
 
 const modalSignal = ref(false);
@@ -106,10 +111,6 @@ const keywordQuery = computed<KeywordQuery>(() => ({
   searchQuery: searchQuery.value,
   category: undefined,
 }));
-
-const handleSearch = (value: string) => {
-  searchQuery.value = value;
-};
 
 const createKeyword = async (body: string) => {
   ignoreNextClose.value = true;

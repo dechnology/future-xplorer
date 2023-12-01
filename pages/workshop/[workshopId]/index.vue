@@ -32,7 +32,8 @@
         </FormCard>
       </FormPanel>
     </template>
-    <CardGalleryPanel @search="handleSearch">
+    <CardGalleryPanel>
+      <InputSearchBar v-model="searchQuery" @search="handleSearch" />
       <CardGallery>
         <Card
           :active="!activeId"
@@ -113,9 +114,7 @@ const handleDblclick = (issueId: string) => {
   router.push(`/workshop/${workshopId.value}/issue/${issueId}`);
 };
 
-const handleSearch = async (value: string) => {
-  searchQuery.value = value;
-
+const handleSearch = async () => {
   const token = await getTokenSilently();
   await stores.workshop.updateIssues(token);
 };

@@ -92,7 +92,8 @@
         </FormCard>
       </FormPanel>
     </template>
-    <CardGalleryPanel @search="handleSearch">
+    <CardGalleryPanel>
+      <InputSearchBar v-model="searchQuery" @search="handleSearch" />
       <CardGallery :grid-cols="3">
         <Card
           class="min-h-[150px] xl:min-h-[350px]"
@@ -172,9 +173,7 @@ const {
   keywordOptions,
 } = storeToRefs(stores.poemsTemplate);
 
-const handleSearch = async (value: string) => {
-  searchQuery.value = value;
-
+const handleSearch = async () => {
   const token = await getTokenSilently();
   stores.poemsTemplate.update(token);
 };

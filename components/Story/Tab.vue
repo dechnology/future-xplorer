@@ -30,7 +30,8 @@
         </FormCard>
       </FormPanel>
     </template>
-    <CardGalleryPanel @search="handleSearch">
+    <CardGalleryPanel>
+      <InputSearchBar v-model="searchQuery" @search="handleSearch" />
       <CardGallery :grid-cols="3">
         <Card
           :active="!activeStories"
@@ -104,9 +105,7 @@ const handleDblclick = () => {
 //   currentContext.value = stores.poemsTemplate.getRandomContext();
 // };
 
-const handleSearch = async (value: string) => {
-  searchQuery.value = value;
-
+const handleSearch = async () => {
   const token = await getTokenSilently();
   stores.story.update(token);
 };

@@ -69,7 +69,8 @@
         </FormCard>
       </FormPanel>
     </template>
-    <CardGalleryPanel @search="handleSearch">
+    <CardGalleryPanel>
+      <InputSearchBar v-model="searchQuery" @search="handleSearch" />
       <CardGallery :grid-cols="4">
         <Card
           v-for="el in illustrations"
@@ -234,9 +235,7 @@ const handleDblclick = (el: Illustration) => {
   stores.modal.show();
 };
 
-const handleSearch = async (value: string) => {
-  searchQuery.value = value;
-
+const handleSearch = async () => {
   const token = await getTokenSilently();
   stores.illustration.update(token);
 };

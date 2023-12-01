@@ -8,11 +8,11 @@
             <template #description>{{ formPanelProps.description }}</template>
           </PanelHeader>
         </template>
-        <KeywordGalleryPanel
-          include-search-bar
-          input-classes="px-0 pt-0"
-          @search="handleSearch"
-        >
+        <KeywordGalleryPanel input-classes="px-0 pt-0">
+          <InputSearchBar
+            v-model="searchQueryBuffer"
+            @search="searchQuery = searchQueryBuffer"
+          />
           <KeywordGallery
             v-slot="slotProps"
             :update-signal="updateSignal"
@@ -123,8 +123,9 @@ const getCurrentElement = (
 
 const draggingKeyword = ref<Keyword | null>(null);
 const currentElement = ref<WorkshopElement | undefined>(getCurrentElement());
-const searchQuery = ref('');
 const loading = ref(false);
+const searchQuery = ref('');
+const searchQueryBuffer = ref('');
 const updateSignal = ref(false);
 
 const keywordQuery = computed<KeywordQuery>(() => ({
@@ -132,10 +133,6 @@ const keywordQuery = computed<KeywordQuery>(() => ({
   userId: userId.value,
   category: currentElement.value?.name,
 }));
-
-const handleSearch = (query: string) => {
-  searchQuery.value = query;
-};
 
 const patchKeyword = async (
   el: Pick<Keyword, '_id' | 'body' | 'category' | 'type'>

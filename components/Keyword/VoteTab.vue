@@ -98,7 +98,11 @@
         </template>
       </FormPanel>
     </template>
-    <KeywordGalleryPanel :include-search-bar="true" @search="handleSearch">
+    <KeywordGalleryPanel>
+      <InputSearchBar
+        v-model="searchQueryBuffer"
+        @search="searchQuery = searchQueryBuffer"
+      />
       <KeywordHeader> 我的最愛 </KeywordHeader>
       <KeywordGallery
         v-slot="slotProps"
@@ -174,8 +178,9 @@ const getCurrentCategory = () => {
 
 const currentUser = ref<User>();
 const currentCategory = ref<string | undefined | null>(getCurrentCategory());
+const searchQuery = ref('');
+const searchQueryBuffer = ref('');
 const updateSignal = ref(false);
-const searchQuery = ref();
 
 const keywordQuery = computed<KeywordQuery>(() => ({
   issueId: issueId.value,
@@ -236,10 +241,6 @@ const setCategory = (cat: string | undefined | null) => {
   } else {
     localStorage.setItem(stroageKey, cat);
   }
-};
-
-const handleSearch = (query: string) => {
-  searchQuery.value = query;
 };
 
 onMounted(async () => {

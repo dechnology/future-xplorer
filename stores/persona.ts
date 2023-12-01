@@ -6,7 +6,7 @@ import { FormStateKey, Persona, NewPersona, ImageStateKey } from '@/types';
 export const usePersonaStore = definePiniaStore('persona', () => {
   const issueStore = useIssueStore();
 
-  const searchQuery = ref<string>();
+  const searchQuery = ref<string>('');
   const personas = ref<Persona[]>([]);
 
   const currentPersona = ref<Persona | NewPersona>(getNewPersona());
