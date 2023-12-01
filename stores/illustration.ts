@@ -4,7 +4,7 @@ import type { Illustration, NewIllustration } from '@/types';
 export const useIllustrationStore = definePiniaStore('illustration', () => {
   const issueStore = useIssueStore();
 
-  const searchQuery = ref<string>();
+  const searchQuery = ref<string>('');
   const illustrations = ref<Illustration[]>([]);
 
   const currentIllustration = ref<Illustration | NewIllustration>(

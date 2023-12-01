@@ -6,13 +6,14 @@
           <PanelHeader>
             <template #title>{{ formPanelProps.title }}</template>
             <template #description>{{ formPanelProps.description }}</template>
+            <template #tooltip>{{ tooltip }}</template>
           </PanelHeader>
         </template>
-        <KeywordGalleryPanel
-          include-search-bar
-          input-classes="px-0 pt-0"
-          @search="handleSearch"
-        >
+        <KeywordGalleryPanel input-classes="px-0 pt-0">
+          <InputSearchBar
+            v-model="searchQueryBuffer"
+            @search="searchQuery = searchQueryBuffer"
+          />
           <KeywordGallery
             v-slot="slotProps"
             :update-signal="updateSignal"
@@ -97,6 +98,26 @@ const formPanelProps = {
   description:
     '第三步需自行在網路平台查詢收集可能的產品與服務案例資料，彙整成獨立的牌卡。',
 };
+const tooltip = [
+  'Case. 如何對關鍵字分類？',
+  '1. 先在心中決定關鍵字的類別，然後點擊右側的類別',
+  '2. 將左側的關鍵字卡牌按下滑鼠左鍵不放開（或是觸控板按住不放），將卡牌拖曳到右側的類別即完成分類',
+  '',
+  'Case. 是否可以重新分類關鍵字？',
+  '1. 可以，直接按下右側已分類的關鍵字卡牌右側的撤銷鈕，該關鍵卡牌就會回到左側的未分類',
+  '',
+  'Case. 在這裡才發現關鍵字給的不完美，可否調整？',
+  '1. 可以，不論是已分類或是未分類的關鍵字，都可先藉由「雙擊」直接開啟關鍵字編輯模式，再單擊關鍵字進行修正',
+  '',
+  'Case. 找不到適合類別怎麼辦？',
+  '當我們想新增關鍵字分類時，可以透過以下方式修改：',
+  '1. 點擊右半部分上方分類Tab的最右邊的「加(+)號」按鈕，此時會跳出與新建工作坊時的OEMS新增分類一樣的介面',
+  '2. 在OEMS下輸入新的子分類名稱',
+  '3. 按下「取消」按鈕維持原狀態退出，或是按下「儲存」按鈕提交變更',
+  '',
+  'Case. 如何進入下一個流程？',
+  '等到大家都把關鍵字分類完畢後，下一步是大家一起對關鍵字進行投票，可以直接點擊上方的「關鍵字分享」，開始整理',
+].join('\n');
 
 const { userId, getTokenSilently } = useAuth();
 
@@ -123,8 +144,9 @@ const getCurrentElement = (
 
 const draggingKeyword = ref<Keyword | null>(null);
 const currentElement = ref<WorkshopElement | undefined>(getCurrentElement());
-const searchQuery = ref('');
 const loading = ref(false);
+const searchQuery = ref('');
+const searchQueryBuffer = ref('');
 const updateSignal = ref(false);
 
 const keywordQuery = computed<KeywordQuery>(() => ({
@@ -132,10 +154,6 @@ const keywordQuery = computed<KeywordQuery>(() => ({
   userId: userId.value,
   category: currentElement.value?.name,
 }));
-
-const handleSearch = (query: string) => {
-  searchQuery.value = query;
-};
 
 const patchKeyword = async (
   el: Pick<Keyword, '_id' | 'body' | 'category' | 'type'>

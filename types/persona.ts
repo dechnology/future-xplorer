@@ -5,7 +5,7 @@ export const NewPersonaSchema = z.object({
   role: z.string().trim().nonempty(),
   name: z.string().trim().nonempty(),
   age: z.string().trim().nonempty(),
-  gender: z.enum(PersonaPresets.gender),
+  gender: z.enum(['male', 'female']),
   trait: z.string().trim().nonempty(),
   other: z.string().trim(),
   image: z.string().url().nullable(),

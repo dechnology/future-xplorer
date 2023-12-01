@@ -5,7 +5,7 @@ export const useWorkshopStore = definePiniaStore('workshop', () => {
   const workshop = ref<Workshop | null>(null);
   const workshopId = computed(() => workshop.value?._id);
 
-  const searchQuery = ref<string>();
+  const searchQuery = ref<string>('');
   const issues = ref<BaseIssue[]>([]);
   const currentIssue = ref<NewIssue | BaseIssue>(getNewIssue());
   const activeIssue = ref<BaseIssue | null>(null);

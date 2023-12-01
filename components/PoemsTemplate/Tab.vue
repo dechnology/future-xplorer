@@ -6,6 +6,7 @@
           <PanelHeader>
             <template #title>{{ formPanelProps.title }}</template>
             <template #description>{{ formPanelProps.description }}</template>
+            <template #tooltip>{{ tooltip }}</template>
           </PanelHeader>
         </template>
         <FormCard v-bind="formCardProps" :username="username">
@@ -92,7 +93,8 @@
         </FormCard>
       </FormPanel>
     </template>
-    <CardGalleryPanel @search="handleSearch">
+    <CardGalleryPanel>
+      <InputSearchBar v-model="searchQuery" @search="handleSearch" />
       <CardGallery :grid-cols="3">
         <Card
           class="min-h-[150px] xl:min-h-[350px]"
@@ -151,6 +153,33 @@ const formPanelProps = {
   title: 'POEMS 模板',
   description: '第四步將前三步所得之資料組合成一張張的情境故事(poems)',
 };
+const tooltip = [
+  'Case. 如何新增模板？',
+  '1. 點擊右側模板卡牌中左上方的加(+)號卡牌，左側面板將會切換為「新增POEMS模板」模式',
+  '2. 依序輸入模板的：標題、使用者(P)、物件(O)、環境(E)、訊息(M)、服務(S)。選項來自於之前小組成員的投票結果。如果發現關鍵字不足，或是某些分類沒有關鍵字，可以隨時回到前面的步驟進行擴增',
+  '3. 最後按下「新增」按鈕，就會出現在右方的模板卡牌中。',
+  '',
+  'Case. 如何查看模板資訊？',
+  '當我們已經有了多個模板時，可以透過兩種方式查看完整議題描述：',
+  '1. 控制游標在卡牌中移動，此時所在位置的模板卡牌會以不同顏色呈現。「單擊」模板卡牌，左側面板將會切換為「POEMS模板資訊」模式。在左側面板以滾動方式查看完整模板組合。',
+  '2. 「雙擊」模板卡牌後，將會出現模板展示模式彈跳視窗，方便呈現',
+  '',
+  'Case. 如何修改模板資訊？',
+  '當我們想修改某個模板組合時，可以透過以下方式修改：',
+  '1. 控制游標在卡牌中移動，此時所在位置的模板卡牌會以不同顏色呈現',
+  '2. 「單擊」模板卡牌，左側面板將會切換為「POEMS模板資訊」模式',
+  '3. 點擊左側面板的「編輯」按鈕，所有欄位將變成可編輯狀態，細節可參考新增模板',
+  '4. 按下「取消」按鈕維持原狀態退出，或是按下「儲存」按鈕提交變更',
+  '',
+  'Case. 如何刪除模板？',
+  '當我們想刪除某個模板時，可以透過以下方式刪除：',
+  '1. 控制游標在卡牌中移動，此時所在位置的模板卡牌會以不同顏色呈現',
+  '2. 「單擊」模板卡牌，左側面板將會切換為「POEMS模板資訊」模式',
+  '3. 點擊左側面板的「刪除」按鈕，系統將會刪除與模板相關的資訊，並進入新增模板模式',
+  '',
+  'Case. 如何進入下一個流程？',
+  '下一步是使用此模板進行情境故事的細節設計，可以直接點擊上方的「情境故事」，開始鍵入',
+].join('\n');
 
 const { username, getTokenSilently } = useAuth();
 const stores = {
@@ -172,9 +201,7 @@ const {
   keywordOptions,
 } = storeToRefs(stores.poemsTemplate);
 
-const handleSearch = async (value: string) => {
-  searchQuery.value = value;
-
+const handleSearch = async () => {
   const token = await getTokenSilently();
   stores.poemsTemplate.update(token);
 };

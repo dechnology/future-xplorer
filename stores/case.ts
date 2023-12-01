@@ -11,7 +11,7 @@ import type {
 export const useCaseStore = definePiniaStore('case', () => {
   const issueStore = useIssueStore();
 
-  const searchQuery = ref<string>();
+  const searchQuery = ref<string>('');
   const cases = ref<Case[]>([]);
 
   const currentCase = ref<Case | NewCase>(getNewCase());

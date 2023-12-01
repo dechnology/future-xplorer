@@ -6,6 +6,7 @@
           <PanelHeader>
             <template #title>{{ formPanelProps.title }}</template>
             <template #description>{{ formPanelProps.description }}</template>
+            <template #tooltip>{{ tooltip }}</template>
           </PanelHeader>
           <KeywordCategoryTabWrapper>
             <KeywordCategoryTab
@@ -98,7 +99,11 @@
         </template>
       </FormPanel>
     </template>
-    <KeywordGalleryPanel :include-search-bar="true" @search="handleSearch">
+    <KeywordGalleryPanel>
+      <InputSearchBar
+        v-model="searchQueryBuffer"
+        @search="searchQuery = searchQueryBuffer"
+      />
       <KeywordHeader> 我的最愛 </KeywordHeader>
       <KeywordGallery
         v-slot="slotProps"
@@ -143,6 +148,20 @@ const formPanelProps = {
   description:
     '第三步需自行在網路平台查詢收集可能的產品與服務案例資料，彙整成獨立的牌卡。',
 };
+const tooltip = [
+  'Case. 如何對關鍵字投票？',
+  '- 透過點擊上方分類，可以對關鍵字進行分類展示，方便投票決策',
+  '- 點擊「空心星星」即可把關鍵字卡牌從左移到右側我的最愛進行投票，可以對自己的關鍵字和別人的關鍵字投票',
+  '',
+  'Case. 是否可以取消投票？',
+  '可以，直接按下右側關鍵字卡牌的「實心星星」即可撤銷，該關鍵卡牌就會回到左側的待投票區',
+  '',
+  'Case. 在這裡才發現關鍵字給的不完美，可否調整？',
+  '可以，不論是已投票或是未投票的關鍵字，都可先藉由「雙擊」直接開啟關鍵字編輯模式，再單擊關鍵字進行修正',
+  '',
+  'Case. 如何進入下一個流程？',
+  '等到大家都把關鍵字投票完畢後，下一步是大家一起對關鍵字設計POEMS組合（也稱為模板），可以直接點擊上方的「模板設計」，開始進行組合',
+].join('\n');
 
 const { userId, getTokenSilently } = useAuth();
 const stores = {
@@ -174,8 +193,9 @@ const getCurrentCategory = () => {
 
 const currentUser = ref<User>();
 const currentCategory = ref<string | undefined | null>(getCurrentCategory());
+const searchQuery = ref('');
+const searchQueryBuffer = ref('');
 const updateSignal = ref(false);
-const searchQuery = ref();
 
 const keywordQuery = computed<KeywordQuery>(() => ({
   issueId: issueId.value,
@@ -236,10 +256,6 @@ const setCategory = (cat: string | undefined | null) => {
   } else {
     localStorage.setItem(stroageKey, cat);
   }
-};
-
-const handleSearch = (query: string) => {
-  searchQuery.value = query;
 };
 
 onMounted(async () => {
