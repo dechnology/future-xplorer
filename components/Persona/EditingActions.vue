@@ -9,6 +9,7 @@
       AI生成圖片
     </CardButton>
     <CardButton
+      v-if="currentPersona.image || imageUrl"
       class="rounded-lg bg-red-400 text-white"
       :class="!loading && 'hover:bg-red-500'"
       :disabled="loading"
@@ -129,6 +130,7 @@ const handleSaveEdit = async () => {
 
     token = await getTokenSilently();
     stores.persona.update(token);
+    state.value = 'DETAILS';
   } catch (e) {
     console.error(e);
   } finally {
