@@ -7,14 +7,18 @@ export default defineEventHandler(
     const id = getRouterParam(event, 'id');
 
     const { keywords: newKeywords } = await readBody<{
-      keywords: string[];
+      keywords: {
+        body: string;
+        category?: string;
+        type?: 'O' | 'E' | 'M' | 'S';
+      }[];
     }>(event);
 
     const keywordDocuments = await KeywordModel.insertMany(
       newKeywords.map((newKeyword) => ({
         creator,
         case: id,
-        body: newKeyword,
+        ...newKeyword,
       }))
     );
 

@@ -30,7 +30,7 @@ export interface KeywordsRequestBody extends IssueContext {
 }
 
 export interface KeywordsResponseBody {
-  keywords: string[];
+  keywords: { body: string; category: string; type: 'O' | 'E' | 'M' | 'S' }[];
 }
 
 export interface HistoryCase extends Omit<NewCase, 'image' | 'other'> {

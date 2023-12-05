@@ -57,6 +57,15 @@ export const IssueTabs: Record<IssueTabKeys, IssueTab> = {
 } as const;
 
 export interface IssueContext {
-  workshop: Pick<Workshop, '_id' | 'name' | 'description'>;
+  workshop: Pick<
+    Workshop,
+    | '_id'
+    | 'name'
+    | 'description'
+    | 'objects'
+    | 'environments'
+    | 'messages'
+    | 'services'
+  >;
   issue: Pick<Issue, '_id' | 'title' | 'description'>;
 }

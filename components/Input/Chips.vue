@@ -22,7 +22,7 @@
         <span>
           {{ chip }}
         </span>
-        <div v-if="!disabled">
+        <div v-if="!disabled && requiredIndex !== idx">
           <Icon
             name="typcn:delete-outline"
             class="h-4 w-4 xl:h-8 xl:w-8"
@@ -48,11 +48,13 @@ interface Props {
   chips: string[];
   title?: string;
   disabled?: boolean;
+  requiredChip?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   title: undefined,
   disabled: false,
+  requiredChip: undefined,
 });
 
 const emit = defineEmits<{
@@ -68,6 +70,13 @@ const { ignoreNextClose } = storeToRefs(stores.modal);
 const ulRef = ref<HTMLUListElement | null>(null);
 const lastListItem = ref<HTMLLIElement | null>(null);
 const focusIndex = ref<number | null>(null);
+const requiredIndex = computed(() => {
+  if (!props.requiredChip) {
+    return null;
+  }
+
+  return props.chips.findIndex((chip) => chip === props.requiredChip);
+});
 
 const handleClick = () => {
   if (!lastListItem.value || props.disabled) {

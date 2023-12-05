@@ -40,21 +40,25 @@
               v-model:chips="currentWorkshop.objects"
               title="Object - 物件 or 技術"
               :disabled="formDisabled"
+              required-chip="技術"
             />
             <InputChips
               v-model:chips="currentWorkshop.environments"
               title="Environment - 環境 or 場景"
               :disabled="formDisabled"
+              required-chip="場景體驗"
             />
             <InputChips
               v-model:chips="currentWorkshop.messages"
               title="Message - 訊息 or 目標"
               :disabled="formDisabled"
+              required-chip="洞見與價值"
             />
             <InputChips
               v-model:chips="currentWorkshop.services"
               title="Service - 服務、行動 or 經驗"
               :disabled="formDisabled"
+              required-chip="使用者體驗"
             />
           </template>
           <template #actions>
