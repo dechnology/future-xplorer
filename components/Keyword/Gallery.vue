@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="keywords.length > 0"
+    v-if="keywords.length > 0 || $slots.default"
     class="grid min-h-0 shrink grow basis-auto grid-cols-2 content-start gap-2 overflow-y-auto p-2"
     :style="{ gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))` }"
   >

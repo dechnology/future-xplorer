@@ -130,7 +130,7 @@ const createKeyword = async (body: string) => {
       `/api/cases/${activeId.value}/keywords`,
       {
         method: 'post',
-        body: { keywords: [el.body] },
+        body: { keywords: [{ body: el.body }] },
       }
     );
     console.log('Created: ', data);
