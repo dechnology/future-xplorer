@@ -12,18 +12,22 @@
         <InputChips
           v-model:chips="categories.objects"
           title="Object - 物件 or 技術"
+          required-chip="技術"
         />
         <InputChips
           v-model:chips="categories.environments"
           title="Environment - 環境 or 場景"
+          required-chip="場景體驗"
         />
         <InputChips
           v-model:chips="categories.messages"
           title="Message - 訊息 or 目標"
+          required-chip="洞見與價值"
         />
         <InputChips
           v-model:chips="categories.services"
           title="Service - 服務、行動 or 經驗"
+          required-chip="使用者體驗"
         />
         <div class="flex items-center justify-around">
           <CardButton
