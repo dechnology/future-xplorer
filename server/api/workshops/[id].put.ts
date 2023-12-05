@@ -32,7 +32,10 @@ export default defineEventHandler(
 
       // Check if fieldValue is an array and includes the required value
       if (!Array.isArray(fieldValue) || !fieldValue.includes(value)) {
-        throw new Error(`'${value}' must be present in ${field}`);
+        throw createError({
+          statusCode: 400,
+          statusMessage: 'Bad Request: Missing Required Value',
+        });
       }
     }
 

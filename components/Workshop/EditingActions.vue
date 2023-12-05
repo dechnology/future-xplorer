@@ -55,6 +55,7 @@ const handleSaveEdit = async () => {
 
     token = await getTokenSilently();
     await stores.workshops.update(token);
+    state.value = 'DETAILS';
   } catch (e) {
     console.error(e);
   } finally {
