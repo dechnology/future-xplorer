@@ -3,7 +3,7 @@
     <slot name="absolute" />
     <slot name="image" />
     <div
-      class="relative flex shrink grow basis-auto flex-col items-center justify-center p-2 xl:p-5"
+      class="relative flex shrink grow basis-auto flex-col items-center p-2 xl:p-3 2xl:p-4"
     >
       <slot />
     </div>

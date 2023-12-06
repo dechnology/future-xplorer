@@ -5,7 +5,12 @@ const schema = new Schema<Illustration>(
   {
     story: { type: String, required: true },
     prompt: { type: String, required: true },
-    image: { type: String, required: true },
+    status: {
+      type: String,
+      enum: ['empty', 'generating', 'uploading', 'done'],
+      required: true,
+    },
+    image: { type: String },
     creator: { type: Schema.Types.ObjectId, ref: 'User' },
     issue: { type: Schema.Types.ObjectId, ref: 'Issue' },
   },

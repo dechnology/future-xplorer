@@ -34,7 +34,7 @@
                 <span>PROMPT</span>
                 <Icon
                   name="material-symbols:double-arrow"
-                  class="h-8 w-8 rotate-90 xl:h-14 xl:w-14"
+                  class="h-8 w-8 rotate-90 xl:h-12 xl:w-12"
                 />
               </CardButton>
             </div>
@@ -80,7 +80,11 @@
           @click="() => (currentIllustration = cloneDeep(el))"
         >
           <template #image>
-            <CardImage :url="el.image" :download="true">
+            <CardImage
+              v-if="el.image || el.status == 'done'"
+              :url="el.image"
+              :download="true"
+            >
               <button
                 v-if="el.image"
                 class="absolute bottom-2 right-2 origin-bottom-right transition-all hover:scale-125"
@@ -92,6 +96,16 @@
                 />
               </button>
             </CardImage>
+            <div v-else class="h-24 w-full shrink-0 animate-pulse xl:h-40">
+              <div
+                class="flex h-full w-full items-center justify-center bg-slate-200"
+              >
+                <Icon
+                  name="eos-icons:bubble-loading"
+                  class="h-6 w-6 text-slate-700 xl:h-12 xl:w-12"
+                />
+              </div>
+            </div>
           </template>
           <CardDescription classes="text-sm font-medium">
             {{
@@ -162,36 +176,34 @@ const handlePromptGeneration = async () => {
 };
 
 const imageGeneration = async () => {
-  try {
-    loading.value = true;
+  const el = NewIllustrationSchema.parse(currentIllustration.value);
 
-    const el = NewIllustrationSchema.parse(currentIllustration.value);
+  let token = await getTokenSilently();
+  const { data: createdIllustration } = await fetchResource<Illustration>(
+    token,
+    `/api/issues/${issueId.value}/illustrations?now=${Date.now()}`,
+    {
+      method: 'post',
+      body: {
+        status: 'empty',
+        ...el,
+      },
+    }
+  );
+  illustrations.value.unshift(createdIllustration);
 
-    let token = await getTokenSilently();
-    const { image } = await generateImage(token, {
-      prompt: el.prompt,
-    });
-    const { data: imageUrl } = await uploadImageUrl(token, image);
-    console.log('Image url: ', imageUrl);
+  token = await getTokenSilently();
+  const { data: generatedIllustration } = await fetchResource<Illustration>(
+    token,
+    `/api/illustrations/${createdIllustration._id}/generate`,
+    {
+      method: 'put',
+    }
+  );
+  console.log('Generated: ', generatedIllustration);
 
-    token = await getTokenSilently();
-    const { data: createdIllustration } = await fetchResource<Illustration>(
-      token,
-      `/api/issues/${issueId.value}/illustrations?now=${Date.now()}`,
-      {
-        method: 'post',
-        body: {
-          ...el,
-          image: imageUrl,
-        },
-      }
-    );
-    console.log('Created: ', createdIllustration);
-  } catch (e) {
-    console.error(e);
-  } finally {
-    loading.value = false;
-  }
+  token = await getTokenSilently();
+  await stores.illustration.update(token);
 };
 
 const handleImageGenerations = async () => {
@@ -205,15 +217,14 @@ const handleImageGenerations = async () => {
     const promises: Promise<void>[] = [];
 
     console.log(
-      `Creating ${numberToGenerate.value} illustration with prompt: `,
-      currentIllustration.value.prompt
+      `Creating ${numberToGenerate.value} illustration with prompt: ${currentIllustration.value.prompt}`
     );
 
     for (let i = 0; i < numberToGenerate.value; i++) {
       promises.push(imageGeneration());
     }
 
-    await Promise.all(promises);
+    await Promise.allSettled(promises);
 
     const token = await getTokenSilently();
     await stores.illustration.update(token);
