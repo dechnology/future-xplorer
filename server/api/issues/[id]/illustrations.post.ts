@@ -6,7 +6,7 @@ export default defineEventHandler(
     const { id: creator } = authenticate(event.context);
     const issue = getRouterParam(event, 'id');
 
-    const newIllustration: NewIllustration & { image: string } =
+    const newIllustration: NewIllustration & { image?: string } =
       await readBody(event);
     const illustration = await IllustrationModel.create({
       creator,

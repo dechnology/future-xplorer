@@ -9,6 +9,7 @@ export const NewIllustrationSchema = z.object({
 export type NewIllustration = z.infer<typeof NewIllustrationSchema>;
 
 export interface Illustration extends Base, NewIllustration {
+  status: 'empty' | 'generating' | 'uploading' | 'done';
   image: string;
   issue: Issue | string;
 }

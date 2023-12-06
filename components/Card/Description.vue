@@ -1,5 +1,6 @@
 <template>
   <p
+    class=""
     :class="classes"
     :style="
       lineClamp
@@ -24,11 +25,15 @@ const props = defineProps<{ inputClasses?: string; lineClamp?: number }>();
 const classes = computed(() =>
   twMerge(
     [
-      'whitespace-break-spaces',
+      'whitespace-pre-wrap',
+      'line-clamp-[4]',
+      'xl:line-clamp-[12]',
+      '2xl:line-clamp-[10]',
       'w-full',
       'text-justify',
       'text-[8px]',
-      'xl:text-xs',
+      'xl:text-[10px]',
+      '2xl:text-xs',
       'font-normal',
       'leading-snug',
       'text-black',

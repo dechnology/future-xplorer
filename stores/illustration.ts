@@ -41,6 +41,7 @@ export const useIllustrationStore = definePiniaStore('illustration', () => {
 
   async function init(token: string) {
     await update(token);
+    console.log('illustrations', illustrations.value);
   }
 
   function resetForm() {
