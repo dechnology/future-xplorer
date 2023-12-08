@@ -25,13 +25,6 @@ export default defineEventHandler(
       });
     }
 
-    if (illustration.status !== 'empty') {
-      throw createError({
-        statusCode: 400,
-        statusMessage: 'Illustration is being processed',
-      });
-    }
-
     try {
       // generating
       illustration.status = 'generating';

@@ -1,21 +1,23 @@
 <template>
   <div class="flex items-center justify-around">
-    <CardButton
-      class="rounded-lg bg-red-400 text-white transition-all"
-      :class="!loading && 'hover:bg-red-500'"
-      :disabled="loading"
-      @click.prevent="modalSignal = !modalSignal"
-    >
-      刪除
-    </CardButton>
-    <CardButton
-      class="rounded-lg bg-black bg-opacity-40 text-white transition-all"
-      :class="!loading && 'hover:bg-opacity-50'"
-      :disabled="loading"
-      @click.prevent="handleEdit"
-    >
-      編輯
-    </CardButton>
+    <div class="flex basis-1/3 items-center justify-center">
+      <Icon
+        name="mdi-delete"
+        class="h-6 w-6 cursor-pointer text-red-400 transition-all hover:text-red-500 xl:h-8 xl:w-8"
+        @click.prevent="modalSignal = !modalSignal"
+      />
+    </div>
+    <div class="flex basis-1/3 items-center justify-center">
+      <CardButton
+        class="rounded-lg bg-black bg-opacity-40 text-white transition-all"
+        :class="!loading && 'hover:bg-opacity-50'"
+        :disabled="loading"
+        @click.prevent="handleEdit"
+      >
+        編輯
+      </CardButton>
+    </div>
+    <div class="basis-1/3"></div>
   </div>
   <ConfirmationModal
     :loading="loading"

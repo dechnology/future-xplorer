@@ -1,29 +1,32 @@
 <template>
-  <div class="flex items-center justify-around">
-    <CardButton
-      class="rounded-lg bg-red-400 text-white transition-all"
-      :class="!loading && 'hover:bg-red-500'"
-      :disabled="loading"
-      @click.prevent="modalSignal = !modalSignal"
-    >
-      刪除
-    </CardButton>
-    <CardButton
-      class="rounded-lg bg-indigo-500 text-white transition-all"
-      :class="!loading && 'hover:bg-opacity-50'"
-      :disabled="loading"
-      @click.prevent="() => (state = 'EDITING')"
-    >
-      編輯
-    </CardButton>
-    <CardButton
-      class="rounded-lg bg-lime-600 text-white transition-all"
-      :class="!loading && 'hover:bg-opacity-50'"
-      :disabled="loading"
-      @click.prevent="() => stores.modal.show()"
-    >
-      關鍵字
-    </CardButton>
+  <div class="flex items-center justify-around gap-5">
+    <div class="flex basis-1/2 justify-between">
+      <div class="flex basis-1/2 items-center justify-center">
+        <Icon
+          name="mdi-delete"
+          class="h-6 w-6 cursor-pointer text-red-400 transition-all hover:text-red-500 xl:h-8 xl:w-8"
+          @click.prevent="modalSignal = !modalSignal"
+        />
+      </div>
+      <CardButton
+        class="rounded-lg bg-indigo-500 text-white transition-all"
+        :class="!loading && 'hover:bg-opacity-50'"
+        :disabled="loading"
+        @click.prevent="() => (state = 'EDITING')"
+      >
+        編輯
+      </CardButton>
+    </div>
+    <div class="basis-1/2">
+      <CardButton
+        class="rounded-lg bg-lime-600 text-white transition-all"
+        :class="!loading && 'hover:bg-opacity-50'"
+        :disabled="loading"
+        @click.prevent="() => stores.modal.show()"
+      >
+        關鍵字
+      </CardButton>
+    </div>
   </div>
   <ConfirmationModal
     :loading="loading"

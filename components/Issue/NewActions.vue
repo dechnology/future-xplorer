@@ -1,11 +1,11 @@
 <template>
   <div class="flex items-center justify-around">
-    <CardButton
+    <!-- <CardButton
       class="rounded-lg bg-red-400 text-white hover:bg-red-500"
       @click.prevent="handleClear"
     >
       清除
-    </CardButton>
+    </CardButton> -->
     <CardButton
       class="rounded-lg bg-indigo-500 text-white hover:bg-indigo-600"
       @click.prevent="handleCreate"
@@ -22,9 +22,9 @@ const { getTokenSilently } = useAuth();
 const stores = { workshop: useWorkshopStore() };
 const { workshopId, currentIssue, loading } = storeToRefs(stores.workshop);
 
-const handleClear = () => {
-  stores.workshop.clearCurrentIssue();
-};
+// const handleClear = () => {
+//   stores.workshop.clearCurrentIssue();
+// };
 
 const handleCreate = async () => {
   try {
