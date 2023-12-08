@@ -10,9 +10,7 @@
       separator=" - "
       class="rounded-md text-xs xl:text-base"
       :input-classes="
-        disabled
-          ? 'border-gray-200 bg-slate-50'
-          : 'border-gray-500 bg-transparent'
+        disabled ? 'border-none' : 'border-gray-500 bg-transparent'
       "
     />
   </div>

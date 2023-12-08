@@ -11,21 +11,25 @@
         </h3>
         <InputChips
           v-model:chips="categories.objects"
+          li-classes="text-white bg-black"
           title="Object - 物件 or 技術"
           required-chip="技術"
         />
         <InputChips
           v-model:chips="categories.environments"
+          li-classes="text-white bg-black"
           title="Environment - 環境 or 場景"
           required-chip="場景體驗"
         />
         <InputChips
           v-model:chips="categories.messages"
+          li-classes="text-white bg-black"
           title="Message - 訊息 or 目標"
           required-chip="洞見與價值"
         />
         <InputChips
           v-model:chips="categories.services"
+          li-classes="text-white bg-black"
           title="Service - 服務、行動 or 經驗"
           required-chip="使用者體驗"
         />
