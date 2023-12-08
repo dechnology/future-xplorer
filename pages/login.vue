@@ -2,11 +2,14 @@
   <NuxtLayout>
     <ClientOnly>
       <form
-        class="m-auto flex flex-col gap-8 bg-white p-8 shadow-lg"
+        class="m-auto flex w-1/3 flex-col gap-8 bg-white p-8 shadow-lg"
         @submit.prevent="handleStart"
       >
-        <Logo class="m-auto w-1/3 fill-purple-500" />
-        <h1 class="text-center text-2xl font-bold">未來情境探索輔助工具</h1>
+        <div class="flex flex-col gap-6">
+          <!-- <Logo class="m-auto w-1/3 fill-purple-500" /> -->
+          <NuxtImg src="login-logo.png" class="m-auto" />
+          <h1 class="text-center text-2xl font-bold">未來情境探索輔助工具</h1>
+        </div>
         <InputComponent
           v-model="uid"
           type="text"

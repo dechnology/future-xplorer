@@ -5,10 +5,14 @@
     @click="(e) => onBackdropClick(e, handleBackdropClick)"
   >
     <div class="flex h-full flex-col gap-4 overflow-y-auto xl:gap-8">
-      <div class="flex flex-col gap-4">
-        <h3 class="text-lg">確定要刪除嗎？</h3>
-        <p class="text-sm text-gray-500">刪除後將無法復原，請確認是否刪除！</p>
-      </div>
+      <slot>
+        <div class="flex flex-col gap-4">
+          <h3 class="text-lg">確定要刪除嗎？</h3>
+          <p class="text-sm text-gray-500">
+            刪除後將無法復原，請確認是否刪除！
+          </p>
+        </div>
+      </slot>
       <div class="mt-auto flex items-center justify-around">
         <CardButton
           class="rounded-lg bg-black bg-opacity-40 text-white transition-all"

@@ -57,6 +57,7 @@ export default defineNuxtConfig({
     ],
   },
   image: {
+    dir: 'assets',
     domains: [
       'dechnology.s3.us-west-2.amazonaws.com',
       'oaidalleapiprodscus.blob.core.windows.net',

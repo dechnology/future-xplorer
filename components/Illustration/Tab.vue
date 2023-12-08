@@ -117,6 +117,18 @@
     </CardGalleryPanel>
   </NuxtLayout>
   <IllustrationModal :modal-state="modalState" />
+  <ConfirmationModal
+    :loading="loading"
+    :signal="confirmModalSignal"
+    @confirm="confirmModalSignal = !confirmModalSignal"
+  >
+    <div class="flex flex-col gap-4">
+      <h3 class="text-lg">情境圖產製錯誤...</h3>
+      <p class="whitespace-pre-wrap text-sm text-gray-500">
+        {{ confirmModalText }}
+      </p>
+    </div>
+  </ConfirmationModal>
 </template>
 
 <script setup lang="ts">
@@ -149,6 +161,8 @@ const {
 
 const numberToGenerate = ref(1);
 const modalState = ref<'stories' | 'illustration'>('stories');
+const confirmModalSignal = ref(false);
+const confirmModalText = ref('');
 
 const handlePromptGeneration = async () => {
   try {
@@ -224,10 +238,22 @@ const handleImageGenerations = async () => {
       promises.push(imageGeneration());
     }
 
-    await Promise.allSettled(promises);
+    const results = await Promise.allSettled(promises);
 
     const token = await getTokenSilently();
     await stores.illustration.update(token);
+
+    const rejections = results.filter(
+      (el) => el.status === 'rejected'
+    ) as PromiseRejectedResult[];
+    if (rejections.length > 0) {
+      confirmModalSignal.value = !confirmModalSignal.value;
+      confirmModalText.value = `有 ${
+        rejections.length
+      } 張圖生成失敗，請再試一次\n錯誤訊息：\n${rejections
+        .map((el) => `\t${el.reason}`)
+        .join('\n')}`;
+    }
   } catch (e) {
     console.error(e);
   } finally {

@@ -1,13 +1,13 @@
 <template>
   <div class="flex items-center justify-around">
-    <CardButton
+    <!-- <CardButton
       class="rounded-lg bg-red-400 text-white"
       :class="!loading && 'transition-all hover:bg-red-500'"
       :disabled="loading"
       @click.prevent="handleClear"
     >
       清除
-    </CardButton>
+    </CardButton> -->
     <CardButton
       class="rounded-lg bg-indigo-500 text-white"
       :class="!loading && 'transition-all hover:bg-indigo-600'"
@@ -26,9 +26,9 @@ const { getTokenSilently } = useAuth();
 const stores = { workshops: useWorkshopsStore() };
 const { currentWorkshop, loading } = storeToRefs(stores.workshops);
 
-const handleClear = () => {
-  stores.workshops.resetForm();
-};
+// const handleClear = () => {
+//   stores.workshops.resetForm();
+// };
 
 const handleCreate = async () => {
   try {
