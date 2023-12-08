@@ -3,17 +3,17 @@
     <InputLabel v-if="title">{{ title }}</InputLabel>
     <ul
       ref="ulRef"
-      :class="disabled ? 'border-gray-200 bg-gray-50' : 'border-gray-500'"
-      class="flex min-h-[43.6px] items-center gap-2 rounded border border-solid p-3 text-xs xl:min-h-[56px] xl:text-base"
+      :class="!disabled && 'border border-solid border-gray-500'"
+      class="flex min-h-[43.6px] items-center gap-2 rounded p-3 text-xs xl:min-h-[56px] xl:text-base"
       @click="handleClick"
     >
       <li
         v-for="(chip, idx) in chips"
         :key="`${idx}_${chip}`"
         :contenteditable="!disabled && idx === focusIndex"
-        :class="idx === focusIndex ? 'bg-slate-300' : 'bg-slate-200'"
+        :class="` ${resultLiClasses}`"
         tabindex="-1"
-        class="flex w-fit items-center gap-2 whitespace-nowrap rounded-2xl px-2 xl:px-3 xl:py-1"
+        class="flex w-fit items-center gap-2 whitespace-nowrap rounded-2xl px-2 py-1 xl:px-3"
         @dblclick="(e) => handleDblClick(e, idx)"
         @keypress.enter.prevent="
           (e) => editChipsByIndex(idx, (e.target as HTMLLIElement).innerText)
@@ -49,12 +49,14 @@ interface Props {
   title?: string;
   disabled?: boolean;
   requiredChip?: string;
+  liClasses?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   title: undefined,
   disabled: false,
   requiredChip: undefined,
+  liClasses: '',
 });
 
 const emit = defineEmits<{
@@ -77,6 +79,13 @@ const requiredIndex = computed(() => {
 
   return props.chips.findIndex((chip) => chip === props.requiredChip);
 });
+
+const resultLiClasses = computed(() =>
+  twMerge(
+    'flex w-fit items-center gap-2 whitespace-nowrap rounded-2xl px-2 xl:px-3 xl:py-1',
+    props.liClasses
+  )
+);
 
 const handleClick = () => {
   if (!lastListItem.value || props.disabled) {
