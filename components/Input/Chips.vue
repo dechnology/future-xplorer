@@ -22,10 +22,13 @@
         <span>
           {{ chip }}
         </span>
-        <div v-if="!disabled && requiredIndex !== idx">
+        <div
+          v-if="!disabled && requiredIndex !== idx"
+          class="flex h-full w-full items-center justify-center"
+        >
           <Icon
             name="typcn:delete-outline"
-            class="h-4 w-4 xl:h-8 xl:w-8"
+            class="h-6 w-6 cursor-pointer"
             @click="() => handleRemove(idx)"
           />
         </div>
