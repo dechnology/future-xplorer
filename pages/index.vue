@@ -38,24 +38,28 @@
             </div>
             <InputChips
               v-model:chips="currentWorkshop.objects"
+              li-classes="text-white bg-black"
               title="Object - 物件 or 技術"
               :disabled="formDisabled"
               required-chip="技術"
             />
             <InputChips
               v-model:chips="currentWorkshop.environments"
+              li-classes="text-white bg-black"
               title="Environment - 環境 or 場景"
               :disabled="formDisabled"
               required-chip="場景體驗"
             />
             <InputChips
               v-model:chips="currentWorkshop.messages"
+              li-classes="text-white bg-black"
               title="Message - 訊息 or 目標"
               :disabled="formDisabled"
               required-chip="洞見與價值"
             />
             <InputChips
               v-model:chips="currentWorkshop.services"
+              li-classes="text-white bg-black"
               title="Service - 服務、行動 or 經驗"
               :disabled="formDisabled"
               required-chip="使用者體驗"

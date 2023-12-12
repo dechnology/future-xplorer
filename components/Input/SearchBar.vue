@@ -17,9 +17,10 @@
         :value="modelValue"
         :placeholder="placeholder"
         @input="handleInputChange"
+        @keypress.enter.prevent="() => handleSubmit()"
       />
       <div
-        v-if="modelValue"
+        v-if="modelValue || searchBuffer"
         class="absolute inset-y-0 right-3 flex h-full items-center justify-center"
       >
         <Icon
@@ -49,7 +50,7 @@ const emit = defineEmits<{
   (e: 'search'): void;
 }>();
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   placeholder: '輸入關鍵字',
   buttonText: '搜尋',
 });
@@ -61,6 +62,7 @@ const stores = {
 const { ignoreNextClose } = storeToRefs(stores.modal);
 
 const inputRef = ref<HTMLInputElement | null>(null);
+const searchBuffer = ref('');
 
 const handleInputChange = (e: Event) => {
   emit('update:modelValue', (e.target as HTMLInputElement).value);
@@ -68,11 +70,14 @@ const handleInputChange = (e: Event) => {
 
 const handleSubmit = () => {
   ignoreNextClose.value = true;
+  searchBuffer.value = props.modelValue;
   emit('search');
 };
 
 const handleClear = () => {
   ignoreNextClose.value = true;
+
+  searchBuffer.value = '';
   emit('update:modelValue', '');
   emit('search');
 };
