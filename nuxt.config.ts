@@ -2,21 +2,26 @@
 export default defineNuxtConfig({
   app: {
     head: {
-      title: '未來情境探索輔助工具',
-      meta: [{ name: 'description', content: '未來情境探索輔助工具' }],
+      title: '創新情境生成工具',
+      meta: [{ name: 'description', content: '創新情境生成工具' }],
       link: [
         {
           rel: 'icon',
-          type: 'image/svg+xml',
-          href: '/favicon.svg',
-          media: '(prefers-color-scheme: dark)',
+          type: 'ico',
+          href: '/favicon.ico',
         },
-        {
-          rel: 'icon',
-          type: 'image/svg+xml',
-          href: '/favicon-light.svg',
-          media: '(prefers-color-scheme: light)',
-        },
+        // {
+        //   rel: 'icon',
+        //   type: 'image/svg+xml',
+        //   href: '/favicon.svg',
+        //   media: '(prefers-color-scheme: dark)',
+        // },
+        // {
+        //   rel: 'icon',
+        //   type: 'image/svg+xml',
+        //   href: '/favicon-light.svg',
+        //   media: '(prefers-color-scheme: light)',
+        // },
       ],
     },
     // pageTransition: { name: 'page', mode: 'out-in' },
