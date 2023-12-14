@@ -8,7 +8,7 @@
         <div class="flex flex-col gap-6">
           <!-- <Logo class="m-auto w-1/3 fill-purple-500" /> -->
           <NuxtImg src="login_logo.png" class="m-auto w-1/3 rounded-full" />
-          <h1 class="text-center text-2xl font-bold">未來情境探索輔助工具</h1>
+          <h1 class="text-center text-2xl font-bold">創新情境生成工具</h1>
         </div>
         <InputComponent
           v-model="uid"

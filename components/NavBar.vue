@@ -3,7 +3,7 @@
     <div
       class="mx-auto flex shrink-0 items-center justify-between px-5 py-1 md:px-14 md:py-3"
     >
-      <HomeLink>未來情境探索輔助工具</HomeLink>
+      <HomeLink>創新情境生成工具</HomeLink>
       <div class="flex items-center gap-2">
         <IssueNav v-if="$route.params.issueId">
           <IssueNavItem
