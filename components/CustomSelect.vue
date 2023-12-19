@@ -18,7 +18,7 @@
         <DropdownItem
           v-for="opt in options"
           :key="`${opt.name}_${opt.data}`"
-          :active="selected && selected.name === opt.name"
+          :active="selected && isEqual(selected.data, opt.data)"
           @click="() => handleClick(opt)"
         >
           {{ opt.name }}
@@ -29,6 +29,7 @@
 </template>
 
 <script setup lang="ts" generic="T">
+import isEqual from 'lodash/isEqual';
 interface Option {
   name: string;
   data: T;
@@ -37,7 +38,7 @@ interface Props {
   modelValue: T;
   options: Option[];
 }
-const props = defineProps<Props>();
+defineProps<Props>();
 
 const emit = defineEmits<{ (e: 'update:modelValue', data: T): void }>();
 
@@ -51,7 +52,7 @@ const handleClick = (option: Option) => {
   dropdownShown.value = false;
 };
 
-onClickOutside(dropdownDiv, (e: PointerEvent) => {
+onClickOutside(dropdownDiv, () => {
   dropdownShown.value = false;
 });
 </script>
