@@ -1,6 +1,6 @@
-# TDRI - 未來情境探索輔助工具
+# TDRI - 創新情境生成工具
 
-This project is build with [Nuxt 3](https://v3.nuxtjs.org) and [Tailwind CSS](https://tailwindcss.com).
+This project is built with [Nuxt 3](https://v3.nuxtjs.org) and [Tailwind CSS](https://tailwindcss.com), and can be hosted using docker-compose.
 
 ## Prerequisites
 
@@ -8,8 +8,8 @@ This project is build with [Nuxt 3](https://v3.nuxtjs.org) and [Tailwind CSS](ht
 
 Create a `.env` file in the root of the project with the following content:
 
-```zsh
-IMAGE_NAME=<IMAGE_NAME>
+```plaintext
+IMAGE_NAME=<IMAGE_NAME> # you specify the image name you want to use, local or prebuilt.
 MONGO_USER=<MONGO_USER>
 MONGO_PASSWORD=<MONGO_PASSWORD>
 MONGO_HOST=<MONGO_HOST>
@@ -38,13 +38,13 @@ docker compose --env-file .env.docker up -d
 
 ## Usage released Docker registry
 
-We have released the Docker image to the GitHub Container Registry, you set the <IMAGE_NAME> to `ghcr.io/eesoymilk/future-xplorer:main` and run the Docker compose with the `.env` file:
+We have released the Docker image to the GitHub Container Registry, you set the <IMAGE_NAME> in `.env` to `ghcr.io/eesoymilk/future-xplorer:main` and run the docker-compose:
 
 ```zsh
 docker compose --env-file .env.docker up -d
 ```
 
-## Development Server
+## Development Server (dev mode)
 
 ### Install dependencies
 
@@ -62,4 +62,4 @@ Start the development server on `http://localhost:3000`:
 yarn dev
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+> Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
