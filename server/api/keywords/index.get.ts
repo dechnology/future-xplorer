@@ -51,9 +51,9 @@ export default defineEventHandler(
 
     // filter votes
     if (voterId) {
-      const votes: Vote[] = await VoteModel.find({ creator: voterId }).distinct(
-        'keyword'
-      );
+      const votes: Vote[] = await VoteModel.find({ creator: voterId })
+        .distinct('keyword')
+        .sort({ createdAt: -1 });
       if (voted === 'true') {
         filter = { ...filter, _id: { $in: votes } };
       } else {
