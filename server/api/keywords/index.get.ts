@@ -51,9 +51,13 @@ export default defineEventHandler(
 
     // filter votes
     if (voterId) {
-      const votes: Vote[] = await VoteModel.find({ creator: voterId })
-        .distinct('keyword')
-        .sort({ createdAt: -1 });
+      const votes = await VoteModel.aggregate([
+        { $match: { creator: voterId } }, // Filter by voterId
+        { $group: { _id: '$keyword', doc: { $first: '$$ROOT' } } }, // Group by keyword and take the first document
+        { $replaceRoot: { newRoot: '$doc' } }, // Replace the root to get the actual document
+        { $sort: { createdAt: -1 } }, // Sort the results
+      ]);
+
       if (voted === 'true') {
         filter = { ...filter, _id: { $in: votes } };
       } else {
