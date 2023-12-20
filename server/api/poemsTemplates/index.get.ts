@@ -33,7 +33,7 @@ export default defineEventHandler(
     }
 
     const el = await PoemsTemplateModel.find(filter)
-      .sort({ createdAt: -1 })
+      .sort({ updatedAt: -1 })
       .populate([
         'creator',
         {

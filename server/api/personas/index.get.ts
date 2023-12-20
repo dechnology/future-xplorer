@@ -34,7 +34,7 @@ export default defineEventHandler(
     }
 
     const el = await PersonaModel.find(filter)
-      .sort({ createdAt: -1 })
+      .sort({ updatedAt: -1 })
       .populate('creator');
 
     if (!el) {
