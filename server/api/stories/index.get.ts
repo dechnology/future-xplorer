@@ -26,7 +26,7 @@ export default defineEventHandler(
       filter.$or = [{ title: searchRegex }, { content: searchRegex }];
     }
     const el = await StoryModel.find(filter)
-      .sort({ createdAt: -1 })
+      .sort({ updatedAt: -1 })
       .populate('creator');
 
     if (!el) {

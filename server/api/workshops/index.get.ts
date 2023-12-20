@@ -5,7 +5,7 @@ export default defineEventHandler(
   async (event): Promise<ResourceObject<Workshop[]>> => {
     authenticate(event.context);
     const workshops = await WorkshopModel.find()
-      .sort({ createdAt: -1 })
+      .sort({ updatedAt: -1 })
       .populate('creator')
       .exec();
 

@@ -36,7 +36,7 @@ export default defineEventHandler(
     }
 
     const el = await CaseModel.find(filter)
-      .sort({ createdAt: -1 })
+      .sort({ updatedAt: -1 })
       .populate([
         'creator',
         {

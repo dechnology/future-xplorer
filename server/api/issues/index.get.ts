@@ -24,7 +24,7 @@ export default defineEventHandler(
       workshop,
       $or: [{ title: searchRegex }, { description: searchRegex }],
     })
-      .sort({ createdAt: -1 })
+      .sort({ updatedAt: -1 })
       .populate('creator');
 
     if (!el) {
