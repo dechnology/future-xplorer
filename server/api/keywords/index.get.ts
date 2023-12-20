@@ -1,5 +1,5 @@
 import { FilterQuery } from 'mongoose';
-import { Keyword, KeywordQuery, ResourceObject, Vote } from '@/types';
+import { Keyword, KeywordQuery, ResourceObject } from '@/types';
 import { CaseModel, KeywordModel, VoteModel } from '@/server/models';
 
 export default defineEventHandler(
