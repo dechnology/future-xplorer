@@ -71,6 +71,7 @@
   <div class="flex flex-col items-center">
     <CardButton
       class="rounded-lg bg-lime-500 text-white transition-all hover:bg-lime-700"
+      :disabled="loading || formDisabled"
       @click.prevent="handleStoryGeneration"
     >
       AI組成故事
@@ -102,8 +103,13 @@ const stores = {
 };
 const { workshop, issue } = storeToRefs(stores.issue);
 const { personaOptions, keywordOptions } = storeToRefs(stores.poemsTemplate);
-const { currentStory, currentContext, formDisabled, poemsTemplateOptions } =
-  storeToRefs(stores.story);
+const {
+  currentStory,
+  currentContext,
+  formDisabled,
+  poemsTemplateOptions,
+  loading,
+} = storeToRefs(stores.story);
 
 const currentPoemsTemplate = ref<PoemsTemplate>();
 
@@ -121,6 +127,8 @@ const handleStoryGeneration = async () => {
       throw new Error('no workshop or issue');
     }
 
+    loading.value = true;
+
     const token = await getTokenSilently();
 
     console.log('Generating story...');
@@ -137,6 +145,8 @@ const handleStoryGeneration = async () => {
     currentStory.value.title = story.title;
   } catch (e) {
     console.error(e);
+  } finally {
+    loading.value = false;
   }
 };
 </script>
