@@ -63,7 +63,7 @@ export default defineEventHandler(
     }
 
     const el = await KeywordModel.find(filter)
-      .sort({ createdAt: -1 })
+      .sort({ updatedAt: -1 })
       .populate([
         'creator',
         { path: 'votes', populate: ['creator', 'keyword'] },
