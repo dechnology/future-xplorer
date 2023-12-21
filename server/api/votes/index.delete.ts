@@ -1,4 +1,4 @@
-import type { Vote, ResourceObject } from '@/types';
+import type { ResourceObject } from '@/types';
 import { VoteModel } from '@/server/models';
 
 export default defineEventHandler(
@@ -21,6 +21,7 @@ export default defineEventHandler(
         statusMessage: 'vote does not exist',
       });
     }
+
     return {
       message: 'vote successfully deleted',
       data: null,

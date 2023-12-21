@@ -16,6 +16,7 @@
       <div class="mt-auto flex items-center justify-around">
         <CardButton
           class="rounded-lg bg-black bg-opacity-40 text-white transition-all"
+          tabindex="1"
           :class="!loading && 'hover:bg-opacity-50'"
           :disabled="loading"
           @click.prevent="() => confirm(false)"
@@ -24,6 +25,7 @@
         </CardButton>
         <CardButton
           class="rounded-lg bg-red-400 text-white transition-all"
+          tabindex="0"
           :class="!loading && 'hover:bg-red-500'"
           :disabled="loading"
           @click.prevent="() => confirm(true)"
