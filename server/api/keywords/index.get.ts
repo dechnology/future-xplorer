@@ -1,4 +1,5 @@
 import { FilterQuery } from 'mongoose';
+import { ObjectId } from 'mongodb';
 import { Keyword, KeywordQuery, ResourceObject } from '@/types';
 import { CaseModel, KeywordModel, VoteModel } from '@/server/models';
 
@@ -62,12 +63,68 @@ export default defineEventHandler(
       }
     }
 
-    const el = await KeywordModel.find(filter)
-      .sort({ updatedAt: -1 })
-      .populate([
-        'creator',
-        { path: 'votes', populate: ['creator', 'keyword'] },
+    let el: Keyword[];
+
+    if (voterId && voted === 'true') {
+      el = await KeywordModel.aggregate([
+        { $match: filter },
+        {
+          $lookup: {
+            from: 'vote',
+            let: { keywordId: '$_id' }, // Define the variable to be used in the pipeline
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ['$keyword', '$$keywordId'] },
+                      { $eq: ['$creator', new ObjectId(voterId)] },
+                    ],
+                  },
+                },
+              },
+              { $limit: 1 }, // Limit to 1 vote
+              { $project: { _id: 1, createdAt: 1, keyword: 1, creator: 1 } }, // Project only necessary fields
+            ],
+            as: 'vote', // output array field
+          },
+        },
+        { $unwind: '$vote' }, // Deconstructs the votes array
+        {
+          $lookup: {
+            from: 'vote',
+            localField: '_id',
+            foreignField: 'keyword',
+            pipeline: [
+              {
+                $lookup: {
+                  from: 'user',
+                  localField: 'creator',
+                  foreignField: '_id',
+                  as: 'creator',
+                },
+              },
+              { $unwind: '$creator' },
+            ],
+            as: 'votes',
+          },
+        },
+        {
+          $lookup: {
+            from: 'user',
+            localField: 'creator',
+            foreignField: '_id',
+            as: 'creator',
+          },
+        },
+        { $unwind: '$creator' },
+        { $sort: { 'votes.createdAt': -1 } }, // Sorts by the createdAt field of votes
       ]);
+    } else {
+      el = await KeywordModel.find(filter)
+        .sort({ updatedAt: -1 })
+        .populate(['creator', { path: 'votes', populate: 'creator' }]);
+    }
 
     if (!el) {
       throw createError({

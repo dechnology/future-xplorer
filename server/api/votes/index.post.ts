@@ -1,5 +1,5 @@
 import { VoteModel } from '@/server/models';
-import { ResourceObject, NewWorkshop, Workshop, Vote, NewVote } from '@/types';
+import { ResourceObject, Vote } from '@/types';
 
 export default defineEventHandler(
   async (event): Promise<ResourceObject<Vote>> => {
@@ -20,7 +20,7 @@ export default defineEventHandler(
       keyword: keyword.toString(),
     });
     if (!vote) {
-      throw Error('Vote creation failed');
+      throw new Error('Vote creation failed');
     }
     return { data: vote };
   }
