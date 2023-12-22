@@ -22,6 +22,19 @@ S3_ACCESS_KEY_ID=<S3_ACCESS_KEY_ID>
 S3_SECRET_ACCESS_KEY=<S3_SECRET_ACCESS_KEY>
 ```
 
+## GitHub Actions
+
+The GitHub Actions workflow is defined in `.github/workflows/main.yml`, it will build the Docker image, push it to the GitHub Container Registry, and deploy it to the EC2 server.
+
+To use the GitHub Actions, you need to set the following secrets in the repository settings:
+
+- `EC2_HOST`
+- `EC2_KEY`
+- `MONOGO_PASSWORD`
+- `OPENAI_API_KEY`
+- `S3_ACCESS_KEY_ID`
+- `S3_SECRET_ACCESS_KEY`
+
 ## Usage with self-built Docker
 
 ### Build the Docker image for Nuxt 3 App
