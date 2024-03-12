@@ -81,7 +81,7 @@ jobs:
             export S3_ACCESS_KEY_ID=${{ env.S3_ACCESS_KEY_ID }}
             export S3_SECRET_ACCESS_KEY=${{ env.S3_SECRET_ACCESS_KEY }}
 
-            git clone https://github.com/eesoymilk/future-xplorer.git || true
+            git clone https://github.com/dechnology/future-xplorer.git || true
             cd future-xplorer || exit 1
             git reset --hard
             git pull --force
