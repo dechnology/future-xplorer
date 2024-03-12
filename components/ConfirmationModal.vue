@@ -30,7 +30,7 @@
           :disabled="loading"
           @click.prevent="() => confirm(true)"
         >
-          確認
+          刪除
         </CardButton>
       </div>
     </div>
