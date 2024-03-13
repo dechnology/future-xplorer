@@ -20,6 +20,8 @@ env:
   S3_DOMAIN: dechnology.s3.us-west-2.amazonaws.com
   S3_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY_ID }}
   S3_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_ACCESS_KEY }}
+  CONSOLE_REGISTRY_USER: ${{ secrets.CONSOLE_REGISTRY_USER }}
+  CONSOLE_REGISTRY_PAT: ${{ secrets.CONSOLE_REGISTRY_PAT }}
 
 jobs:
   build-and-push-images:
@@ -84,6 +86,8 @@ jobs:
             cd future-xplorer || exit 1
             git reset --hard
             git pull --force
+
+            docker login ${{ env.REGISTRY }} -u ${{ env.CONSOLE_REGISTRY_USER }} -p ${{ env.CONSOLE_REGISTRY_PAT }}
 
             docker compose down
             docker system prune -f
