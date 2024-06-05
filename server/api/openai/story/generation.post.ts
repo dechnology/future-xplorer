@@ -17,7 +17,7 @@ const getSystemMessage = (ctx: IssueContext): string => {
     'The message is the message that the persona is trying to convey.',
     'The service is the service that the persona is trying to use.',
     'Compose a short story describing the scenario with the given function call.',
-    'The story should be written in the language of the given context.',
+    'The story should be written in the Traditional Chinese.',
     'The length of the story content is preferbly 400 characters long.',
     'But it should be at least 250 characters long.',
     'The title of the story should be based on the content of the story.',
@@ -92,12 +92,13 @@ export default defineEventHandler(async (event): Promise<StoryResponseBody> => {
     await readBody(event);
 
   const completions = await openai.chat.completions.create({
-    model: 'gpt-3.5-turbo',
+    model: 'gpt-4o',
     messages: [
       { role: 'system', content: getSystemMessage({ workshop, issue }) },
       { role: 'user', content: getUserMessage(storyCtx) },
     ],
     functions,
+    "function_call": { "name": "generate_story" }
   });
 
   const message = completions.choices[0].message;
